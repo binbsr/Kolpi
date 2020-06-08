@@ -24,7 +24,10 @@ namespace Kolpi.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Kolpi.ServerAPI"));
 
-            builder.Services.AddApiAuthorization();
+            builder.Services.AddOidcAuthentication(options =>
+            {
+                builder.Configuration.Bind("Local", options.ProviderOptions);
+            });
 
             await builder.Build().RunAsync();
         }
