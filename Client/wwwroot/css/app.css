@@ -6,7 +6,7 @@
     right:0;
 }
 .kolpi-colorcode {
-    background-color: coral;
+    background: linear-gradient(to left, #24c6dc, #514a9d);
 }
 /* Smaller Header */
 .uk-navbar-nav > li > a,
@@ -29,7 +29,7 @@
   bottom:0;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #222A30;
+  background: linear-gradient(0deg, #24c6dc, #514a9d);
   width: 240px;
   z-index:2;
   transition: height 0.3s ease-out;
@@ -81,17 +81,14 @@
 .left-nav-wrap {
 	padding-bottom: 60px;
 }
-.content-box-dark {
-	background-color: rgba(0,0,0,0.09);
-}
+
 .text-light {
 	font-weight: 200;
 	font-size: 1.25rem;
 }
 .bar-bottom {
-	border-top: 1px solid rgba(255,255,255,0.07);
 	padding: 15px 0;
-   background-color: #222A30;
+	background: linear-gradient(0deg, #24c6dc, #514a9d);
    position: fixed;
    left: 0;
    right: 0;
@@ -109,7 +106,7 @@
 	height: 32px;
 }
 .profile-img {
-	width: 60px;
+	width: 100px;
 	margin: 0 auto 10px auto;
 	display: block;
 }
