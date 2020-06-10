@@ -6,8 +6,18 @@
 
 <AuthorizeView>
     <Authorized>
-        <label>Hi, @GetUserName(context.User.Identity.Name)</label>
-		<a uk-icon="icon: sign-out" uk-tooltip="title: Sign Out" class="uk-icon-link uk-margin-small-left" @onclick="BeginSignOut"></a>
+        <li>
+            <a href="#">@GetUserName(context.User.Identity.Name) <span uk-icon="icon: triangle-down"></span></a>
+             <div class="uk-navbar-dropdown">
+                 <ul class="uk-nav uk-navbar-dropdown-nav">
+                     <li><a href="authentication/profile">Profile</a></li>
+                     <li><a href="#">Change Password</a></li>
+                     <li><a href="#">Two-factor Authentication</a></li>
+                     <li class="uk-nav-divider"></li>
+                     <li><button class="uk-button uk-button-danger uk-width-1-1" @onclick="BeginSignOut"><span uk-icon="icon: sign-out" uk-tooltip="title: Sign Out"></span> Logout</button></li>
+                 </ul>
+            </div>
+        </li>
     </Authorized>
     <NotAuthorized>
         <ul class="uk-iconnav">
