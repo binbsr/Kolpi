@@ -29,13 +29,11 @@
 						<input class="uk-search-input search-field" type="search" placeholder="Search">
 					</form>
 				</div>
-			</div>
+			</div>	
 			<div class="uk-navbar-right">
 				<ul class="uk-navbar-nav">
-					<li><a href="#" data-uk-icon="icon:user" title="" data-uk-tooltip="" class="uk-icon" aria-expanded="false"></a></li>
-					<li><a href="#" data-uk-icon="icon: settings" title="" data-uk-tooltip="" class="uk-icon" aria-expanded="false"></a></li>
-					<li><a href="#" data-uk-icon="icon:  sign-out" title="" data-uk-tooltip="" class="uk-icon" aria-expanded="false"></a></li>
-					<li><a class="uk-navbar-toggle uk-icon uk-navbar-toggle-icon" data-uk-toggle="" data-uk-navbar-toggle-icon="" href="#offcanvas-nav" title="" data-uk-tooltip=""></a></li>
+					<LoginDisplay />
+					<li><a class="uk-hidden@m" uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon uk-tooltip="Canvas"></a></li>
 				</ul>
 			</div>
 		</nav>

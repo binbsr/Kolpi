@@ -6,12 +6,12 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <li><a href="authentication/profile">Hi, @GetUserName(context.User.Identity.Name)</a></li>
+		<li><a uk-icon="icon: sign-out" uk-tooltip="title: Sign Out" @onclick="BeginSignOut"></a></li>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <li><a href="authentication/register" uk-icon="icon: lock" uk-tooltip="title: Register"></a></li>
+        <li><a href="authentication/login" uk-icon="icon: sign-in" uk-tooltip="title: Sign In"></a></li>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -21,4 +21,7 @@
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
+
+    private string GetUserName(string email) =>
+        email?.Substring(0, email?.LastIndexOf("@") ?? 0);
 }
