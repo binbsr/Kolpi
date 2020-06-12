@@ -2,11 +2,18 @@
  	<div class="left-logo uk-flex uk-flex-middle">
  		<img class="custom-logo" src="img/logonew2.png" alt="logo">
  	</div>
- 	<div class="left-content-box">
- 		<img src="img/me.jpg" alt="" class="uk-border-circle profile-img">
- 		<h4 class="uk-text-center uk-margin-remove-vertical text-light">@fullName</h4>
- 	</div>
- 	
+	 <AuthorizeView>
+		<Authorized>
+			<div class="left-content-box">
+				<img src="img/me.jpg" alt="" class="uk-border-circle profile-img">
+				<h4 class="uk-text-center uk-margin-remove-vertical text-light">@GetUserName(context.User.Identity.Name)</h4>
+			</div>
+		</Authorized>
+		<NotAuthorized>
+			<span class="uk-label uk-label-warning">Please login</span>
+		</NotAuthorized>
+	</AuthorizeView>
+	 
  	<div class="left-nav-wrap">
  		<ul class="uk-nav uk-nav-default uk-nav-parent-icon" uk-nav="multiple: true">
  			<li class="uk-nav-header">ACTIONS</li>
@@ -63,6 +70,8 @@
  	</div>
  </aside>
 
-@code {
-	string fullName = "Bishnu Rawal";
+@code {	
+	private string GetUserName(string email) =>
+        email?.Substring(0, email?.LastIndexOf("@") ?? 0);
+
 }

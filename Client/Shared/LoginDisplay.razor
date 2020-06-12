@@ -6,8 +6,8 @@
 
 <AuthorizeView>
     <Authorized>
-        <li>
-            <a href="#">@GetUserName(context.User.Identity.Name) <span uk-icon="icon: triangle-down"></span></a>
+        <li id="profile-link">
+            <a href="#"><img class="uk-border-rounded" src="img/me.jpg" width="30" height="30" alt="profile image"></a>
              <div class="uk-navbar-dropdown">
                  <ul class="uk-nav uk-navbar-dropdown-nav">
                      <li><a href="authentication/profile">Profile</a></li>
@@ -33,7 +33,4 @@
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
-
-    private string GetUserName(string email) =>
-        email?.Substring(0, email?.LastIndexOf("@") ?? 0);
 }
