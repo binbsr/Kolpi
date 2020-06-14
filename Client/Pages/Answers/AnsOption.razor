@@ -1,0 +1,19 @@
+<InputCheckbox class="uk-checkbox" @bind-Value="AnswerOption.IsAnswer" uk-tooltip="@ChkTooltip">This is answer</InputCheckbox>
+<button class="uk-button uk-button-danger" @onclick="RemoveItem"><span uk-icon="trash"></span> Remove Option</button>
+<InputText class="uk-input uk-form-success" @bind-Value="AnswerOption.Body"></InputText>
+
+@code 
+{
+    [Parameter]
+    public AnswerOption AnswerOption { get; set; }
+
+    [Parameter]
+    public EventCallback<AnswerOption> RemoveItemCallback { get; set; }
+
+    public string ChkTooltip => AnswerOption.IsAnswer ? "It's an answer." : "It's not an answer.";
+
+    private async Task RemoveItem()
+    {
+        await RemoveItemCallback.InvokeAsync(AnswerOption);
+    }
+}

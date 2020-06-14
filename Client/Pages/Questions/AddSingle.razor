@@ -1,3 +1,45 @@
 @page "/Question/AddSingle"
+@using System.ComponentModel.DataAnnotations;
+@using Kolpi.Client.Pages.Answers
 
-<h1>Todo UI: Add questions one by one</h1>
+<EditForm Model="@question" OnValidSubmit="SubmitQuestion" class="uk-form-stacked">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="uk-margin">
+        <label class="uk-form-label" for="question">Question</label>
+        <div class="uk-form-controls">
+            <InputTextArea class="uk-textarea" rows="3" @bind-Value="question.Body" placeholder="Enter question?"></InputTextArea>
+        </div>
+    </div>
+
+    <button class="uk-button uk-button-secondary" @onclick="AddAnsOption">Add Option</button>
+
+    @foreach (var item in question.AnswerOptions)
+    {
+        <div class="uk-margin">
+            <AnsOption AnswerOption="@item" RemoveItemCallback="DeleteAnsOption"></AnsOption>
+        </div>   
+    }
+
+    <button class="uk-button uk-button-primary" type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private Question question = new Question { AnswerOptions = new List<AnswerOption>()};
+    
+    private void SubmitQuestion()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    private void AddAnsOption()
+    {
+        question.AnswerOptions.Add(new AnswerOption { IsAnswer = false, Body = string.Empty });
+    }
+
+    private void DeleteAnsOption(AnswerOption item)
+    {
+        question.AnswerOptions.Remove(item);
+    }
+}
