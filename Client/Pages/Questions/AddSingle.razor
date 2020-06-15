@@ -1,10 +1,10 @@
 @page "/Question/AddSingle"
-@using System.ComponentModel.DataAnnotations;
-@using Kolpi.Client.Pages.Answers
+@using Kolpi.Shared.Models
+@using Kolpi.Client.Components
 
 <EditForm Model="@question" OnValidSubmit="SubmitQuestion" class="uk-form-stacked">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    <ValidationSummary class="uk-text-danger"/>
 
     <div class="uk-margin">
         <label class="uk-form-label" for="question">Question</label>
@@ -13,21 +13,40 @@
         </div>
     </div>
 
-    <button class="uk-button uk-button-secondary" @onclick="AddAnsOption">Add Option</button>
+    <button class="uk-button uk-button-primary" @onclick="AddAnsOption">
+        <span uk-icon="plus"></span> Add
+    </button>
+    <div uk-form-custom="target: > * > span:first-child">
+        <InputSelect @bind-Value="optionCount">
+            <option value="1">1 answer option</option>
+            <option value="2">2 answer options</option>
+            <option value="3">3 answer options</option>
+            <option value="4">4 answer options</option>
+            <option value="5">5 answer options</option>
+            <option value="6">6 answer options</option>
+        </InputSelect>
+        <button class="uk-button uk-button-default" type="button" tabindex="-1">
+            <span></span>
+            <span uk-icon="icon: chevron-down"></span>
+        </button>
+    </div>
 
-    @foreach (var item in question.AnswerOptions)
-    {
-        <div class="uk-margin">
-            <AnsOption AnswerOption="@item" RemoveItemCallback="DeleteAnsOption"></AnsOption>
-        </div>   
-    }
+    <div class="uk-child-width-1-2@s uk-margin" uk-grid>
+        @foreach (var item in question.AnswerOptions)
+        {
+            <div>
+                <AnswerOptionComponent AnswerModel="@item" RemoveItemCallback="DeleteAnsOption">                
+                </AnswerOptionComponent>
+            </div>   
+        }    
+    </div>
 
     <button class="uk-button uk-button-primary" type="submit">Submit</button>
 </EditForm>
 
 @code {
     private Question question = new Question { AnswerOptions = new List<AnswerOption>()};
-    
+    private string optionCount = "1";
     private void SubmitQuestion()
     {
         Console.WriteLine("OnValidSubmit");
@@ -35,7 +54,10 @@
 
     private void AddAnsOption()
     {
-        question.AnswerOptions.Add(new AnswerOption { IsAnswer = false, Body = string.Empty });
+        for (int i=1; i <= int.Parse(optionCount); i++)
+        {
+            question.AnswerOptions.Add(new AnswerOption { IsAnswer = false, Body = string.Empty });   
+        }
     }
 
     private void DeleteAnsOption(AnswerOption item)

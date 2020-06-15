@@ -1,5 +1,8 @@
-public class Tag
+namespace Kolpi.Shared.Models
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
+    public class Tag
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
 }
