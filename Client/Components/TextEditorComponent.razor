@@ -1,0 +1,14 @@
+@inject IJSRuntime JSRuntime
+
+<div @ref=editor></div>
+
+@code {    
+    private ElementReference editor;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("createQuill", editor);
+        }
+    }   
+}
