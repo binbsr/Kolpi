@@ -123,6 +123,32 @@
 	padding: 0 15px;
 }
 
+.ql-editor {
+	background-color: white;
+}
+
+.ql-container.ql-snow {
+	height: 100px;
+}
+
+/* Slim select customization*/
+.ss-value {
+	background-color: #24c6dc !important;
+	font-size: 16px !important;
+}
+
+.ss-add {
+	margin: 13px 13px 0 5px !important;
+}
+
+.ss-multi-selected {
+	border-radius: 0 !important;
+}
+
+.ss-disabled {
+	line-height: unset !important;
+}
+
 #profile-link:hover {
 	background-color: #514a9d;
 }

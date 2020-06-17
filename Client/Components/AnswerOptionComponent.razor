@@ -4,8 +4,7 @@
     <InputCheckbox class="uk-checkbox" @bind-Value="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
     This is answer
 </label>
-<a class="uk-icon-button" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
-<a class="uk-icon-button" uk-icon="close" uk-tooltip="Clear option text."></a>
+<a class="uk-icon-button uk-float-right" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
 
 <InputText class="uk-input uk-form-success" @bind-Value="AnswerModel.Body"></InputText>
 
