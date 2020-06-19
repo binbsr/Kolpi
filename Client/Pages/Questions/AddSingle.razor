@@ -4,74 +4,132 @@
 @using Kolpi.Shared.Models
 @using Kolpi.Client.Components
 @using Kolpi.Shared.ViewModels
+@using Kolpi.Shared.Enums
 
 @inject HttpClient Http
 
-<EditForm Model="@question" OnValidSubmit="SubmitQuestion">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="uk-text-danger"/>
+<div class="uk-margin">
+    <label>Question</label>
+    <BlazoredTextEditor @ref="@questionEditor" Placeholder="Write your question..." DebugLevel="error">
+        <ToolbarContent>
+            <span class="ql-formats">
+                <select class="ql-font">
+                    <option selected=""></option>
+                    <option value="serif"></option>
+                    <option value="monospace"></option>
+                </select>
+                <select class="ql-size">
+                    <option value="small"></option>
+                    <option selected=""></option>
+                    <option value="large"></option>
+                    <option value="huge"></option>
+                </select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-image"></button>
+                <button class="ql-formula"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-clean"></button>
+            </span>
+        </ToolbarContent>
+        <EditorContent>
+        </EditorContent>
+    </BlazoredTextEditor>
+</div>
 
-    <div class="uk-margin">
-        <label>Question</label>
-        <TextEditorComponent />
+<div uk-grid class="uk-child-width-1-2@m">
+    <div>
+        <AutoComplete OptionItems="tags" TItem="TagViewModel">
+            <OptionTemplate Context="tag">
+                <option value="@tag.Value">@tag.Label</option>
+            </OptionTemplate>
+        </AutoComplete>
     </div>
+    <div>
+        <select @bind="questionType" class="uk-select uk-width-1-4">
+            <option value="@QuestionType.Objective" selected>Objective</option>
+            <option value="@QuestionType.Subjective">Subjective</option>
+        </select>
 
-    <div uk-grid>
-        <div class="uk-width-2-3@m">
-            <AutocompleteComponent OptionItems="tags" TItem="TagViewModel">
-                <OptionTemplate Context="tag">
-                    <option value="@tag.Value">@tag.Label</option>   
-                </OptionTemplate> 
-            </AutocompleteComponent>
-        </div>
-        <div class="uk-width-1-3@m">            
-            <div uk-form-custom="target: > * > span:first-child">
-                <InputSelect @bind-Value="optionCount">
-                    <option value="1">1 answer option</option>
-                    <option value="2">2 answer options</option>
-                    <option value="3">3 answer options</option>
-                    <option value="4">4 answer options</option>
-                    <option value="5">5 answer options</option>
-                    <option value="6">6 answer options</option>
-                </InputSelect>
-                <button class="uk-button uk-button-default" type="button" tabindex="-1">
-                    <span></span>
-                    <span uk-icon="icon: chevron-down"></span>
-                </button>
-            </div>
+        @if (questionType == QuestionType.Objective)
+        {
+            <select @bind="optionCount" class="uk-select uk-width-1-2">
+                <option value="1">1 answer option</option>
+                <option value="2">2 answer options</option>
+                <option value="3">3 answer options</option>
+                <option value="4">4 answer options</option>
+                <option value="5">5 answer options</option>
+                <option value="6">6 answer options</option>
+            </select>
+
             <button class="uk-button uk-button-primary uk-float-right" @onclick="AddAnsOption">
                 <span uk-icon="plus"></span> Add
             </button>
-        </div>
-    </div>
-    <div class="uk-child-width-1-2@s uk-margin" uk-grid>
-        @foreach (var item in question.AnswerOptions)
+        }
+        else
         {
-            <div>
-                <AnswerOptionComponent AnswerModel="@item" RemoveItemCallback="DeleteAnsOption">                
-                </AnswerOptionComponent>
-            </div>   
-        }    
+            <label>That's great, just add your quetion with appropriate category tags.</label>
+        }
     </div>
+</div>
 
-    <button class="uk-button uk-button-primary" type="submit">Submit</button>
-</EditForm>
+<div class="uk-child-width-1-2@s uk-margin" uk-grid>
+    @foreach (var item in question.AnswerOptions)
+    {
+        <div>
+            <AnsOption AnswerModel="@item" RemoveItemCallback="DeleteAnsOption">
+            </AnsOption>
+        </div>
+    }
+</div>
+
+<button @onclick="SaveQuestion" class="uk-button uk-button-primary">
+    <span uk-icon="database"></span> Save Question
+</button>
 
 @code {
-    private Question question = new Question { AnswerOptions = new List<AnswerOption>()};
+
+    BlazoredTextEditor questionEditor;
+    string questionBody;
+    QuestionType questionType;
+    private Question question = new Question { AnswerOptions = new List<AnswerOption>() };
     private string optionCount = "1";
     private IEnumerable<TagViewModel> tags;
 
-    private void SubmitQuestion()
+    private async Task SaveQuestion()
     {
+        questionBody = await this.questionEditor.GetHTML();
+        
         Console.WriteLine("OnValidSubmit");
     }
 
     private void AddAnsOption()
     {
-        for (int i=1; i <= int.Parse(optionCount); i++)
+        for (int i = 1; i <= int.Parse(optionCount); i++)
         {
-            question.AnswerOptions.Add(new AnswerOption { IsAnswer = false, Body = string.Empty });   
+            question.AnswerOptions.Add(new AnswerOption { IsAnswer = false, Body = string.Empty });
         }
     }
 
