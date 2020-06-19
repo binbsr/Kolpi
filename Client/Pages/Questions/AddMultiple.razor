@@ -1,3 +1,31 @@
 @page "/Question/AddMultiple"
 
-<h1>Todo UI: Add questions on bulk</h1>
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Kolpi.Shared.Models
+@using Kolpi.Client.Components
+@using Kolpi.Shared.ViewModels
+
+@inject HttpClient Http
+
+<EditForm Model="@questionsBulk" OnValidSubmit="SubmitQuestions" class="uk-form-stacked">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="uk-text-danger" />
+
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-stacked-text">Write/Paste your questions in format given</label>
+        <div class="uk-form-controls">
+            <InputTextArea class="uk-textarea"  @bind-Value="questionsBulk.Body" id="form-stacked-text" rows="15" placeholder="Your questions in plain text..."></InputTextArea>
+        </div>
+    </div>
+
+    <button class="uk-button uk-button-primary" type="submit"><span uk-icon="plus-circle"></span> Submit Questions</button>
+</EditForm>
+
+@code {
+    private QuestionsBulk questionsBulk = new QuestionsBulk();
+
+    private void SubmitQuestions()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+}
