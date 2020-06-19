@@ -1,12 +1,11 @@
 @using Kolpi.Shared.Models
 
 <label>
-    <InputCheckbox class="uk-checkbox" @bind-Value="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
-    This is answer
+    <input type="checkbox" class="uk-checkbox" @bind="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
+    Answer
 </label>
-<a class="uk-icon-button uk-float-right" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
-
-<InputText class="uk-input uk-form-success" @bind-Value="AnswerModel.Body"></InputText>
+<a class="uk-icon-button" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
+<input class="uk-input uk-form-success" @bind="AnswerModel.Body" />
 
 @code 
 {
