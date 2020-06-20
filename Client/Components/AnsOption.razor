@@ -1,4 +1,4 @@
-@using Kolpi.Shared.Models
+@using Kolpi.Shared.ViewModels
 
 <label>
     <input type="checkbox" class="uk-checkbox" @bind="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
@@ -10,10 +10,10 @@
 @code 
 {
     [Parameter]
-    public AnswerOption AnswerModel { get; set; }
+    public AnswerOptionViewModel AnswerModel { get; set; }
 
     [Parameter]
-    public EventCallback<AnswerOption> RemoveItemCallback { get; set; }
+    public EventCallback<AnswerOptionViewModel> RemoveItemCallback { get; set; }
 
     public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Mark if its an answer.";
 
