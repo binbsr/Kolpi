@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Kolpi.Shared.ViewModels
 {
-    public class QuestionsBulk
+    public class QuestionsBulkViewModel
     {
         public string Body { get; set; }
 
