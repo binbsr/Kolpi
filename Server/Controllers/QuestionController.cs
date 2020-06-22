@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Kolpi.Shared.ViewModels;
+using Kolpi.Server.Data;
 
 namespace Kolpi.Server.Controllers
 {
@@ -16,10 +17,12 @@ namespace Kolpi.Server.Controllers
     public class QuestionController : ControllerBase
     {
         private readonly ILogger<QuestionController> logger;
+        private readonly KolpiDbContext kolpiDbContext;
 
-        public QuestionController(ILogger<QuestionController> logger)
+        public QuestionController(ILogger<QuestionController> logger, KolpiDbContext kolpiDbContext)
         {
             this.logger = logger;
+            this.kolpiDbContext = kolpiDbContext;
         }
 
         [HttpPost]
