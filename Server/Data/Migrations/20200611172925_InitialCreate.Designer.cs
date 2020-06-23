@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Kolpi.Server.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(KolpiDbContext))]
     [Migration("20200611172925_InitialCreate")]
     partial class InitialCreate
     {

@@ -1,0 +1,24 @@
+@using Kolpi.Shared.ViewModels
+
+<label>
+    <input type="checkbox" class="uk-checkbox" @bind="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
+    Answer
+</label>
+<a class="uk-icon-button" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
+<input class="uk-input uk-form-success" @bind="AnswerModel.Body" />
+
+@code 
+{
+    [Parameter]
+    public AnswerOptionViewModel AnswerModel { get; set; }
+
+    [Parameter]
+    public EventCallback<AnswerOptionViewModel> RemoveItemCallback { get; set; }
+
+    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Mark if its an answer.";
+
+    private async Task RemoveItem()
+    {
+        await RemoveItemCallback.InvokeAsync(AnswerModel);
+    }
+}

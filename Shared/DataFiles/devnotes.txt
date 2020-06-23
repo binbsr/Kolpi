@@ -1,2 +1,56 @@
 set ASPNETCORE_ENVIRONMENT=Staging
 dotnet run --no-launch-profile
+
+
+@if (question.QuestionType == QuestionType.Subjective)
+{
+    <div class="uk-margin">
+        <BlazoredTextEditor @ref="@subAnswerEditor" Placeholder="Write answer...">
+            <ToolbarContent>
+                <span class="ql-formats">
+                    <select class="ql-font">
+                        <option selected=""></option>
+                        <option value="serif"></option>
+                        <option value="monospace"></option>
+                    </select>
+                    <select class="ql-size">
+                        <option value="small"></option>
+                        <option selected=""></option>
+                        <option value="large"></option>
+                        <option value="huge"></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-code-block"></button>
+                    <button class="ql-script" value="sub"></button>
+                    <button class="ql-script" value="super"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                    <button class="ql-formula"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-clean"></button>
+                </span>
+            </ToolbarContent>
+            <EditorContent>
+            </EditorContent>
+        </BlazoredTextEditor>
+    </div>
+}
