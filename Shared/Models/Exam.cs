@@ -10,7 +10,7 @@ namespace Kolpi.Shared.Models
         public string Details { get; set; }
         public DateTime StartsAt { get; set; }
         public byte DurationHours { get; set; }
-        public string[] Attendees { get; set; }
+        public string Attendees { get; set; }
 
         public virtual List<ExamPaper> ExamPapers  { get; set; }
     }
