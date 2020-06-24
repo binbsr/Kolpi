@@ -7,25 +7,50 @@
 
 @inject HttpClient Http
 
-<EditForm Model="@questionsBulk" OnValidSubmit="SubmitQuestions" class="uk-form-stacked">
+<Form Model="@questionsBulk" OnFinish="SubmitQuestions">
     <DataAnnotationsValidator />
-    <ValidationSummary class="uk-text-danger" />
-
-    <div class="uk-margin">
-        <label class="uk-form-label" for="form-stacked-text">Write/Paste your questions in format given</label>
-        <div class="uk-form-controls">
-            <InputTextArea class="uk-textarea"  @bind-Value="questionsBulk.Body" id="form-stacked-text" rows="15" placeholder="Your questions in plain text..."></InputTextArea>
-        </div>
-    </div>
-
-    <button class="uk-button uk-button-primary" type="submit"><span uk-icon="plus-circle"></span> Submit Questions</button>
-</EditForm>
+    <ValidationSummary />
+    <FormItem>
+        <Button Type="dashed" Icon="question-circle" OnClick="@(()=>{ _visible = true; })" Style="float:right;">
+            Input Format
+        </Button>
+        <Modal Title="@title"
+               Visible="@_visible"
+               Closable="true"
+               OnOk="HandleCancel"
+               OnCancel="HandleCancel">
+            <p>
+                Quesiton body? <br/>
+                --------------------------------<br/>
+                Tags: categories and complexity<br/>
+                --------------------------------<br/>
+                Answeroption1<br/>
+                Answeroption2<br/>
+                Answeroption3<br/>
+                Answeroption4<br/>
+                ======================================
+            </p>
+        </Modal>
+        <TextArea AutoFocus Placeholder="Your questions in specified format..." @bind-Value="@questionsBulk.Body" />
+    </FormItem>
+    <FormItem>
+        <Button Type="default" HtmlType="submit" Icon="save">Submit Questions</Button>
+     </FormItem>
+</Form>
 
 @code {
     private QuestionsBulkViewModel questionsBulk = new QuestionsBulkViewModel();
+    string title = "Multi-Questions Input Format";
+    bool _visible = false;
+
 
     private void SubmitQuestions()
     {
         Console.WriteLine("OnValidSubmit");
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
     }
 }

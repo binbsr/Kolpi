@@ -1,12 +1,64 @@
 ﻿@inherits LayoutComponentBase
 
-<TopNavigation></TopNavigation>
-<SideNavigation></SideNavigation>
+<Layout>
+    <Header Class="header" Style="padding-right:0;">
+        <div class="logo" />
+        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new []{"2"})>
+            <MenuItem Key="1">nav 1</MenuItem>
+            <MenuItem Key="2">nav 2</MenuItem>
+            <MenuItem Key="3">nav 3</MenuItem>
+            <div class="profile-logo">
+                <LoginDisplay />
+            </div>
+        </Menu>
+    </Header>
+    <Layout>
+        <SideNavigation />
+        <Layout Style=" padding: 0 24px 24px;">
+            <Content Class="site-layout-background" Style=" padding: 24px; margin: 0; min-height: 280px;">
+                @Body
+            </Content>
+            <Footer Style="text-align:center">Kolpi Assessment ©@DateTime.Now.Year Created by Bishnu Rawal and Team</Footer>
+        </Layout>
+    </Layout>
+</Layout>
 
-<div id="content" data-uk-height-viewport="expand: true">
-	<div class="uk-container uk-container-expand">
-		@Body
-	</div>
-</div>
+@code
+{
+    bool collapsed;
 
-<OffCanvassMenu></OffCanvassMenu>
+    void onCollapse(bool collapsed)
+    {
+        Console.WriteLine(collapsed);
+        this.collapsed = collapsed;
+    }
+
+
+    private RenderFragment ButtonsRender(RenderFragment leftButton, RenderFragment rightButton)
+    {
+        return@<Template>
+        <span>@leftButton</span>
+        @rightButton
+    </Template>;
+}
+}
+
+<style>
+    .logo {
+        width: 120px;
+        height: 31px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 16px 28px 16px 0;
+        float: left;
+    }
+
+    .profile-logo {
+        float: right;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+    .site-layout-background {
+        background: #fff;
+    }
+</style>

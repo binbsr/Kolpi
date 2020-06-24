@@ -26,6 +26,8 @@ namespace Kolpi.Client
 
             builder.Services.AddApiAuthorization();
 
+            builder.Services.AddAntDesign();
+
             await builder.Build().RunAsync();
         }
     }
