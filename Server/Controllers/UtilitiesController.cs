@@ -17,7 +17,7 @@ namespace Kolpi.Server.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "GK", "Level-1"
         };
 
         private readonly ILogger<UtilitiesController> logger;
@@ -31,7 +31,7 @@ namespace Kolpi.Server.Controllers
         [Route("gettags")]
         public IEnumerable<TagViewModel> GetTags()
         {   
-            return Enumerable.Range(0, 9).Select(index => new TagViewModel
+            return Enumerable.Range(0, 11).Select(index => new TagViewModel
             {
                 Value = index.ToString(),
                 Label = Summaries[index]

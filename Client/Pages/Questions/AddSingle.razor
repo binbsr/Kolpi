@@ -1,107 +1,112 @@
 @page "/Question/AddSingle"
 
 @inherits AddSingleBase
+@inject HttpClient Http
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Kolpi.Client.Components
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Shared.Enums
+@using OneOf
 
-<div class="uk-margin">
-    <label>Question</label>
-    <div class="uk-float-right">
-        <a class="uk-link-text" href="https://katex.org/docs/supported.html" target="_blank"><span uk-icon="link"></span>Katex docs</a>
-    </div>
-    <BlazoredTextEditor @ref="@questionEditor" Placeholder="Write your question..." DebugLevel="error">
-        <ToolbarContent>
-            <span class="ql-formats">
-                <select class="ql-font">
-                    <option selected=""></option>
-                    <option value="serif"></option>
-                    <option value="monospace"></option>
-                </select>
-                <select class="ql-size">
-                    <option value="small"></option>
-                    <option selected=""></option>
-                    <option value="large"></option>
-                    <option value="huge"></option>
-                </select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <select class="ql-color"></select>
-                <select class="ql-background"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-blockquote"></button>
-                <button class="ql-code-block"></button>
-                <button class="ql-script" value="sub"></button>
-                <button class="ql-script" value="super"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-link"></button>
-                <button class="ql-image"></button>
-                <button class="ql-formula"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-clean"></button>
-            </span>
-        </ToolbarContent>
-        <EditorContent>
-        </EditorContent>
-    </BlazoredTextEditor>
+<div class="space-bottom">
+    <Row>
+        <Col Span="18">
+        <h4>Question (For mathmetical equations [<i>fx</i> button], please refer <a href="https://katex.org/docs/supported.html" target="_blank"><Icon Type="question-circle"></Icon>Katex docs</a>)</h4>
+        <BlazoredTextEditor @ref="@questionEditor" Placeholder="Write your question..." DebugLevel="error">
+            <ToolbarContent>
+                <span class="ql-formats">
+                    <select class="ql-font">
+                        <option selected=""></option>
+                        <option value="serif"></option>
+                        <option value="monospace"></option>
+                    </select>
+                    <select class="ql-size">
+                        <option value="small"></option>
+                        <option selected=""></option>
+                        <option value="large"></option>
+                        <option value="huge"></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-code-block"></button>
+                    <button class="ql-script" value="sub"></button>
+                    <button class="ql-script" value="super"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                    <button class="ql-formula"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-clean"></button>
+                </span>
+            </ToolbarContent>
+            <EditorContent>
+            </EditorContent>
+        </BlazoredTextEditor>
+        </Col>
+        <Col Span="6" Class="pl-2">
+        <h4><Icon Type="question-circle"></Icon> Tag this question (e.g. GK, Level-1, Physics etc.)</h4>
+        <Select Mode="multiple"
+                Style="width: 100%"
+                Placeholder="Type to add tags...">
+            @foreach (var item in tags ?? Array.Empty<TagViewModel>())
+            {
+                <SelectOption Value="@item.Value">@item.Label</SelectOption>
+            }
+        </Select>
+        </Col>
+    </Row>
+
 </div>
-
-<div uk-grid class="uk-child-width-1-2@m">
-    <div>
-        <AutoComplete OptionItems="tags" TItem="TagViewModel">
-            <OptionTemplate Context="tag">
-                <option value="@tag.Value">@tag.Label</option>
-            </OptionTemplate>
-        </AutoComplete>
-    </div>
-    <div>
-        <select @bind="questionType" class="uk-select uk-width-1-4">
-            <option value="@QuestionType.Objective" selected>Objective</option>
-            <option value="@QuestionType.Subjective">Subjective</option>
-        </select>
-
-        @if (questionType == QuestionType.Objective)
+<div class="space-bottom">
+    <Row>
+        <Col Span="8">
+        <RadioGroup @bind-Value="@questionType" ButtonStyle="solid">
+            <Radio RadioButton Value="1">Objective</Radio>
+            <Radio RadioButton Value="2">Subjective</Radio>
+        </RadioGroup>
+        </Col>
+        <Col Span="16">
+        @if (questionType == "1")
         {
-            <select @bind="optionCount" class="uk-select uk-width-1-2">
-                <option value="1">1 answer option</option>
-                <option value="2">2 answer options</option>
-                <option value="3">3 answer options</option>
-                <option value="4">4 answer options</option>
-                <option value="5">5 answer options</option>
-                <option value="6">6 answer options</option>
-            </select>
+            <Select OnChange="OnAnsOptionsCountChnage" DefaultValue="@("1")">
+                <SelectOption Value="1">1 answer option</SelectOption>
+                <SelectOption Value="2">2 answer options</SelectOption>
+                <SelectOption Value="3">3 answer options</SelectOption>
+                <SelectOption Value="4">4 answer options</SelectOption>
+                <SelectOption Value="5">5 answer options</SelectOption>
+                <SelectOption Value="6">6 answer options</SelectOption>
+            </Select>
 
-            <button class="uk-button uk-button-primary uk-float-right" @onclick="AddAnsOption">
-                <span uk-icon="plus"></span> Add
-            </button>
+            <Button Type="dashed" @onclick="AddAnsOption" Icon="plus">Add</Button>
         }
         else
         {
-            <div class="uk-alert-primary" uk-alert>
-                <a class="uk-alert-close" uk-close></a>
-                <h3>Subjective Question</h3>
-                <p>Please tag your subjective question with appropriate categories and levels. That's all we need for the these questions.</p>
-            </div>
+            <h3>Subjective Question</h3>
+            <p>Please tag your subjective question with appropriate categories and levels. That's all we need for the these questions.</p>
         }
-    </div>
+        </Col>
+    </Row>
 </div>
 
-<div class="uk-child-width-1-2@s uk-margin" uk-grid>
+<div>
     @foreach (AnswerOptionViewModel item in question.AnswerOptions)
     {
         <div>
@@ -109,8 +114,44 @@
             </AnsOption>
         </div>
     }
+    <Button Icon="save" Type="default" @onclick="SaveQuestion">Save Question</Button>
 </div>
 
-<button @onclick="SaveQuestion" class="uk-button uk-button-primary">
-    <span uk-icon="database"></span> Save Question
-</button>
+@code
+{
+    private string[] _items;
+    private string[] _defaultValues;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/utilities/gettags");
+    }
+
+    private void OnChangeQuestionType(OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value, OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        questionType = value.AsT0;
+    }
+
+    private void OnAnsOptionsCountChnage(OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value, OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        optionCount = value.AsT0;
+    }
+}
+
+<style>
+    .space-bottom {
+        margin-bottom: 10px;
+    }
+
+    .pl-1 {
+        padding-left: 2px;
+    }
+
+    .pl-2 {
+        padding-left: 4px;
+    }
+
+    .pl-3 {
+        padding-left: 8px;
+    }
+</style>

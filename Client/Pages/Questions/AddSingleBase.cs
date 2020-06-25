@@ -17,15 +17,15 @@ namespace Kolpi.Client.Pages.Questions
         
         public BlazoredTextEditor questionEditor;
         public string questionBody;
-        public QuestionType questionType;
+        public string questionType = "1";
         public QuestionViewModel question = new QuestionViewModel { AnswerOptions = new List<AnswerOptionViewModel>() };
         public string optionCount = "1";
-        public IEnumerable<TagViewModel> tags;
+        public TagViewModel[] tags;
 
         public async Task SaveQuestion()
         {
             question.Body = await this.questionEditor.GetHTML();
-            question.QuestionType = questionType;
+            question.QuestionType = QuestionType.Objective;
             question.Tags = new List<TagViewModel>();
 
             var result = await Http.PostAsJsonAsync("api/question", question);
@@ -42,18 +42,6 @@ namespace Kolpi.Client.Pages.Questions
         public void DeleteAnsOption(AnswerOptionViewModel item)
         {
             question.AnswerOptions.Remove(item);
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            try
-            {
-                tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/utilities/gettags");
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
         }
     }
 }
