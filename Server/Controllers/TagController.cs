@@ -10,6 +10,9 @@ using Kolpi.Shared.ViewModels;
 using Kolpi.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.Shared.Mapper;
+using System.Net.Mime;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Kolpi.Server.Controllers
 {
@@ -43,7 +46,9 @@ namespace Kolpi.Server.Controllers
 
         [HttpGet]
         [Route("types")]
-        public async Task<IEnumerable<TagTypeViewModel>> GetTagTypes(int pageIndex, int pageSize)
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IEnumerable<TagTypeViewModel>> GetTagTypes([FromQuery] int pageIndex, int pageSize)
         {
             var tagTypeModels = await kolpiDbContext.TagTypes.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
             var tagTypeViewModels = tagTypeModels.ToViewModel();
