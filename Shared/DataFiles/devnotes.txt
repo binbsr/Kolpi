@@ -3,3 +3,8 @@ dotnet run --no-launch-profile
 
 
 dotnet ef migrations add DbSkeleton -o "Data\Migrations"
+
+
+<Column @bind-Field="@context.Date">
+	@context.Date.ToShortDateString()
+</Column>

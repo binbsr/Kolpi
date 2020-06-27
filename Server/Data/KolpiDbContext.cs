@@ -24,6 +24,7 @@ namespace Kolpi.Server.Data
         {
             base.OnModelCreating(modelBuilder); 
 
+            // Renaming identity tables to more generic names
             modelBuilder.Entity<KolpiUser>().ToTable("Users");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
@@ -32,6 +33,14 @@ namespace Kolpi.Server.Data
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
 
+            // Tag to tagtypes
+            modelBuilder.Entity<Tag>()
+                .HasOne(t => t.TagType)
+                .WithMany(tt => tt.Tags);
+
+            // Question and Tag
+
+            
             // ExamPaperQuestion (Join table)
             modelBuilder.Entity<ExamPaperQuestion>()
             .HasKey(t => new { t.ExamPaperId, t.QuestionId });
@@ -46,6 +55,7 @@ namespace Kolpi.Server.Data
                 .WithMany(q => q.ExamPaperQuestions)
                 .HasForeignKey(epq => epq.QuestionId);
 
+
             // Question to questionType (one to zero)
             modelBuilder.Entity<Question>()
                 .HasOne(c => c.QuestionType)
@@ -59,6 +69,7 @@ namespace Kolpi.Server.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<AnswerOption> AnswerOptions { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<TagType> TagTypes { get; set; }
         public DbSet<QuestionType> QuestionTypes { get; set; }
         public DbSet<QuestionStatus> QuestionStatuses { get; set; }
         public DbSet<Reputation> Reputations { get; set; }
