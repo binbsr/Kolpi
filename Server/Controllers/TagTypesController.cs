@@ -4,11 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Kolpi.Shared.ViewModels;
-using Kolpi.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.Shared.Mapper;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
+using Kolpi.Server.ApplicationCore.Services;
+using Kolpi.Server.Infrastructure.Logging;
+using System.Reflection.Metadata.Ecma335;
+using System.Net;
 using Kolpi.Shared.Models;
 
 namespace Kolpi.Server.Controllers
@@ -18,20 +21,20 @@ namespace Kolpi.Server.Controllers
     [Route("api/[controller]")]
     public class TagTypesController : ControllerBase
     {
-        private readonly KolpiDbContext kolpiDbContext;
-        private readonly ILogger<TagTypesController> logger;
+        private readonly ITagTypeService tagTypeService;
+        private readonly IKolpiLogger<TagTypesController> logger;
 
-        public TagTypesController(KolpiDbContext kolpiDbContext, ILogger<TagTypesController> logger)
+        public TagTypesController(ITagTypeService tagTypeService, IKolpiLogger<TagTypesController> logger)
         {
-            this.kolpiDbContext = kolpiDbContext;
+            this.tagTypeService = tagTypeService;
             this.logger = logger;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get([FromQuery] int pageIndex = 1, int pageSize = 10)
+        public async Task<ActionResult<TagTypeViewModel>> Get()
         {
-            var tagTypeModels = await kolpiDbContext.TagTypes.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            var tagTypeModels = await tagTypeService.GetAllAsync();
             var tagTypeViewModels = tagTypeModels.ToViewModel();
             return Ok(tagTypeViewModels);
         }
@@ -41,7 +44,7 @@ namespace Kolpi.Server.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
-            var tagTypeModel = await kolpiDbContext.TagTypes.FindAsync(id);
+            var tagTypeModel = await tagTypeService.GetByIdAsync(id);
 
             if (tagTypeModel == null)
                 return NotFound();
@@ -55,14 +58,15 @@ namespace Kolpi.Server.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] TagTypeViewModel tagTypeViewModel)
+        public async Task<ActionResult> Post([FromBody] TagTypeViewModel tagTypeViewModel)
         {
             if (tagTypeViewModel == null || string.IsNullOrWhiteSpace(tagTypeViewModel.Name))
                 return BadRequest();
 
             var tagTypeModel = tagTypeViewModel.ToModel();
-            kolpiDbContext.TagTypes.Add(tagTypeModel);
-            _ = await kolpiDbContext.SaveChangesAsync();
+            var rowsAdded = await tagTypeService.AddAsync(tagTypeModel);
+            if (rowsAdded <= 0)
+                return Problem("Could not insert into the store.", nameof(tagTypeModel), (int)HttpStatusCode.InternalServerError, "Data Insert");
 
             return CreatedAtAction(nameof(Get), new { id = tagTypeModel.Id }, tagTypeModel);
         }
@@ -71,14 +75,16 @@ namespace Kolpi.Server.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(int id, [FromBody] TagTypeViewModel tagTypeViewModel)
+        public async Task<ActionResult> Put(int id, [FromBody] TagTypeViewModel tagTypeViewModel)
         {
             if (id == default || tagTypeViewModel == null || string.IsNullOrWhiteSpace(tagTypeViewModel.Name))
                 return BadRequest();
 
             var tagTypeModel = tagTypeViewModel.ToModel();
-            kolpiDbContext.TagTypes.Update(tagTypeModel);
-            _ = await kolpiDbContext.SaveChangesAsync();
+
+            var rowsUpdated = await tagTypeService.UpdateAsync(tagTypeModel);
+            if (rowsUpdated <= 0)
+                return Problem("Could not modify store.", nameof(tagTypeModel), (int)HttpStatusCode.InternalServerError, "Data Update");
 
             return Ok();
         }
@@ -87,14 +93,15 @@ namespace Kolpi.Server.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id == default)
                 return BadRequest();
 
-            var model = kolpiDbContext.TagTypes.Find(id);
-            kolpiDbContext.Remove(model);
-            _ = await kolpiDbContext.SaveChangesAsync();
+            var rowsDeleted = await tagTypeService.DeleteAsync(id);
+
+            if (rowsDeleted <= 0)
+                return Problem("Could not delete from store.", nameof(TagType), (int)HttpStatusCode.InternalServerError, "Data Deletion");
 
             return NoContent();
         }
