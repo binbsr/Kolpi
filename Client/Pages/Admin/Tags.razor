@@ -9,10 +9,7 @@
         <Table @ref="table"
                DataSource="@tagTypeViewModels"
                Total="_total"
-               @bind-PageIndex="_pageIndex"
-               @bind-PageSize="_pageSize"
-               OnPageIndexChange="async e=>await fetchData(e)"
-               @bind-SelectedRows="selectedRows">
+               OnPageIndexChange="async e=>await fetchData(e)">
             
             <Selection Key="@(context.Id.ToString())" />
             <Column @bind-Field="@context.Id" />

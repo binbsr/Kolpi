@@ -1,11 +1,8 @@
 ﻿using Kolpi.Server.Infrastructure.Services;
-using Kolpi.Server.Logging;
+using Kolpi.Server.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Kolpi.Server.ApplicationCore.Services;
 
 namespace Kolpi.Server.Extentions
 {

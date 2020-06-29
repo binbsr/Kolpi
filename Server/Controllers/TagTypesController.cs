@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Kolpi.Shared.ViewModels;
 using Kolpi.Shared.Mapper;
-using System.Net.Mime;
-using Microsoft.AspNetCore.Http;
 using Kolpi.Server.ApplicationCore.Services;
 using Kolpi.Server.Infrastructure.Logging;
 using System.Net;
 using Kolpi.Shared.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kolpi.Server.Controllers
 {
@@ -27,11 +27,11 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<TagTypeViewModel>> Get()
+        public async Task<ActionResult<IEnumerable<TagTypeViewModel>>> Get()
         {
             var tagTypeModels = await tagTypeService.GetAllAsync();
             var tagTypeViewModels = tagTypeModels.ToViewModel();
-            return Ok(tagTypeViewModels);
+            return tagTypeViewModels.ToList();
         }
 
         [HttpGet("{id}")]

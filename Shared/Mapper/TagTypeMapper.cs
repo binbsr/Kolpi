@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Kolpi.Shared.Models;
 using Kolpi.Shared.ViewModels;
 
@@ -16,7 +14,8 @@ namespace Kolpi.Shared.Mapper
             var tagTypeViewModel = new TagTypeViewModel { 
                     Id = model.Id,
                     Name = model.Name,
-                    Details = model.Details
+                    Details = model.Details,
+                    ColorCode = model.ColorCode
                 };
 
             return tagTypeViewModel;
@@ -31,7 +30,8 @@ namespace Kolpi.Shared.Mapper
             {
                 Id = viewModel.Id,
                 Name = viewModel.Name,
-                Details = viewModel.Details
+                Details = viewModel.Details,
+                ColorCode = viewModel.ColorCode
             };
 
             return tagTypeModel;
