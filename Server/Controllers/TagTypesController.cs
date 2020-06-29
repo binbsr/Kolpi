@@ -1,16 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Kolpi.Shared.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using Kolpi.Shared.Mapper;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Kolpi.Server.ApplicationCore.Services;
 using Kolpi.Server.Infrastructure.Logging;
-using System.Reflection.Metadata.Ecma335;
 using System.Net;
 using Kolpi.Shared.Models;
 
@@ -31,7 +27,6 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TagTypeViewModel>> Get()
         {
             var tagTypeModels = await tagTypeService.GetAllAsync();
@@ -40,8 +35,6 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             var tagTypeModel = await tagTypeService.GetByIdAsync(id);
@@ -55,9 +48,6 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpPost]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Post([FromBody] TagTypeViewModel tagTypeViewModel)
         {
             if (tagTypeViewModel == null || string.IsNullOrWhiteSpace(tagTypeViewModel.Name))
@@ -72,10 +62,7 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Put(int id, [FromBody] TagTypeViewModel tagTypeViewModel)
+        public async Task<ActionResult<int>> Put(int id, [FromBody] TagTypeViewModel tagTypeViewModel)
         {
             if (id == default || tagTypeViewModel == null || string.IsNullOrWhiteSpace(tagTypeViewModel.Name))
                 return BadRequest();
@@ -86,13 +73,10 @@ namespace Kolpi.Server.Controllers
             if (rowsUpdated <= 0)
                 return Problem("Could not modify store.", nameof(tagTypeModel), (int)HttpStatusCode.InternalServerError, "Data Update");
 
-            return Ok();
+            return rowsUpdated;
         }
 
         [HttpDelete("{id}")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(int id)
         {
             if (id == default)
