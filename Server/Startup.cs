@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Kolpi.Server.Data;
 using Kolpi.Server.Models;
+using Kolpi.Server.Extentions;
 
 namespace Kolpi.Server
 {
@@ -42,6 +43,11 @@ namespace Kolpi.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            // DI registrations
+            services.AddKolpiServices()
+                .AddKolpiLogger()
+                .AddKolpiEmailSender();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
