@@ -1,0 +1,52 @@
+﻿@page "/tagtypes/index"
+
+@inject HttpClient Http
+
+@using Kolpi.Shared.ViewModels
+@using Kolpi.Client.Components.Results
+
+<h4>Total @_total records. <a href="/tagtypes/add" style="float:right"><Icon Type="plus"></Icon>Add Tagtype</a></h4>
+
+@if (tagTypeViewModels.Any())
+{
+    <Table @ref="table" HidePagination="true"
+           DataSource="@tagTypeViewModels">
+
+        <Column @bind-Field="@context.Id" />
+        <Column @bind-Field="@context.Name" />
+        <Column @bind-Field="@context.ColorCode" />
+        <Column @bind-Field="@context.Details" />
+
+        <ActionColumn Title="Action">
+            <Space Size="middle">
+                <SpaceItem>
+                    <a href="/tagtypes/edit/@context.Id"><Icon Type="edit"></Icon></a>
+                </SpaceItem>
+                <SpaceItem>
+                    <a href="/tagtypes/edit/@context.Id"><Icon Type="delete"></Icon></a>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+}
+else
+{
+    <EmptyResult Explanation="No tagtypes added yet." />
+}
+
+@code {
+    List<TagTypeViewModel> tagTypeViewModels = new List<TagTypeViewModel>();
+    ITable table;
+    int _total = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagTypeViewModels = await GetTagTypesAsync();
+        _total = tagTypeViewModels.Count;
+    }
+
+    public Task<List<TagTypeViewModel>> GetTagTypesAsync()
+    {
+        return Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
+    }
+}

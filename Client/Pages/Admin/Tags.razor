@@ -2,7 +2,8 @@
 
 @inject HttpClient Http
 @using Kolpi.Shared.ViewModels
-@using Kolpi.Client.Shared.Results
+@using Kolpi.Client.Components.Results
+@using System.Text.Json
 
 <div>
     <Row>
@@ -13,6 +14,34 @@
         <Col Span="12">
         @if (tagTypeViewModels.Any())
         {
+            <Button Type="primary" Disabled="@disabledAddNew" Icon="plus" OnClick="@ShowAddNewUI">Add New TagType</Button>
+
+            @if (disabledAddNew)
+            {
+                <Form Model="@tagTypeViewModel"
+                      LabelCol="new ColLayoutParam { Span = 8 }"
+                      WrapperCol="new ColLayoutParam { Span = 16 }"
+                      OnFinish="OnFinish"
+                      OnFinishFailed="OnFinishFailed">
+
+                    <FormItem Label="Input">
+                        <Input @bind-Value="@context.Name" />
+                    </FormItem>
+                    <FormItem Label="InputArea">
+                        <TextArea @bind-Value="@context.Details" />
+                    </FormItem>
+                    <FormItem Label="Cascader">
+                        <Cascader @bind-Value="@context.ColorCode" Options="colors" />
+                    </FormItem>
+
+                    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
+                        <Button Icon="save" HtmlType="submit">
+                            Save
+                        </Button>
+                    </FormItem>
+                </Form>
+            }
+
             <Table @ref="table"
                    DataSource="@tagTypeViewModels"
                    Total="_total">
@@ -47,6 +76,7 @@
 
 @code {
     TagTypeViewModel[] tagTypeViewModels = new TagTypeViewModel[] { };
+    TagTypeViewModel tagTypeViewModel = new TagTypeViewModel();
     ITable table;
     int _total = 0;
 
@@ -60,4 +90,64 @@
     {
         return Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes");
     }
+
+    // Add new model logic
+    bool disabledAddNew = false;
+
+    private void ShowAddNewUI()
+    {
+        disabledAddNew = true;
+    }
+
+    private void OnFinish(EditContext editContext)
+    {
+        Console.WriteLine($"Success:{JsonSerializer.Serialize(tagTypeViewModel)}");
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Console.WriteLine($"Failed:{JsonSerializer.Serialize(tagTypeViewModel)}");
+    }
+
+    private List<CascaderNode> colors = new List<CascaderNode>
+    {
+        new CascaderNode()
+        {
+            Value = "red",
+            Label = "Red",
+            Children = new []
+            {
+                new CascaderNode {Value = "lawngreen", Label = "Lawn Green"},
+                new CascaderNode {Value = "lime", Label = "Lime"},
+                new CascaderNode {Value = "forestgreen", Label = "Forest Green"},
+                new CascaderNode {Value = "springgreen", Label = "Spring Green"},
+            },
+        },
+        new CascaderNode()
+        {
+            Value = "green",
+            Label = "Green",
+            Children = new []
+            {
+                new CascaderNode {Value = "lawngreen", Label = "Lawn Green"},
+                new CascaderNode {Value = "lime", Label = "Lime"},
+                new CascaderNode {Value = "forestgreen", Label = "Forest Green"},
+                new CascaderNode {Value = "springgreen", Label = "Spring Green"},
+                new CascaderNode {Value = "olivedrab", Label = "Olivedrab"},
+                new CascaderNode {Value = "seagreen", Label = "Sea Green"},
+            },
+        },
+        new CascaderNode()
+        {
+            Value = "blue",
+            Label = "Blue",
+            Children = new []
+            {
+                new CascaderNode {Value = "lawngreen", Label = "Lawn Green"},
+                new CascaderNode {Value = "lime", Label = "Lime"},
+                new CascaderNode {Value = "forestgreen", Label = "Forest Green"},
+                new CascaderNode {Value = "springgreen", Label = "Spring Green"},
+            },
+        }
+    };
 }

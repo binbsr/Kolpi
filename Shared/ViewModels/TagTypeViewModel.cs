@@ -11,7 +11,7 @@ namespace Kolpi.Shared.ViewModels
         [MinLength(2), Required]
         public string Name { get; set; }
 
-        [DisplayName("Summary")]
+        [DisplayName("Details")]
         [MinLength(5), Required]
         public string Details { get; set; }
 
