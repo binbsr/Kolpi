@@ -14,9 +14,7 @@ namespace Kolpi.Server.ApplicationCore.Services
     {
         private readonly KolpiDbContext context;
         private DbSet<TEntity> entities;
-
-        public AsyncService() { }
-
+        
         public AsyncService(KolpiDbContext context)
         {
             this.context = context;
@@ -56,7 +54,7 @@ namespace Kolpi.Server.ApplicationCore.Services
 
         public Task<List<TEntity>> GetAllAsync()
         {
-            return entities.AsNoTracking()
+            return entities?.AsNoTracking()
                 .ToListAsync();
         }
 
