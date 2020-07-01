@@ -62,9 +62,9 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<int>> Put(int id, [FromBody] TagTypeViewModel tagTypeViewModel)
+        public async Task<ActionResult<int>> Put([FromBody] TagTypeViewModel tagTypeViewModel)
         {
-            if (id == default || tagTypeViewModel == null || string.IsNullOrWhiteSpace(tagTypeViewModel.Name))
+            if (tagTypeViewModel == null || tagTypeViewModel.Id == default)
                 return BadRequest();
 
             var tagTypeModel = tagTypeViewModel.ToModel();

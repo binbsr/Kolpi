@@ -1,0 +1,62 @@
+﻿
+@inject HttpClient Http
+
+@using Kolpi.Shared.ViewModels
+
+<Form Model="@TagTypeViewModel"
+      LabelCol="new ColLayoutParam { Span = 8 }"
+      WrapperCol="new ColLayoutParam { Span = 16 }"
+      OnFinish="OnFinish">
+
+    <FormItem Label="Name">
+        <Input @bind-Value="@context.Name" />
+    </FormItem>
+    <FormItem Label="Details">
+        <TextArea @bind-Value="@context.Details" />
+    </FormItem>
+    <FormItem Label="Color Code">
+        <Input @bind-Value="@context.ColorCode" />
+    </FormItem>
+
+    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
+        <Button Icon="save" HtmlType="submit" Loading="@isSaving">
+            Save Tagtype @context.Name
+        </Button>
+        <Button Icon="unordered-list" Type="dashed">
+            <a href="/tagtypes/index">To all tagtypes</a>
+        </Button> 
+    </FormItem>
+</Form>
+
+@code {
+
+    [Parameter]
+    public TagTypeViewModel TagTypeViewModel { get; set; } = new TagTypeViewModel();
+
+    bool isSaving = false;
+
+    private void OnFinish(EditContext editContext)
+    {
+        isSaving = true;
+        InvokeAsync(StateHasChanged);
+
+        Task<HttpResponseMessage> saveTask;
+
+        if (TagTypeViewModel.Id == default)
+        {
+            // Adding new
+            saveTask = Http.PostAsJsonAsync("api/tagtypes", TagTypeViewModel);
+        }
+        else
+        {
+            // Modifying existing
+            saveTask = Http.PutAsJsonAsync($"api/tagtypes/{TagTypeViewModel.Id}", TagTypeViewModel);
+        }
+
+        saveTask.ContinueWith(t =>
+        {
+            isSaving = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

@@ -37,7 +37,7 @@ namespace Kolpi.Server.ApplicationCore.Services
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            var entityToDelete = entities.SingleOrDefault(m => GenericUtility.Compare(m.Id, id));
+            var entityToDelete = entities.SingleOrDefault(m => m.Id.Equals(id));
             entities.Remove(entityToDelete);
             return context.SaveChangesAsync();
         }
@@ -67,7 +67,7 @@ namespace Kolpi.Server.ApplicationCore.Services
         public Task<TEntity> GetByIdAsync(TKey id)
         {
             return entities.AsNoTracking()
-                .SingleOrDefaultAsync(o => GenericUtility.Compare(o.Id, id));
+                .SingleOrDefaultAsync(o => o.Id.Equals(id));
         }
 
         public Task<int> UpdateAsync(TEntity model)

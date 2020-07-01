@@ -5,14 +5,16 @@
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-<h4>Total @_total records. <a href="/tagtypes/add" style="float:right"><Icon Type="plus"></Icon>Add Tagtype</a></h4>
+<h4>Total @_total Records</h4>
+<Button type="dashed" Icon="plus" Style="float: right">
+    <a href="/tagtypes/add">Add Tagtype</a>
+</Button>
 
 @if (tagTypeViewModels.Any())
 {
     <Table @ref="table" HidePagination="true"
            DataSource="@tagTypeViewModels">
 
-        <Column @bind-Field="@context.Id" />
         <Column @bind-Field="@context.Name" />
         <Column @bind-Field="@context.ColorCode" />
         <Column @bind-Field="@context.Details" />
