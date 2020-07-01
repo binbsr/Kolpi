@@ -1,81 +1,68 @@
-<aside id="left-col" class="uk-light uk-visible@m">
- 	<div class="left-logo uk-flex uk-flex-middle">
- 		<img class="custom-logo" src="img/logonew2.png" alt="logo">
- 	</div>
-	 <AuthorizeView>
-		<Authorized>
-			<div class="left-content-box">
-				<img src="img/me.jpg" alt="" class="uk-border-circle profile-img">
-				<h4 class="uk-text-center uk-margin-remove-vertical text-light">@GetUserName(context.User.Identity.Name)</h4>
-			</div>
-		</Authorized>
-		<NotAuthorized>
-            <div class="uk-padding">
-                <a class="uk-button uk-button-default uk-width-1-1" href="authentication/login" uk-tooltip="Sign-in to Kolpi">
-                <span uk-icon="sign-in"></span> Sign-in
-                </a>
-            </div>
-		</NotAuthorized>
-	</AuthorizeView>
-	 
- 	<div class="left-nav-wrap">
- 		<ul class="uk-nav uk-nav-default uk-nav-parent-icon" uk-nav="multiple: true">
- 			<li class="uk-nav-header">ACTIONS</li>
- 			<li><a href="#"><span uk-icon="icon: thumbnails"></span> Your Stats</a></li>
- 			<li class="uk-parent">
-				<a href="#"><span uk-icon="icon: database"></span> Questions</a>
- 				<ul class="uk-nav-sub" hidden="">
- 					<li><a title="Contribution" href="#">Your Contribution</a></li>
- 					<li><a title="Add Single" href="Question/AddSingle">Add New (Single)</a></li>
- 					<li><a title="Add in volume" href="Question/AddMultiple">Add New (Bulk)</a></li>
- 					<li><a title="Review Questions" href="#">Review</a></li>
- 					<li><a title="Question Categories" href="#">Manage Category</a></li>
- 					<li><a title="Question Complexities" href="#">Manage Complexity</a></li>
-				</ul>
- 			</li>
-			<li class="uk-parent">
- 				<a href="#"><span uk-icon="icon: file-text"></span> Question Paper</a>
- 				<ul class="uk-nav-sub" hidden="">
- 					<li><a href="#">Generate New</a></li>
- 					<li><a href="#">Manage Papers</a></li>
- 				</ul>	
- 			</li>
-			<li class="uk-parent">
- 				<a href="#"><span uk-icon="icon: file-edit"></span> Exams</a>
- 				<ul class="uk-nav-sub" hidden="">
- 					<li><a href="#">New Session</a></li>
- 					<li><a title="Exam Levels" href="#">Manage Levels</a></li>
- 				</ul>
- 			</li>
-			<li class="uk-parent">
- 				<a href="#"><span uk-icon="icon: table"></span> Results</a>
- 				<ul class="uk-nav-sub" hidden="">
- 					<li><a href="#">Current Exams</a></li>
- 					<li><a href="#">Answer Sheets</a></li>
- 				</ul>
- 			</li>
- 		</ul>				
- 	</div>
- 	<div class="bar-bottom">
- 		<ul class="uk-subnav uk-flex uk-flex-center uk-child-width-1-5 uk-grid" uk-grid>
- 			<li class="uk-first-column">
- 				<a href="/" class="uk-icon-link" uk-icon="icon: home" uk-tooltip="Home"></a>
- 			</li>
- 			<li>
- 				<a href="#" class="uk-icon-link" uk-icon="icon: settings" uk-tooltip="Settings"></a>
- 			</li>
- 			<li>
- 				<a href="#" class="uk-icon-link" uk-icon="icon: social" uk-tooltip="Share"></a>
- 			</li>					
- 			<li>
- 				<a href="#" class="uk-icon-link" uk-icon="icon: sign-out" uk-tooltip="Sign out"></a>
- 			</li>
- 		</ul>
- 	</div>
- </aside>
+<Sider Collapsible Width="200" Class="site-layout-background">
+    <Menu Theme="MenuTheme.Light"
+          DefaultSelectedKeys=@(new[]{"1"})
+          Mode="MenuMode.Inline"
+          Style="height: 100%; border-right: 0;">
+        <MenuItem Key="1">
+            <Icon Type="dashboard" Theme="outline" />
+            <span>Dashboard</span>
+        </MenuItem>
+        @{
+            RenderFragment questionTitle =
+            @<span>
+                <Icon Type="question" Theme="outline" />
+                <span>Question</span>
+            </span>;
+        }
+        <SubMenu Key="sub1" Title=questionTitle>
+            <MenuItem Key="2">
+                <a title="Add Question" href="Question/AddSingle">Add Question</a>
+            </MenuItem>
+            <MenuItem Key="3">
+                <a title="Add Multiple Questions in Single Shot" href="Question/AddMultiple">Add Questions (In Bulk)</a>
+            </MenuItem>
+            <MenuItem Key="4">
+                <a title="Review Questions" href="#">Review</a>
+            </MenuItem>
+            <MenuItem Key="5">
+                <a title="Manage Question Tags" href="#">Manage Tags</a>
+            </MenuItem>
+        </SubMenu>
+        @{
+            RenderFragment questionPaperTitle =
+            @<span>
+                <Icon Type="file-add" Theme="outline" />
+                <span>Question Paper</span>
+            </span>;
+        }
+        <SubMenu Key="sub2" Title=questionPaperTitle>
+            <MenuItem Key="6">
+                <a href="#">Generate New</a>
+            </MenuItem>
+            <MenuItem Key="7">
+                <a href="#">Manage Papers</a>
+            </MenuItem>
+        </SubMenu>
 
-@code {	
-	private string GetUserName(string email) =>
-        email?.Substring(0, email?.LastIndexOf("@") ?? 0);
+        @{
+            RenderFragment examTitle =
+            @<span>
+                <Icon Type="bell" Theme="outline" />
+                <span>Exam</span>
+            </span>;
+        }
+        <SubMenu Key="sub3" Title=examTitle>
+            <MenuItem Key="8">
+                <a href="#">Schedule New</a>
+            </MenuItem>
+            <MenuItem Key="9">
+                <a href="#">Manage Exams</a>
+            </MenuItem>
+        </SubMenu>
 
-}
+        <MenuItem Key="10">
+            <Icon Type="table" Theme="outline" />
+            <span>Results</span>
+        </MenuItem>
+    </Menu>
+</Sider>

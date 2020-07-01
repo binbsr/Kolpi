@@ -1,0 +1,27 @@
+﻿@page "/tagtypes/edit/{Id:int}"
+
+@inject HttpClient Http
+
+@using Kolpi.Shared.ViewModels
+
+@if (tagTypeViewModel == null)
+{
+    <h4>Navigating to tagtype edit form...</h4>
+}
+else
+{
+    <EditTagType TagTypeViewModel="tagTypeViewModel" />
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    TagTypeViewModel tagTypeViewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagTypeViewModel = await Http.GetFromJsonAsync<TagTypeViewModel>($"api/tagtypes/{Id}");
+    }
+}

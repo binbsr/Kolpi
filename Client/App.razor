@@ -9,15 +9,16 @@
                     }
                     else
                     {
-                        <p>You are not authorized to access this resource.</p>
+                        <Kolpi.Client.Components.Results.NotAuthorizedResult />
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
+                <Kolpi.Client.Components.Results.NotFoundResult />
             </LayoutView>
         </NotFound>
     </Router>
+    <AntContainer />
 </CascadingAuthenticationState>

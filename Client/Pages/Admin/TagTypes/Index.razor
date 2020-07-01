@@ -1,0 +1,77 @@
+﻿@page "/tagtypes/index"
+
+@inject HttpClient http
+@inject ModalService modalService
+@inject MessageService _message
+
+@using Kolpi.Shared.ViewModels
+@using Kolpi.Client.Components.Results
+
+<p>Total @tagTypeViewModels.Count Records <a href="/tagtypes/add" style="float:right"><Icon Type="plus"></Icon>Add Tagtype</a></p>
+
+@if (tagTypeViewModels.Any())
+{
+    <Table @ref="table" HidePagination="true"
+           DataSource="@tagTypeViewModels">
+
+        <Column @bind-Field="@context.Name" />
+        <Column @bind-Field="@context.ColorCode" />
+        <Column @bind-Field="@context.Details" />
+
+        <ActionColumn Title="Action">
+            <Space Size="middle">
+                <SpaceItem>
+                    <Button Type="dashed" Shape="circle" Size="small">
+                        <a href="/tagtypes/edit/@context.Id"><Icon Type="edit"></Icon></a>
+                    </Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Popconfirm Title="@("Are you sure delete this tagtype?")" Id="@context.Id.ToString()"
+                                OnConfirm="() => Confirm(context)"
+                                OkText="Delete"
+                                CancelText="Cancel">
+                        <Button Icon="delete" Shape="circle" Type="dashed" Size="small"></Button>
+                    </Popconfirm>
+
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+}
+else
+{
+    <EmptyResult Explanation="No tagtypes added yet." />
+}
+
+@code {
+    List<TagTypeViewModel> tagTypeViewModels = new List<TagTypeViewModel>();
+    ITable table;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagTypeViewModels = await GetTagTypesAsync();
+    }
+
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
+    }
+
+    public Task<List<TagTypeViewModel>> GetTagTypesAsync()
+    {
+        return http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
+    }
+
+    private async Task Confirm(TagTypeViewModel tagTypeViewModel)
+    {
+        var deleteResult = await http.DeleteAsync($"api/tagtypes/{tagTypeViewModel.Id}");
+        if (deleteResult.IsSuccessStatusCode)
+        {
+            await _message.Success($"Tagtype '{tagTypeViewModel.Name}' deleted successfully.", 2);
+
+            // Remove it from viewmodel as well
+            tagTypeViewModels.Remove(tagTypeViewModel);
+            StateHasChanged();
+        }
+    }
+}
