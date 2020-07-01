@@ -118,10 +118,7 @@
 </div>
 
 @code
-{
-    private string[] _items;
-    private string[] _defaultValues;
-
+{   
     protected override async Task OnInitializedAsync()
     {
         tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/utilities/gettags");

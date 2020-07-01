@@ -7,7 +7,7 @@ namespace Kolpi.Shared.ViewModels
     {
         public int Id { get; set; }
         
-        [DisplayName("TagTpye Name")]
+        [DisplayName("Tagtpye Name")]
         [MinLength(2), Required]
         public string Name { get; set; }
 

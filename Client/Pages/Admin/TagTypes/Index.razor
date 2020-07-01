@@ -2,11 +2,12 @@
 
 @inject HttpClient http
 @inject ModalService modalService
+@inject MessageService _message
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-<p>Total @_total Records <a href="/tagtypes/add" style="float:right"><Icon Type="plus"></Icon>Add Tagtype</a></p>
+<p>Total @tagTypeViewModels.Count Records <a href="/tagtypes/add" style="float:right"><Icon Type="plus"></Icon>Add Tagtype</a></p>
 
 @if (tagTypeViewModels.Any())
 {
@@ -20,12 +21,18 @@
         <ActionColumn Title="Action">
             <Space Size="middle">
                 <SpaceItem>
-                    <Button Type="dashed" Shape="circle">
+                    <Button Type="dashed" Shape="circle" Size="small">
                         <a href="/tagtypes/edit/@context.Id"><Icon Type="edit"></Icon></a>
                     </Button>
                 </SpaceItem>
                 <SpaceItem>
-                    <Button Icon="delete" Shape="circle" Type="dashed" OnClick="(e) => ConfirmDelete(context)"></Button>
+                    <Popconfirm Title="@("Are you sure delete this tagtype?")" Id="@context.Id.ToString()"
+                                OnConfirm="() => Confirm(context)"
+                                OkText="Delete"
+                                CancelText="Cancel">
+                        <Button Icon="delete" Shape="circle" Type="dashed" Size="small"></Button>
+                    </Popconfirm>
+
                 </SpaceItem>
             </Space>
         </ActionColumn>
@@ -39,12 +46,15 @@ else
 @code {
     List<TagTypeViewModel> tagTypeViewModels = new List<TagTypeViewModel>();
     ITable table;
-    int _total = 0;
 
     protected override async Task OnInitializedAsync()
     {
         tagTypeViewModels = await GetTagTypesAsync();
-        _total = tagTypeViewModels.Count;
+    }
+
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
     }
 
     public Task<List<TagTypeViewModel>> GetTagTypesAsync()
@@ -52,17 +62,16 @@ else
         return http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
     }
 
-    private async Task ConfirmDelete(TagTypeViewModel tagTypeViewModel)
+    private async Task Confirm(TagTypeViewModel tagTypeViewModel)
     {
-        RenderFragment icon =@<Icon Type="exclamation-circle" Theme="outline"></Icon>;
-
-        await modalService.Confirm(new ConfirmOptions()
+        var deleteResult = await http.DeleteAsync($"api/tagtypes/{tagTypeViewModel.Id}");
+        if (deleteResult.IsSuccessStatusCode)
         {
-            Title = "Tagtype Delete",
-            Icon = icon,
-            Content = "Do you want to delete this item?",
-            OnOk = (e) => http.DeleteAsync($"api/tagtypes/{tagTypeViewModel.Id}"),
-            OkText = $"Delete {tagTypeViewModel.Name}"
-        });
-    }    
+            await _message.Success($"Tagtype '{tagTypeViewModel.Name}' deleted successfully.", 2);
+
+            // Remove it from viewmodel as well
+            tagTypeViewModels.Remove(tagTypeViewModel);
+            StateHasChanged();
+        }
+    }
 }
