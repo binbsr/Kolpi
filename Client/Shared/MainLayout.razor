@@ -3,10 +3,28 @@
 <Layout>
     <Header Class="header" Style="padding-right:0;">
         <div class="logo" />
-        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new []{"2"})>
+        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new []{"1"})>
             <MenuItem Key="1">nav 1</MenuItem>
             <MenuItem Key="2">nav 2</MenuItem>
-            <MenuItem Key="3">nav 3</MenuItem>
+            <SubMenu Title=tagTitle>
+                <MenuItemGroup Title=@("Tags")>
+                    <MenuItem Key="tags:1">
+                        <MenuLink href="/tags/index" Match="NavLinkMatch.All">All Tags</MenuLink>
+                    </MenuItem>
+                    <MenuItem Key="tags:2">
+                        <MenuLink href="/tags/index" Match="NavLinkMatch.All">Add New</MenuLink>
+                    </MenuItem>
+                </MenuItemGroup>
+                <MenuItemGroup Title=@("Tag Categories")>
+                    <MenuItem Key="tagtypes:1">
+                        <MenuLink href="/tagtypes/index" Match="NavLinkMatch.All">All Tag Categories</MenuLink>
+                    </MenuItem>
+                    <MenuItem Key="tagtypes:2">
+                        <MenuLink href="/tagtypes/add" Match="NavLinkMatch.All">Add New</MenuLink>
+                    </MenuItem>
+                </MenuItemGroup>
+            </SubMenu>
+
             <div class="profile-logo">
                 <LoginDisplay />
             </div>
@@ -25,22 +43,11 @@
 
 @code
 {
-    bool collapsed;
-
-    void onCollapse(bool collapsed)
-    {
-        Console.WriteLine(collapsed);
-        this.collapsed = collapsed;
-    }
-
-
-    private RenderFragment ButtonsRender(RenderFragment leftButton, RenderFragment rightButton)
-    {
-        return@<Template>
-        <span>@leftButton</span>
-        @rightButton
+    RenderFragment tagTitle =
+    @<Template>
+        <Icon Type="tags" Theme="outline"></Icon>
+        Question Tagging
     </Template>;
-}
 }
 
 <style>
