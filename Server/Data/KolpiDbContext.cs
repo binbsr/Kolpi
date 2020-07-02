@@ -22,7 +22,7 @@ namespace Kolpi.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
 
             // Renaming identity tables to more generic names
             modelBuilder.Entity<KolpiUser>().ToTable("Users");
@@ -38,10 +38,21 @@ namespace Kolpi.Server.Data
                 .HasOne(t => t.TagType)
                 .WithMany(tt => tt.Tags);
 
-            // Question and Tag
+            // Question and Tag, Join Table - many to many
+            modelBuilder.Entity<QuestionTag>()
+                .HasKey(t => new { t.QuestionId, t.TagId });
 
-            
-            // ExamPaperQuestion (Join table)
+            modelBuilder.Entity<QuestionTag>()
+                .HasOne(qt => qt.Question)
+                .WithMany(q => q.QuestionTags)
+                .HasForeignKey(qt => qt.QuestionId);
+
+            modelBuilder.Entity<QuestionTag>()
+                .HasOne(qt => qt.Tag)
+                .WithMany(t => t.QuestionTags)
+                .HasForeignKey(qt => qt.TagId);
+
+            // ExamPaper and Question, Join table - many to many
             modelBuilder.Entity<ExamPaperQuestion>()
             .HasKey(t => new { t.ExamPaperId, t.QuestionId });
 
@@ -55,14 +66,11 @@ namespace Kolpi.Server.Data
                 .WithMany(q => q.ExamPaperQuestions)
                 .HasForeignKey(epq => epq.QuestionId);
 
-
-            // Question to questionType (one to zero)
+            // Questionstatus to Question (one to many)
             modelBuilder.Entity<Question>()
-                .HasOne(c => c.QuestionType)
-                .WithMany()
-                .HasForeignKey(q => q.QuestionTypeId);
-
-
+                .HasOne(q => q.QuestionStatus)
+                .WithMany(qs => qs.Questions)
+                .HasForeignKey(q => q.QuestionStatusId);
         }
 
         // Kolpi Db tables
@@ -70,12 +78,11 @@ namespace Kolpi.Server.Data
         public DbSet<AnswerOption> AnswerOptions { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TagType> TagTypes { get; set; }
-        public DbSet<QuestionType> QuestionTypes { get; set; }
         public DbSet<QuestionStatus> QuestionStatuses { get; set; }
         public DbSet<Reputation> Reputations { get; set; }
         public DbSet<ExamPaper> ExamPapers { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
-
+        public DbSet<QuestionTag> QuestionTags { get; set; }
     }
 }
