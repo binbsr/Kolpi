@@ -68,7 +68,7 @@
                 Placeholder="Type to add tags...">
             @foreach (var item in tags ?? Array.Empty<TagViewModel>())
             {
-                <SelectOption Value="@item.Value">@item.Label</SelectOption>
+                <SelectOption Value="@item.Name">@item.Name</SelectOption>
             }
         </Select>
         </Col>
