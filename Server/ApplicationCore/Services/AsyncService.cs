@@ -54,8 +54,7 @@ namespace Kolpi.Server.ApplicationCore.Services
 
         public Task<List<TEntity>> GetAllAsync()
         {
-            return entities?.AsNoTracking()
-                .ToListAsync();
+            return entities.ToListAsync();
         }
 
         public Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression)
@@ -66,7 +65,7 @@ namespace Kolpi.Server.ApplicationCore.Services
 
         public Task<TEntity> GetByIdAsync(TKey id)
         {
-            return entities.AsNoTracking()
+            return entities
                 .SingleOrDefaultAsync(o => o.Id.Equals(id));
         }
 
