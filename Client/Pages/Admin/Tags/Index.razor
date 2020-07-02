@@ -1,0 +1,85 @@
+﻿@page "/tags/index"
+
+@inject HttpClient http
+@inject MessageService message
+
+@using Kolpi.Shared.ViewModels
+@using Kolpi.Client.Components.Results
+
+<p>Page: @_pageIndex | Page Size: @_pageSize | Total: @_total <a href="/tags/add" style="float:right"><Icon Type="plus"></Icon>Add Tag</a></p>
+
+@if (tagViewModels.Any())
+{
+    <Table @ref="table"
+           DataSource="@tagViewModels"
+           Total="_total"
+           @bind-PageIndex="_pageIndex"
+           @bind-PageSize="_pageSize"
+           OnPageIndexChange="async e => await FetchData(e)"
+           @bind-SelectedRows="selectedRows">
+        <Selection Key="@(context.Id.ToString())" />
+        <ActionColumn Title="Action">
+            <Space Size="middle">
+                <SpaceItem>
+                    <Button Type="dashed" Shape="circle" Size="small">
+                        <a href="/tags/edit/@context.Id"><Icon Type="edit"></Icon></a>
+                    </Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+        <Column @bind-Field="@context.Name" />
+        <Column @bind-Field="@context.TagTypeName" />
+        <Column @bind-Field="@context.TagColorCode" />
+        <Column @bind-Field="@context.Details" />
+        <Column @bind-Field="@context.CreatedBy" />
+        <Column @bind-Field="@context.CreatedAt" />
+        <Column @bind-Field="@context.ModifiedBy" />
+        <Column @bind-Field="@context.ModifiedAt" />
+    </Table>
+}
+else
+{
+    <EmptyResult Explanation="No tags added yet." />
+}
+
+@code {
+    List<TagViewModel> tagViewModels = new List<TagViewModel>();
+    ITable table;
+    int _pageIndex = 1;
+    int _pageSize = 10;
+    int _total = 0;
+    IEnumerable<TagViewModel> selectedRows;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagViewModels = await GetTagTypesAsync(_pageIndex, _pageSize);
+    }
+
+    public Task<List<TagViewModel>> GetTagTypesAsync(int pageIndex, int pageSize)
+    {
+        return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSze{pageSize}");
+    }
+
+    async Task FetchData(PaginationEventArgs args)
+    {
+        tagViewModels = await GetTagTypesAsync(args.PageIndex, args.PageSize);
+    }
+
+    private async Task Delete()
+    {
+        var deleteResult = await http.DeleteAsync($"api/tags");
+        if (deleteResult.IsSuccessStatusCode)
+        {
+            await message.Success($"Tag deleted successfully.", 2);
+
+            // Remove selected from viewmodels as well
+            selectedRows.ForEach(item =>
+            {
+                tagViewModels.Remove(item);
+
+            });
+
+            StateHasChanged();
+        }
+    }
+}

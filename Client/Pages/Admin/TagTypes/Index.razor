@@ -1,8 +1,7 @@
 ﻿@page "/tagtypes/index"
 
 @inject HttpClient http
-@inject ModalService modalService
-@inject MessageService _message
+@inject MessageService message
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
@@ -52,11 +51,6 @@ else
         tagTypeViewModels = await GetTagTypesAsync();
     }
 
-    protected override bool ShouldRender()
-    {
-        return base.ShouldRender();
-    }
-
     public Task<List<TagTypeViewModel>> GetTagTypesAsync()
     {
         return http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
@@ -67,7 +61,7 @@ else
         var deleteResult = await http.DeleteAsync($"api/tagtypes/{tagTypeViewModel.Id}");
         if (deleteResult.IsSuccessStatusCode)
         {
-            await _message.Success($"Tagtype '{tagTypeViewModel.Name}' deleted successfully.", 2);
+            await message.Success($"Tagtype '{tagTypeViewModel.Name}' deleted successfully.", 2);
 
             // Remove it from viewmodel as well
             tagTypeViewModels.Remove(tagTypeViewModel);
