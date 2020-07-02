@@ -1,14 +1,15 @@
+using System.Collections.Generic;
+
 namespace Kolpi.Shared.Models
 {
-    public class Tag
+    public class Tag : EditBase<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Details { get; set; }
         public bool IsFinalized { get; set; }
 
         public TagType TagType { get; set; }
-        public Question Question { get; set; }
-        public int QuestionId { get; set; }
+
+        public List<QuestionTag> QuestionTags { get; set; }
     }
 }

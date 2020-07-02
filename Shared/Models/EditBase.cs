@@ -2,7 +2,7 @@
 
 namespace Kolpi.Shared.Models
 {
-    public class EditBase : BaseEntity<int>
+    public class EditBase<TKey> : BaseEntity<TKey>
     {
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }

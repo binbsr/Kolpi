@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Kolpi.Shared.Models
 {
-    public class Exam : EditBase
+    public class Exam : EditBase<Guid>
     {
         public string Title { get; set; }
         public string Details { get; set; }

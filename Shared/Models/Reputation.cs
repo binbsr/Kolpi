@@ -1,6 +1,6 @@
 namespace Kolpi.Shared.Models
 {
-    public class Reputation : EditBase
+    public class Reputation : EditBase<int>
     {
         public int TotalScore { get; set; }
         public int OutstandingBadges  { get; set; }

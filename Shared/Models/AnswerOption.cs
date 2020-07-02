@@ -1,6 +1,6 @@
 namespace Kolpi.Shared.Models
 {
-    public class AnswerOption : EditBase
+    public class AnswerOption : EditBase<int>
     {
         public string Body { get; set; }
         public bool IsAnswer  { get; set; }
