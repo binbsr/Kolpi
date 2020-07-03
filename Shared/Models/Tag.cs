@@ -8,6 +8,7 @@ namespace Kolpi.Shared.Models
         public string Details { get; set; }
         public bool IsFinalized { get; set; }
 
+        public int TagTypeId { get; set; }
         public TagType TagType { get; set; }
 
         public List<QuestionTag> QuestionTags { get; set; }
