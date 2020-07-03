@@ -57,7 +57,7 @@ else
 
     public Task<List<TagViewModel>> GetTagTypesAsync(int pageIndex, int pageSize)
     {
-        return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSze{pageSize}");
+        return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSize={pageSize}");
     }
 
     async Task FetchData(PaginationEventArgs args)
