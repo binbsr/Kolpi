@@ -42,7 +42,8 @@ namespace Kolpi.Shared.Mapper
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAt = viewModel.CreatedAt,
                 ModifiedBy = viewModel.ModifiedBy,
-                ModifiedAt = viewModel.ModifiedAt
+                ModifiedAt = viewModel.ModifiedAt,
+                TagTypeId = viewModel.TagTypeId
             };
 
             return tagModel;

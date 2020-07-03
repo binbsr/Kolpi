@@ -1,7 +1,10 @@
-﻿@page "/tags/update"
+﻿@page "/tags/edit/{Id:int}"
 
 <h3>Update</h3>
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
 
 }

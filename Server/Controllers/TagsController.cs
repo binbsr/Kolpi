@@ -8,6 +8,7 @@ using Kolpi.Shared.Mapper;
 using System.Net;
 using Kolpi.Server.ApplicationCore.Services;
 using Kolpi.Shared.Models;
+using System.Security.Claims;
 
 namespace Kolpi.Server.Controllers
 {
@@ -53,10 +54,16 @@ namespace Kolpi.Server.Controllers
                 return BadRequest();
 
             var tagModel = tagViewModel.ToModel();
+
+            // Get userid creating this tag
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            tagModel.AddCreatedStamps(userId);
+
             var rowsAdded = await tagService.AddAsync(tagModel);
             
             if (rowsAdded <= 0)
-                return Problem("Could not insert into the store.", nameof(tagModel), (int)HttpStatusCode.InternalServerError, "Data Insert");
+                return Problem("Could not insert into the store.", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Insert");
 
             return CreatedAtAction(nameof(Get), new { id = tagModel.Id }, tagModel);
         }

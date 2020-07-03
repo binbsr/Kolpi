@@ -6,8 +6,15 @@
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-<p>Page: @_pageIndex | Page Size: @_pageSize | Total: @_total <a href="/tags/add" style="float:right"><Icon Type="plus"></Icon>Add Tag</a></p>
-
+<div>
+    @if (selectedRows?.Any() ?? false)
+    {
+        <Tooltip Title="@("Delete selected tags")">
+            <Button Shape="circle" Type="primary" Icon="delete"></Button>
+        </Tooltip>
+    }
+    <a href="/tags/add" style="float:right"><Icon Type="plus"></Icon>Add Tag</a>
+</div>
 @if (tagViewModels.Any())
 {
     <Table @ref="table"
@@ -18,7 +25,7 @@
            OnPageIndexChange="async e => await FetchData(e)"
            @bind-SelectedRows="selectedRows">
         <Selection Key="@(context.Id.ToString())" />
-        <ActionColumn Title="Action">
+        <ActionColumn>
             <Space Size="middle">
                 <SpaceItem>
                     <Button Type="dashed" Shape="circle" Size="small">
@@ -36,6 +43,8 @@
         <Column @bind-Field="@context.ModifiedBy" />
         <Column @bind-Field="@context.ModifiedAt" />
     </Table>
+    <p>Page: @_pageIndex | Page Size: @_pageSize | Total: @_total</p>
+
 }
 else
 {
@@ -53,6 +62,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         tagViewModels = await GetTagTypesAsync(_pageIndex, _pageSize);
+        _total = tagViewModels.Count;
     }
 
     public Task<List<TagViewModel>> GetTagTypesAsync(int pageIndex, int pageSize)

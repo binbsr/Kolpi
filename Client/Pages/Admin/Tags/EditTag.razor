@@ -1,5 +1,96 @@
-﻿<h3>EditTag</h3>
+﻿@inject HttpClient Http
+
+@using Kolpi.Shared.ViewModels
+@using OneOf
+
+<Form Model="@TagViewModel"
+      LabelCol="new ColLayoutParam { Span = 8 }"
+      WrapperCol="new ColLayoutParam { Span = 16 }"
+      OnFinish="OnFinish">
+
+    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
+        <Button Icon="unordered-list" Type="dashed">
+            <a href="/tags/index">Show All Tags</a>
+        </Button>
+    </FormItem>
+
+    <FormItem Label="Name">
+        <Input @bind-Value="@context.Name" />
+    </FormItem>
+    <FormItem Label="Details">
+        <Input @bind-Value="@context.Details" />
+    </FormItem>
+    <FormItem Label="Tag Category">
+        <Select ShowSearch
+                Style="width: 250px"
+                Placeholder="Tag Category..."
+                OptionFilterProp="children"
+                OnChange="OnChange"
+                FilterOption="FilterOptionValue">
+
+            @foreach (var option in tagCategories)
+            {
+                <SelectOption Value="@option.Id.ToString()">@option.Name</SelectOption>
+            }
+
+        </Select>
+    </FormItem>
+    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
+        <Button Icon="save" HtmlType="submit" Loading="@isSaving">
+            Save Tag @context.Name
+        </Button>
+    </FormItem>
+</Form>
 
 @code {
 
+    [Parameter]
+    public TagViewModel TagViewModel { get; set; } = new TagViewModel();
+    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
+    private readonly Func<string, SelectOption, bool> FilterOptionValue = FilterOption;
+    int selectedTagTypeId = default;
+    bool isSaving = false;
+
+    private void OnFinish(EditContext editContext)
+    {
+        isSaving = true;
+        InvokeAsync(StateHasChanged);
+
+        Task<HttpResponseMessage> saveTask;
+
+        if (TagViewModel.Id == default)
+        {
+            // Adding new
+            TagViewModel.TagTypeId = selectedTagTypeId;
+            saveTask = Http.PostAsJsonAsync("api/tags", TagViewModel);
+        }
+        else
+        {
+            // Modify existing
+            TagViewModel.TagTypeId = selectedTagTypeId;
+            saveTask = Http.PutAsJsonAsync($"api/tags/{TagViewModel.Id}", TagViewModel);
+        }
+
+        saveTask.ContinueWith(t =>
+        {
+            isSaving = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private static bool FilterOption(string value, SelectOption option)
+    {
+        var optionContent = option.Children.ToUpper();
+        return optionContent.Contains(value, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void OnChange(OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value, OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        selectedTagTypeId = int.Parse(value.AsT0);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
+    }
 }
