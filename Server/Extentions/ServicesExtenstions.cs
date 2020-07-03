@@ -11,6 +11,7 @@ namespace Kolpi.Server.Extentions
         public static IServiceCollection AddKolpiServices(this IServiceCollection services)
         {
             services.AddScoped<ITagTypeService, TagTypeService>();
+            services.AddScoped<ITagService, TagService>();
             return services;
         }
         public static IServiceCollection AddKolpiLogger(this IServiceCollection services)
