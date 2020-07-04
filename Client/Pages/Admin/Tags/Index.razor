@@ -15,7 +15,11 @@
     }
     <a href="/tags/add" style="float:right"><Icon Type="plus"></Icon>Add Tag</a>
 </div>
-@if (tagViewModels.Any())
+@if(tagViewModels ==  null)
+{
+    <Skeleton Active></Skeleton>
+}
+else if (tagViewModels.Any())
 {
     <Table @ref="table"
            DataSource="@tagViewModels"
@@ -52,27 +56,28 @@ else
 }
 
 @code {
-    List<TagViewModel> tagViewModels = new List<TagViewModel>();
+
+    List<TagViewModel> tagViewModels;
     ITable table;
     int _pageIndex = 1;
     int _pageSize = 10;
     int _total = 0;
     IEnumerable<TagViewModel> selectedRows;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        tagViewModels = await GetTagTypesAsync(_pageIndex, _pageSize);
-        _total = tagViewModels.Count;
+        tagViewModels = await GetTagsAsync(_pageIndex, _pageSize);
+        _total = tagViewModels?.Count ?? 0;
     }
 
-    public Task<List<TagViewModel>> GetTagTypesAsync(int pageIndex, int pageSize)
+    public Task<List<TagViewModel>> GetTagsAsync(int pageIndex, int pageSize)
     {
         return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSize={pageSize}");
     }
 
     async Task FetchData(PaginationEventArgs args)
     {
-        tagViewModels = await GetTagTypesAsync(args.PageIndex, args.PageSize);
+        tagViewModels = await GetTagsAsync(args.PageIndex, args.PageSize);
     }
 
     private async Task Delete()
