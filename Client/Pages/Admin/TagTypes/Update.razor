@@ -1,4 +1,4 @@
-﻿@page "/tagtypes/edit/{Id:int}"
+﻿@page "/tagtypes/update/{Id:int}"
 
 @inject HttpClient Http
 
@@ -6,7 +6,7 @@
 
 @if (tagTypeViewModel == null)
 {
-    <h4>Navigating to tagtype edit form...</h4>
+    <Skeleton Active></Skeleton>
 }
 else
 {
