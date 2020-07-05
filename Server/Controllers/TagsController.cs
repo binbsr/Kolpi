@@ -37,14 +37,14 @@ namespace Kolpi.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TagViewModel>> Get([FromRoute] int id)
         {
-            var tagTypeModel = await tagService.GetByIdAsync(id);
+            var tagModel = await tagService.GetByIdAsync(id);
 
-            if (tagTypeModel == null)
+            if (tagModel == null)
                 return NotFound();
 
-            var tagTypeViewModel = tagTypeModel.ToViewModel();
+            var tagViewModel = tagModel.ToViewModel();
 
-            return Ok(tagTypeViewModel);
+            return Ok(tagViewModel);
         }
 
         [HttpPost]
@@ -57,7 +57,6 @@ namespace Kolpi.Server.Controllers
 
             // Get userid creating this tag
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             tagModel.AddCreatedStamps(userId);
 
             var rowsAdded = await tagService.AddAsync(tagModel);
@@ -74,7 +73,11 @@ namespace Kolpi.Server.Controllers
             if (tagViewModel == null || tagViewModel.Id == default)
                 return BadRequest();
 
-            var tagModel = tagViewModel.ToModel();
+            Tag tagModel = tagViewModel.ToModel();
+
+            // Get userid creating this tag
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            tagModel.AddModifiedStamps(userId);
 
             var rowsUpdated = await tagService.UpdateAsync(tagModel);
             if (rowsUpdated <= 0)

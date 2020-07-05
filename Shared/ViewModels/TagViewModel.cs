@@ -23,16 +23,12 @@ namespace Kolpi.Shared.ViewModels
         [DisplayName("Tag Color")]
         public string TagColorCode { get; set; }
 
-        [DisplayName("Created At")]
-        public DateTime CreatedAt { get; set; }
-
-        [DisplayName("Created By")]
+        [DisplayName("Created")]
+        public string CreatedAt { get; set; }
         public string CreatedBy { get; set; }
 
-        [DisplayName("Modified At")]
-        public DateTime ModifiedAt { get; set; }
-
-        [DisplayName("Modified By")]
+        [DisplayName("Modified")]
+        public string ModifiedAt { get; set; }
         public string ModifiedBy { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Kolpi.Shared.Extentions;
 using Kolpi.Shared.Models;
 using Kolpi.Shared.ViewModels;
 
@@ -18,9 +19,10 @@ namespace Kolpi.Shared.Mapper
                 Details = model.Details,
                 IsFinalized = model.IsFinalized,
                 CreatedBy = model.CreatedBy,
-                CreatedAt = model.CreatedAt,
+                CreatedAt = model.CreatedAt.Relativize(),
                 ModifiedBy = model.ModifiedBy,
-                ModifiedAt = model.ModifiedAt,
+                ModifiedAt = model.ModifiedAt.Relativize(),
+                TagTypeId = model.TagTypeId,
                 TagTypeName = model.TagType?.Name,
                 TagColorCode = model.TagType?.ColorCode
             };
@@ -39,10 +41,6 @@ namespace Kolpi.Shared.Mapper
                 Name = viewModel.Name,
                 Details = viewModel.Details,
                 IsFinalized = viewModel.IsFinalized,
-                CreatedBy = viewModel.CreatedBy,
-                CreatedAt = viewModel.CreatedAt,
-                ModifiedBy = viewModel.ModifiedBy,
-                ModifiedAt = viewModel.ModifiedAt,
                 TagTypeId = viewModel.TagTypeId
             };
 
