@@ -26,5 +26,12 @@ namespace Kolpi.Server.ApplicationCore.Services
                 .Take(pageSize)
                 .ToListAsync();
         }
+
+        public override Task<Tag> GetByIdAsync(int id)
+        {
+            return dbContext.Set<Tag>()
+                .Include(t => t.TagType)
+                .SingleOrDefaultAsync(o => o.Id.Equals(id));
+        }
     }
 }

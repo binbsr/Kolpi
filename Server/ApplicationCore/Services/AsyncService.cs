@@ -52,7 +52,7 @@ namespace Kolpi.Server.ApplicationCore.Services
             return context.SaveChangesAsync();
         }
 
-        public Task<List<TEntity>> GetAllAsync()
+        public virtual Task<List<TEntity>> GetAllAsync()
         {
             return entities.ToListAsync();
         }
@@ -63,7 +63,7 @@ namespace Kolpi.Server.ApplicationCore.Services
                 .ToListAsync();
         }
 
-        public Task<TEntity> GetByIdAsync(TKey id)
+        public virtual Task<TEntity> GetByIdAsync(TKey id)
         {
             return entities
                 .SingleOrDefaultAsync(o => o.Id.Equals(id));
