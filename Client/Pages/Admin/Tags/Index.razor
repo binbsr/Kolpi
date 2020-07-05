@@ -6,16 +6,29 @@
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-<div>
-    @if (selectedRows?.Any() ?? false)
-    {
-        <Tooltip Title="@("Delete selected tags")">
-            <Button Shape="circle" Type="primary" Icon="delete"></Button>
+<Space Size="middle" Style="margin-bottom:10px">
+    <SpaceItem>
+        <Button Shape="round" Icon="plus" Type="dashed">
+            <a href="/tags/add">Add Tag</a>
+        </Button>
+    </SpaceItem>
+    <SpaceItem>
+        <Tooltip Title="@("Delete selected tags")" Placement="PlacementType.Left">
+            <Button Shape="round" Type="danger" Icon="delete" Disabled="@(!selectedRows?.Any() ?? true)">
+            Delete
+            </Button>
         </Tooltip>
-    }
-    <a href="/tags/add" style="float:right"><Icon Type="plus"></Icon>Add Tag</a>
-</div>
-@if(tagViewModels ==  null)
+    </SpaceItem>
+    <SpaceItem>
+        <Tooltip Title="@("Approve selected tags")" Placement="PlacementType.Left">
+            <Button Shape="round" Type="primary" Icon="check" Disabled="@(!selectedRows?.Any() ?? true)">
+            Approve
+            </Button>
+        </Tooltip>
+    </SpaceItem>
+</Space>
+
+@if (tagViewModels == null)
 {
     <Skeleton Active></Skeleton>
 }
@@ -33,7 +46,7 @@ else if (tagViewModels.Any())
             <Space Size="middle">
                 <SpaceItem>
                     <Button Type="dashed" Shape="circle" Size="small">
-                        <a href="/tags/edit/@context.Id"><Icon Type="edit"></Icon></a>
+                        <a href="/tags/update/@context.Id"><Icon Type="edit"></Icon></a>
                     </Button>
                 </SpaceItem>
             </Space>
@@ -42,13 +55,10 @@ else if (tagViewModels.Any())
         <Column @bind-Field="@context.TagTypeName" />
         <Column @bind-Field="@context.TagColorCode" />
         <Column @bind-Field="@context.Details" />
-        <Column @bind-Field="@context.CreatedBy" />
-        <Column @bind-Field="@context.CreatedAt" />
-        <Column @bind-Field="@context.ModifiedBy" />
-        <Column @bind-Field="@context.ModifiedAt" />
+        <Column @bind-Field="@context.CreatedAt" Title="@context.CreatedBy" />
+        <Column @bind-Field="@context.ModifiedAt" Title="@context.ModifiedBy" />
     </Table>
     <p>Page: @_pageIndex | Page Size: @_pageSize | Total: @_total</p>
-
 }
 else
 {

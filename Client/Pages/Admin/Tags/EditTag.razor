@@ -21,7 +21,7 @@
         <Input @bind-Value="@context.Details" />
     </FormItem>
     <FormItem Label="Tag Category">
-        <Select ShowSearch
+        <Select ShowSearch DefaultValue="@context.TagTypeId.ToString()"
                 Style="width: 250px"
                 Placeholder="Tag Category..."
                 OptionFilterProp="children"
