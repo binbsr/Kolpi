@@ -15,18 +15,29 @@
     <SpaceItem>
         <Tooltip Title="@("Delete selected tags")" Placement="PlacementType.Left">
             <Button Shape="round" Type="danger" Icon="delete" Disabled="@(!selectedRows?.Any() ?? true)">
-            Delete
+                Delete
             </Button>
         </Tooltip>
     </SpaceItem>
     <SpaceItem>
         <Tooltip Title="@("Approve selected tags")" Placement="PlacementType.Left">
             <Button Shape="round" Type="primary" Icon="check" Disabled="@(!selectedRows?.Any() ?? true)">
-            Approve
+                Approve
             </Button>
         </Tooltip>
     </SpaceItem>
 </Space>
+
+<div style="float:right">
+    <Space>
+        <SpaceItem>
+            Total <b>@_total</b> items
+        </SpaceItem>
+        <SpaceItem>
+            Page size <b>@_pageSize</b>
+        </SpaceItem>
+    </Space>
+</div>
 
 @if (tagViewModels == null)
 {
@@ -55,10 +66,9 @@ else if (tagViewModels.Any())
         <Column @bind-Field="@context.TagTypeName" />
         <Column @bind-Field="@context.TagColorCode" />
         <Column @bind-Field="@context.Details" />
-        <Column @bind-Field="@context.CreatedAt" Title="@context.CreatedBy" />
-        <Column @bind-Field="@context.ModifiedAt" Title="@context.ModifiedBy" />
+        <Column @bind-Field="@context.CreatedAt" />
+        <Column @bind-Field="@context.ModifiedAt" />
     </Table>
-    <p>Page: @_pageIndex | Page Size: @_pageSize | Total: @_total</p>
 }
 else
 {
@@ -76,8 +86,13 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        tagViewModels = await GetTagsAsync(_pageIndex, _pageSize);
-        _total = tagViewModels?.Count ?? 0;
+        var count = await http.GetStringAsync("api/tags/totalcount");
+        _total = int.Parse(count);
+
+        if (_total > 0)
+        {
+            tagViewModels = await GetTagsAsync(_pageIndex, _pageSize);
+        }
     }
 
     public Task<List<TagViewModel>> GetTagsAsync(int pageIndex, int pageSize)

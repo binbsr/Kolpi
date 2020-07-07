@@ -17,10 +17,10 @@ namespace Kolpi.Shared.ViewModels
 
         public int TagTypeId { get; set; }
         
-        [DisplayName("Tag Type")]
+        [DisplayName("Type")]
         public string TagTypeName { get; set; }
 
-        [DisplayName("Tag Color")]
+        [DisplayName("Color Code")]
         public string TagColorCode { get; set; }
 
         [DisplayName("Created")]
