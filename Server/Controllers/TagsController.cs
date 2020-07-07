@@ -34,6 +34,13 @@ namespace Kolpi.Server.Controllers
             return Ok(tagViewModels);
         }
 
+        [HttpGet("totalcount")]
+        public async Task<ActionResult<int>> GetTotalCount()
+        {
+            var totalCount = await tagService.GetTotalCountAsync();
+            return Ok(totalCount);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<TagViewModel>> Get([FromRoute] int id)
         {

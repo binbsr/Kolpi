@@ -12,6 +12,7 @@ namespace Kolpi.Server.ApplicationCore.Services
         Task<List<TEntity>> GetAllAsync();
         Task<TEntity> GetByIdAsync(TKey id);
         Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression);
+        Task<int> GetTotalCountAsync();
 
         Task<int> AddAsync(TEntity entity);
         Task<int> AddAsync(IEnumerable<TEntity> entities);

@@ -69,6 +69,11 @@ namespace Kolpi.Server.ApplicationCore.Services
                 .SingleOrDefaultAsync(o => o.Id.Equals(id));
         }
 
+        public Task<int> GetTotalCountAsync()
+        {
+            return entities.CountAsync();
+        }
+
         public Task<int> UpdateAsync(TEntity model)
         {
             entities.Update(model);
