@@ -79,7 +79,7 @@ namespace Kolpi.Server.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TagType> TagTypes { get; set; }
         public DbSet<QuestionStatus> QuestionStatuses { get; set; }
-        public DbSet<Reputation> Reputations { get; set; }
+        public DbSet<PrivilegeLookup> PrivilegeLookups { get; set; }
         public DbSet<ExamPaper> ExamPapers { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
