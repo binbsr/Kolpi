@@ -26,6 +26,12 @@
             </Button>
         </Tooltip>
     </SpaceItem>
+    @if (selectedRows != null && selectedRows.Any())
+    {
+        <SpaceItem>
+            <b>@selectedRows.Count()</b> rows selected
+        </SpaceItem>
+    }
 </Space>
 
 <div style="float:right">
@@ -62,12 +68,12 @@ else if (tagViewModels.Any())
                 </SpaceItem>
             </Space>
         </ActionColumn>
-        <Column @bind-Field="@context.Name" />
-        <Column @bind-Field="@context.TagTypeName" />
+        <Column @bind-Field="@context.Name" Sortable />
+        <Column @bind-Field="@context.TagTypeName" Sortable ShowSorterTooltip="false" />
         <Column @bind-Field="@context.TagColorCode" />
         <Column @bind-Field="@context.Details" />
-        <Column @bind-Field="@context.CreatedAt" />
-        <Column @bind-Field="@context.ModifiedAt" />
+        <Column @bind-Field="@context.CreatedAt" Sortable />
+        <Column @bind-Field="@context.ModifiedAt" Sortable />
     </Table>
 }
 else

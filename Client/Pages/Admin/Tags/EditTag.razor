@@ -1,4 +1,5 @@
-﻿@inject HttpClient Http
+﻿@inject HttpClient http
+@inject MessageService message
 
 @using Kolpi.Shared.ViewModels
 @using OneOf
@@ -18,7 +19,7 @@
         <Input @bind-Value="@context.Name" />
     </FormItem>
     <FormItem Label="Details">
-        <Input @bind-Value="@context.Details" />
+        <TextArea @bind-Value="@context.Details" />
     </FormItem>
     <FormItem Label="Tag Category">
         <Select ShowSearch DefaultValue="@context.TagTypeId.ToString()"
@@ -51,10 +52,10 @@
     int selectedTagTypeId = default;
     bool isSaving = false;
 
-    private void OnFinish(EditContext editContext)
+    private async Task OnFinish(EditContext editContext)
     {
         isSaving = true;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
 
         Task<HttpResponseMessage> saveTask;
 
@@ -62,19 +63,30 @@
         {
             // Adding new
             TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = Http.PostAsJsonAsync("api/tags", TagViewModel);
+            saveTask = http.PostAsJsonAsync("api/tags", TagViewModel);
         }
         else
         {
             // Modify existing
             TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = Http.PutAsJsonAsync($"api/tags/{TagViewModel.Id}", TagViewModel);
+            saveTask = http.PutAsJsonAsync($"api/tags/{TagViewModel.Id}", TagViewModel);
         }
 
-        saveTask.ContinueWith(t =>
+        await saveTask.ContinueWith(st =>
         {
             isSaving = false;
             InvokeAsync(StateHasChanged);
+
+            var result = st.Result;
+
+            if (result.IsSuccessStatusCode)
+            {
+                message.Success("Tag saved successfully.");
+            }
+            else
+            {
+                message.Error($"Error occured while saving tag. Problem: {result.ReasonPhrase}");
+            }
         });
     }
 
@@ -91,6 +103,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
+        tagCategories = await http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
     }
 }

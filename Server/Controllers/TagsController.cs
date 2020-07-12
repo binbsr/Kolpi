@@ -9,6 +9,7 @@ using System.Net;
 using Kolpi.Server.ApplicationCore.Services;
 using Kolpi.Shared.Models;
 using System.Security.Claims;
+using System;
 
 namespace Kolpi.Server.Controllers
 {
@@ -85,10 +86,18 @@ namespace Kolpi.Server.Controllers
             // Get userid creating this tag
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             tagModel.AddModifiedStamps(userId);
-
-            var rowsUpdated = await tagService.UpdateAsync(tagModel);
-            if (rowsUpdated <= 0)
-                return Problem("Could not modify store.", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Update");
+            
+            int rowsUpdated = 0;
+            try
+            {
+                rowsUpdated = await tagService.UpdateAsync(tagModel);
+                if (rowsUpdated <= 0)
+                    return Problem("Could not modify store.", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Update");
+            }
+            catch (Exception e)
+            {
+                return Problem($"Could not modify store. Exception: {e.Message}", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Update");
+            }
 
             return Ok(rowsUpdated);
         }
