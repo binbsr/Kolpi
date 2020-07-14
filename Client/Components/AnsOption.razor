@@ -1,13 +1,10 @@
 @using Kolpi.Shared.ViewModels
 
-<label>
-    <input type="checkbox" class="uk-checkbox" @bind="AnswerModel.IsAnswer" uk-tooltip="@ChkTooltip" />
-    Answer
-</label>
-<a class="uk-icon-button" @onclick="RemoveItem" uk-icon="trash" uk-tooltip="Remove this option."></a>
-<input class="uk-input uk-form-success" @bind="AnswerModel.Body" />
+<Checkbox @bind-Value="AnswerModel.IsAnswer">Answer</Checkbox>
+<Button Type="primary" Danger Shape="circle" Icon="delete" Size="small" @onclick="RemoveItem"/>
+<Input @bind-Value="AnswerModel.Body" />
 
-@code 
+@code
 {
     [Parameter]
     public AnswerOptionViewModel AnswerModel { get; set; }
