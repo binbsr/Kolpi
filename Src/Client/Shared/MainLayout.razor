@@ -1,0 +1,71 @@
+﻿@inherits LayoutComponentBase
+
+<Layout>
+    <Header Class="header" Style="padding-right:0;">
+        <div class="logo" />
+        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new []{"1"})>
+            <MenuItem Key="1">nav 1</MenuItem>
+            <MenuItem Key="2">nav 2</MenuItem>
+            <SubMenu Title=tagTitle>
+                <MenuItemGroup Title=@("Tags")>
+                    <MenuItem Key="tags:1">
+                        <MenuLink href="/tags/index" Match="NavLinkMatch.All">All Tags</MenuLink>
+                    </MenuItem>
+                    <MenuItem Key="tags:2">
+                        <MenuLink href="/tags/add" Match="NavLinkMatch.All">Add New</MenuLink>
+                    </MenuItem>
+                </MenuItemGroup>
+                <MenuItemGroup Title=@("Tag Categories")>
+                    <MenuItem Key="tagtypes:1">
+                        <MenuLink href="/tagtypes/index" Match="NavLinkMatch.All">All Tag Categories</MenuLink>
+                    </MenuItem>
+                    <MenuItem Key="tagtypes:2">
+                        <MenuLink href="/tagtypes/add" Match="NavLinkMatch.All">Add New</MenuLink>
+                    </MenuItem>
+                </MenuItemGroup>
+            </SubMenu>
+
+            <div class="profile-logo">
+                <LoginDisplay />
+            </div>
+        </Menu>
+    </Header>
+    <Layout>
+        <SideNavigation />
+        <Layout>
+            <Content Class="site-layout-background" Style=" padding: 10px; margin: 10px; min-height: 280px;">
+                @Body
+            </Content>
+            <Footer Style="text-align:center">Kolpi Assessment ©@DateTime.Now.Year Created by Bishnu Rawal and Team</Footer>
+        </Layout>
+    </Layout>
+</Layout>
+
+@code
+{
+    RenderFragment tagTitle =
+    @<Template>
+        <Icon Type="tags" Theme="outline"></Icon>
+        Question Tagging
+    </Template>;
+}
+
+<style>
+    .logo {
+        width: 120px;
+        height: 31px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 16px 28px 16px 0;
+        float: left;
+    }
+
+    .profile-logo {
+        float: right;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+    .site-layout-background {
+        background: #fff;
+    }
+</style>

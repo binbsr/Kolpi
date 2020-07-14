@@ -1,2 +1,0 @@
-﻿-Considered using automapper like libraries, didn't find worth it.
--Even utility like OneOf for discriminated unioin is not worth it, C# will will add it in future anyway.

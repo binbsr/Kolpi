@@ -1,0 +1,27 @@
+﻿@page "/tagtypes/update/{Id:int}"
+
+@inject HttpClient Http
+
+@using Kolpi.Shared.ViewModels
+
+@if (tagTypeViewModel == null)
+{
+    <Skeleton Active></Skeleton>
+}
+else
+{
+    <EditTagType TagTypeViewModel="tagTypeViewModel" />
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    TagTypeViewModel tagTypeViewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagTypeViewModel = await Http.GetFromJsonAsync<TagTypeViewModel>($"api/tagtypes/{Id}");
+    }
+}
