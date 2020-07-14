@@ -101,7 +101,7 @@ else
         }
     }
 
-    public Task<List<TagViewModel>> GetTagsAsync(int pageIndex, int pageSize)
+    public Task<List<TagViewModel>> GetTagsAsync(int pageIndex = 1, int pageSize = 10)
     {
         return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSize={pageSize}");
     }

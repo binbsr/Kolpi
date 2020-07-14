@@ -28,9 +28,11 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagViewModel>>> Get([FromQuery] int pageIndex = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<TagViewModel>>> Get([FromQuery] int pageIndex = 1, int pageSize = int.MaxValue)
         {
-            var tagModels = await tagService.GetAllAsync(pageIndex, pageSize);
+            var tagModels = pageIndex == int.MaxValue   // If page size is not supplied, fetch all
+                ? await tagService.GetAllAsync()
+                : await tagService.GetAllAsync(pageIndex, pageSize);
             var tagViewModels = tagModels.ToViewModel();
             return Ok(tagViewModels);
         }
