@@ -9,34 +9,34 @@ namespace Kolpi.Server
 {
     public static class SeedData
     {
-        public static readonly TagType tagType1 = new TagType
+        public static readonly TagType TagType1 = new TagType
         {
             Name = "Complexity",
             Details = "Tags that defines complexities of the question e.g. level-1, level-2 etc.",
             ColorCode = "green"
         };
 
-        public static readonly TagType tagType2 = new TagType
+        public static readonly TagType TagType2 = new TagType
         {
             Name = "Subject Category",
             Details = "Tags that defines subject categories of the question e.g. GK, GK-History, Physics etc.",
             ColorCode = "orange"
         };
 
-        public static readonly Tag tag1 = new Tag
+        public static readonly Tag Tag1 = new Tag
         {
             Name = "Level-1",
             Details = "Defines simplest objective questions.",
-            TagType = tagType1,
+            TagType = TagType1,
             CreatedAt = DateTime.Now,
             CreatedBy = "Test User",
         };
 
-        public static readonly Tag tag2 = new Tag
+        public static readonly Tag Tag2 = new Tag
         {
             Name = "GK",
             Details = "Defines general knowledge questions.",
-            TagType = tagType2,
+            TagType = TagType2,
             CreatedAt = DateTime.Now,
             CreatedBy = "Test User",
         };
@@ -71,8 +71,8 @@ namespace Kolpi.Server
             if (tagTypesInTable.Any())
                 dbContext.TagTypes.RemoveRange(tagTypesInTable);
 
-            dbContext.TagTypes.Add(tagType1);
-            dbContext.TagTypes.Add(tagType2);
+            dbContext.TagTypes.Add(TagType1);
+            dbContext.TagTypes.Add(TagType2);
             dbContext.SaveChanges();
         }
 
@@ -83,8 +83,8 @@ namespace Kolpi.Server
             if (tagsInTable.Any())
                 dbContext.Tags.RemoveRange(tagsInTable);
 
-            dbContext.Tags.Add(tag1);
-            dbContext.Tags.Add(tag2);
+            dbContext.Tags.Add(Tag1);
+            dbContext.Tags.Add(Tag2);
             dbContext.SaveChanges();
         }
     }

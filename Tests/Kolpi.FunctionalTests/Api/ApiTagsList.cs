@@ -14,11 +14,11 @@ using Xunit;
 
 namespace Kolpi.FunctionalTests.Api
 {
-    public class ApiTagtypesList : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ApiTagsList : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient client;
 
-        public ApiTagtypesList(CustomWebApplicationFactory<Startup> applicationFactory)
+        public ApiTagsList(CustomWebApplicationFactory<Startup> applicationFactory)
         {
             client = applicationFactory.WithWebHostBuilder(builder =>
             {
@@ -39,18 +39,19 @@ namespace Kolpi.FunctionalTests.Api
         }
 
         [Fact]
-        public async Task ReturnTagtypes()
+        public async Task ReturnTags()
         {
-            var response = await client.GetAsync("/api/tagtypes");
+            var response = await client.GetAsync("/api/tags");
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<IEnumerable<TagTypeViewModel>>(stringResponse);
+            
+            var result = JsonConvert.DeserializeObject<IEnumerable<TagViewModel>>(stringResponse);
 
             Assert.Equal(2, result.Count());
-            Assert.Contains(result, i => i.Name == SeedData.TagType1.Name
-                && i.Details == SeedData.TagType1.Details);
-            Assert.Contains(result, i => i.Name == SeedData.TagType2.Name
-                && i.Details == SeedData.TagType2.Details);
+            Assert.Contains(result, i => i.Name == SeedData.Tag1.Name 
+                && i.Details == SeedData.Tag1.Details);
+            Assert.Contains(result, i => i.Name == SeedData.Tag2.Name 
+                && i.Details == SeedData.Tag2.Details);
         }
     }
 }
