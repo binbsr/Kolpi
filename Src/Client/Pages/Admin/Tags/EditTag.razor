@@ -25,13 +25,12 @@
         <Select ShowSearch DefaultValue="@context.TagTypeId.ToString()"
                 Style="width: 250px"
                 Placeholder="Tag Category..."
-                OptionFilterProp="children"
-                OnChange="OnChange"
-                FilterOption="FilterOptionValue">
+                TItemValue="string"
+                TItem="string">
 
             @foreach (var option in tagCategories)
             {
-                <SelectOption Value="@option.Id.ToString()">@option.Name</SelectOption>
+                <SelectOption TItemValue="string" TItem="string" Value="@option.Id.ToString()">@option.Name</SelectOption>
             }
 
         </Select>
@@ -48,7 +47,7 @@
     [Parameter]
     public TagViewModel TagViewModel { get; set; } = new TagViewModel();
     List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private readonly Func<string, SelectOption, bool> FilterOptionValue = FilterOption;
+    private readonly Func<string, SelectOption<string, string>, bool> FilterOptionValue = FilterOption;
     int selectedTagTypeId = default;
     bool isSaving = false;
 
@@ -90,15 +89,15 @@
         });
     }
 
-    private static bool FilterOption(string value, SelectOption option)
+    private static bool FilterOption(string value, SelectOption<string, string> option)
     {
-        var optionContent = option.Children.ToUpper();
+        var optionContent = option.Value.ToUpper();
         return optionContent.Contains(value, StringComparison.OrdinalIgnoreCase);
     }
 
-    private void OnChange(OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value, OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private void OnChange(string value)
     {
-        selectedTagTypeId = int.Parse(value.AsT0);
+        selectedTagTypeId = int.Parse(value);
     }
 
     protected override async Task OnInitializedAsync()
