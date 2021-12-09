@@ -12,7 +12,7 @@
 }
 else if (tagTypeViewModels.Any())
 {
-    <Table @ref="table" Bordered Title="@header" Footer="@($"Total {tagTypeViewModels.Count} Records")" HidePagination="true"
+    <Table @ref="table" Bordered TitleTemplate="@header" Footer="@($"Total {tagTypeViewModels.Count} Records")" HidePagination="true"
            DataSource="@tagTypeViewModels">
 
         <ActionColumn>
@@ -29,7 +29,7 @@ else if (tagTypeViewModels.Any())
                                 OnConfirm="() => Confirm(context)"
                                 OkText="Delete"
                                 CancelText="Cancel">
-                        <Tooltip Title="@($"Delete {context.Name}")" Placement="PlacementType.Bottom">
+                        <Tooltip Title="@($"Delete {context.Name}")" Placement="Placement.Bottom">
                             <Button Icon="delete" Shape="circle" Type="dashed" Size="small"></Button>
                         </Tooltip>
                     </Popconfirm>
