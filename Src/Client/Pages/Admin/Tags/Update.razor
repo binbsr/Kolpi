@@ -1,4 +1,4 @@
-﻿@page "/tags/update/{Id:int}"
+﻿@* @page "/tags/update/{Id:int}"
 
 @inject HttpClient Http
 
@@ -24,4 +24,4 @@ else
     {
         tagViewModel = await Http.GetFromJsonAsync<TagViewModel>($"api/tags/{Id}");
     }
-}
+} *@

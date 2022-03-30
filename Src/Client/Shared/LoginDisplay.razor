@@ -3,7 +3,7 @@
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-
+@* 
 <AuthorizeView>
     <Authorized>
         <Dropdown Placement="@Placement.BottomRight"
@@ -55,4 +55,4 @@
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
-}
+} *@

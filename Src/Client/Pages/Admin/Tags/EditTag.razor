@@ -1,4 +1,4 @@
-﻿@inject HttpClient http
+﻿@* @inject HttpClient http
 @inject MessageService message
 
 @using Kolpi.Shared.ViewModels
@@ -104,4 +104,4 @@
     {
         tagCategories = await http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
     }
-}
+} *@

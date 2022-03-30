@@ -1,71 +1,26 @@
 ﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <SideNavigation/>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
 
-<Layout>
-    <Header Class="header" Style="padding-right:0;">
-        <div class="logo" />
-        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new []{"1"})>
-            <MenuItem Key="1">nav 1</MenuItem>
-            <MenuItem Key="2">nav 2</MenuItem>
-            <SubMenu Title=tagTitle>
-                <MenuItemGroup Title=@("Tags")>
-                    <MenuItem Key="tags:1">
-                        <MenuLink href="/tags/index" Match="NavLinkMatch.All">All Tags</MenuLink>
-                    </MenuItem>
-                    <MenuItem Key="tags:2">
-                        <MenuLink href="/tags/add" Match="NavLinkMatch.All">Add New</MenuLink>
-                    </MenuItem>
-                </MenuItemGroup>
-                <MenuItemGroup Title=@("Tag Categories")>
-                    <MenuItem Key="tagtypes:1">
-                        <MenuLink href="/tagtypes/index" Match="NavLinkMatch.All">All Tag Categories</MenuLink>
-                    </MenuItem>
-                    <MenuItem Key="tagtypes:2">
-                        <MenuLink href="/tagtypes/add" Match="NavLinkMatch.All">Add New</MenuLink>
-                    </MenuItem>
-                </MenuItemGroup>
-            </SubMenu>
+@code {
+    bool _drawerOpen = true;
 
-            <div class="profile-logo">
-                <LoginDisplay />
-            </div>
-        </Menu>
-    </Header>
-    <Layout>
-        <SideNavigation />
-        <Layout>
-            <Content Class="site-layout-background" Style=" padding: 10px; margin: 10px; min-height: 280px;">
-                @Body
-            </Content>
-            <Footer Style="text-align:center">Kolpi Assessment ©@DateTime.Now.Year Created by Bishnu Rawal and Team</Footer>
-        </Layout>
-    </Layout>
-</Layout>
-
-@code
-{
-    RenderFragment tagTitle =
-    @<Template>
-        <Icon Type="tags" Theme="outline"></Icon>
-        Question Tagging
-    </Template>;
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 }
-
-<style>
-    .logo {
-        width: 120px;
-        height: 31px;
-        background: rgba(255, 255, 255, 0.2);
-        margin: 16px 28px 16px 0;
-        float: left;
-    }
-
-    .profile-logo {
-        float: right;
-        padding: 2px;
-        cursor: pointer;
-    }
-
-    .site-layout-background {
-        background: #fff;
-    }
-</style>
