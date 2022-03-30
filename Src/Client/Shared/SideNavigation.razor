@@ -4,15 +4,19 @@
         <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
         <MudDivider Class="my-2" />
         <MudNavLink Href="/dashboard" Icon="@Icons.Filled.Dashboard">Dashboard</MudNavLink>
-        <MudNavLink Href="/servers" Icon="@Icons.Filled.Storage">Servers</MudNavLink>
+        <MudNavLink Href="/users" Icon="@Icons.Filled.Storage">Users</MudNavLink>
         <MudNavLink Href="/billing" Icon="@Icons.Filled.Receipt" Disabled="true">Billing</MudNavLink>
-        <MudNavGroup Title="Tagging" Icon="@Icons.Filled.Tag" Expanded="true">
-            <MudNavLink Href="/tags/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Success">All Tags</MudNavLink>
-            <MudNavLink Href="/tags/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+        
+        <MudNavGroup Title="Admin" Icon="@Icons.Filled.AdminPanelSettings" Expanded="true">
+            <MudNavGroup Title="Tagging" Icon="@Icons.Filled.Tag" Expanded="true">
+                <MudNavLink Href="/tags/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
+                <MudNavLink Href="/tags/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Tag Categories" Icon="@Icons.Filled.Category" Expanded="true">
+                <MudNavLink Href="/tagtypes/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
+                <MudNavLink Href="/tagtypes/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+            </MudNavGroup>                
         </MudNavGroup>
-        <MudNavGroup Title="Tag Categories" Icon="@Icons.Filled.Category" Expanded="true">
-            <MudNavLink Href="/tagtypes/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Success">All Categories</MudNavLink>
-            <MudNavLink Href="/tagtypes/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
-        </MudNavGroup>
+        
     </MudNavMenu>
 </MudPaper>
