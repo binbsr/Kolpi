@@ -1,7 +1,6 @@
-﻿@* @page "/tags/index"
+﻿@page "/tags/index"
 
 @inject HttpClient http
-@inject MessageService message
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
@@ -34,82 +33,69 @@
     }
 </Space>
 
-<div style="float:right">
-    <Space>
-        <SpaceItem>
-            Total <b>@_total</b> items
-        </SpaceItem>
-        <SpaceItem>
-            Page size <b>@_pageSize</b>
-        </SpaceItem>
-    </Space>
-</div>
-
 @if (tagViewModels == null)
 {
-    <Skeleton Active></Skeleton>
+    <MudSkeleton Animation="Animation.Wave"></MudSkeleton>
 }
 else if (tagViewModels.Any())
 {
-    <Table @ref="table"
-           DataSource="@tagViewModels"
-           Total="_total"
-           @bind-PageIndex="_pageIndex"
-           @bind-PageSize="_pageSize"
-           OnPageIndexChange="async e => await FetchData(e)"
-           @bind-SelectedRows="selectedRows">
-        <Selection Key="@(context.Id.ToString())" />
-        <ActionColumn>
-            <Space Size=@("middle")>
-                <SpaceItem>
-                    <Button Type="dashed" Shape="circle" Size="small">
-                        <a href="/tags/update/@context.Id"><Icon Type="edit"></Icon></a>
-                    </Button>
-                </SpaceItem>
-            </Space>
-        </ActionColumn>
-        <Column @bind-Field="@context.Name" Sortable />
-        <Column @bind-Field="@context.TagTypeName" Sortable ShowSorterTooltip="false" />
-        <Column @bind-Field="@context.TagColorCode" />
-        <Column @bind-Field="@context.Details" />
-        <Column @bind-Field="@context.CreatedAt" Sortable />
-        <Column @bind-Field="@context.ModifiedAt" Sortable />
-    </Table>
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<TagViewModel>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="table">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Periodic Elements</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagViewModel">Tag Name</MudTableSortLabel></MudTh>
+            <MudTh>Details</MudTh>
+            <MudTh><MudTableSortLabel SortLabel="category_field" T="TagViewModel">Tag Category</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.Name</MudTd>
+            <MudTd DataLabel="Sign">@context.Details</MudTd>
+            <MudTd DataLabel="Name">@context.TagTypeName</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
 }
 else
 {
-    <EmptyResult Explanation="No tags added yet." />
+    <EmptyResult />
 }
 
 @code {
 
-    List<TagViewModel> tagViewModels;
-    ITable table;
-    int _pageIndex = 1;
-    int _pageSize = 10;
-    int _total = 0;
-    IEnumerable<TagViewModel> selectedRows;
+    List<TagViewModel> tagViewModels = new List<TagViewModel>();
+    private string searchString = "";
+    private MudTable<TagViewModel> table;
 
-    protected override async Task OnParametersSetAsync()
+    private void OnSearch(string text)
     {
-        var count = await http.GetStringAsync("api/tags/totalcount");
-        _total = int.Parse(count);
-
-        if (_total > 0)
-        {
-            tagViewModels = await GetTagsAsync(_pageIndex, _pageSize);
-        }
+        searchString = text;
+        table.ReloadServerData();
     }
 
-    public Task<List<TagViewModel>> GetTagsAsync(int pageIndex = 1, int pageSize = 10)
+    private async Task<TableData<TagViewModel>> ServerReload(TableState state)
     {
-        return http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?pageIndex={pageIndex}&pageSize={pageSize}");
+        int pageIndex = state.Page;
+        int pageSize = state.PageSize;
+        IEnumerable<TagViewModel> data = await http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}")
+        
+        
+        return new TableData<TagViewModel>() { TotalItems = totalItems, Items = data };
     }
-
-    async Task FetchData(PaginationEventArgs args)
-    {
-        tagViewModels = await GetTagsAsync(args.Page, args.PageSize);
-    }
+    
 
     private async Task Delete()
     {
@@ -128,4 +114,4 @@ else
             StateHasChanged();
         }
     }
-} *@
+}

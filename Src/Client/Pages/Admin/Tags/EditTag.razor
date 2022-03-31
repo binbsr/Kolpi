@@ -1,51 +1,62 @@
-﻿@* @inject HttpClient http
-@inject MessageService message
+﻿@inject HttpClient Http
 
 @using Kolpi.Shared.ViewModels
-@using OneOf
+@using System.ComponentModel.DataAnnotations
 
-<Form Model="@TagViewModel"
-      LabelCol="new ColLayoutParam { Span = 8 }"
-      WrapperCol="new ColLayoutParam { Span = 16 }"
-      OnFinish="OnFinish">
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Name" HelperText="Max. 8 characters"
+                              @bind-Value="Model.Name" For="@(() => Model.Name)"/>
+                <MudTextField Label="Details" Class="mt-3"
+                              @bind-Value="Model.Details" For="@(() => Model.Details)"/>
+                <MudAutocomplete T="string"
+                             Label="Tag Category"
+                             SearchFunc="Search"
+                             ResetValueOnEmptyText=true
+                             @bind-Value="Model.TagTypeName"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                    Save Tag
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+</EditForm>
 
-    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
-        <Button Icon="unordered-list" Type="dashed">
-            <a href="/tags/index">Show All Tags</a>
-        </Button>
-    </FormItem>
-
-    <FormItem Label="Name">
-        <Input @bind-Value="@context.Name" />
-    </FormItem>
-    <FormItem Label="Details">
-        <TextArea @bind-Value="@context.Details" />
-    </FormItem>
-    <FormItem Label="Tag Category">
-        <Select ShowSearch DefaultValue="@context.TagTypeId.ToString()"
-                Style="width: 250px"
-                Placeholder="Tag Category..."
-                TItemValue="string"
-                TItem="string">
-
-            @foreach (var option in tagCategories)
-            {
-                <SelectOption TItemValue="string" TItem="string" Value="@option.Id.ToString()">@option.Name</SelectOption>
-            }
-
-        </Select>
-    </FormItem>
-    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
-        <Button Icon="save" HtmlType="submit" Loading="@isSaving">
-            Save Tag @context.Name
-        </Button>
-    </FormItem>
-</Form>
 
 @code {
 
     [Parameter]
-    public TagViewModel TagViewModel { get; set; } = new TagViewModel();
+    public TagViewModel Model { get; set; } = new TagViewModel();
+
+    bool success;
+    public string TagType { get; set; } = default!;
+    public TagTypeViewModel[] TagTypes { get; set; } = default!;
+
+    private async Task<IEnumerable<string>> Search(string value)
+    {
+        TagTypes = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? Array.Empty<TagTypeViewModel>();
+
+        if (string.IsNullOrEmpty(value))
+            return TagTypes.Select(x => x.Name);
+        return TagTypes.Select(x => x.Name)
+                       .Where(y => y.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+}
+
+
+@*
+
+@code {
+    
     List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
     private readonly Func<string, SelectOption<string, string>, bool> FilterOptionValue = FilterOption;
     int selectedTagTypeId = default;
@@ -104,4 +115,6 @@
     {
         tagCategories = await http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
     }
-} *@
+}
+
+*@

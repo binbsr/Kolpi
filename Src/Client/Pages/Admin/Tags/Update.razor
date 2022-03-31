@@ -1,4 +1,4 @@
-﻿@* @page "/tags/update/{Id:int}"
+﻿ @page "/tags/update/{Id:int}"
 
 @inject HttpClient Http
 
@@ -6,11 +6,11 @@
 
 @if (tagViewModel == null)
 {
-    <Skeleton Active></Skeleton>
+    <MudSkeleton Animation="Animation.Wave" />
 }
 else
 {
-    <EditTag TagViewModel="tagViewModel" />
+    <EditTag Model="tagViewModel" />
 }
 
 @code {
@@ -18,10 +18,10 @@ else
     [Parameter]
     public int Id { get; set; }
 
-    TagViewModel tagViewModel;
+    TagViewModel tagViewModel = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        tagViewModel = await Http.GetFromJsonAsync<TagViewModel>($"api/tags/{Id}");
+        tagViewModel = await Http.GetFromJsonAsync<TagViewModel>($"api/tags/{Id}") ?? default!;
     }
-} *@
+} 
