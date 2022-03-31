@@ -1,130 +1,142 @@
-@* @page "/question/add"
-
-@inherits AddSingleBase
+@page "/question/add"
 @inject HttpClient Http
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Kolpi.Client.Components
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Shared.Enums
-@using OneOf
 
-<h4>Question (For mathmetical equations [<i>fx</i> button], please refer <a href="https://katex.org/docs/supported.html" target="_blank"><Icon Type="question-circle"></Icon>Katex docs</a>)</h4>
-<BlazoredTextEditor @ref="@questionEditor" Placeholder="Write your question..." DebugLevel="error">
+<MudContainer>
+    <MudText Typo="Typo.h6">Question
+        <MudText Typo="Typo.body2">
+        For mathmetical equations [<i>fx</i> button], refer
+        <MudLink Href="https://katex.org/docs/supported.html" Target="_blank">Katex docs</MudLink>
+    </MudText>
+    </MudText>
+    <Editor @bind-HTMLContent="question" PlaceHolder="Type your question here..." />    
+</MudContainer>
+
+@code {
+    private string question = default!;
+}
+
+@*
+
+    <BlazoredTextEditor @ref="@questionEditor" Placeholder="Write your question..." DebugLevel="error">
     <ToolbarContent>
-        <span class="ql-formats">
-            <select class="ql-font">
-                <option selected=""></option>
-                <option value="serif"></option>
-                <option value="monospace"></option>
-            </select>
-            <select class="ql-size">
-                <option value="small"></option>
-                <option selected=""></option>
-                <option value="large"></option>
-                <option value="huge"></option>
-            </select>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-        </span>
-        <span class="ql-formats">
-            <select class="ql-color"></select>
-            <select class="ql-background"></select>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-list" value="bullet"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
-            <button class="ql-script" value="sub"></button>
-            <button class="ql-script" value="super"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-link"></button>
-            <button class="ql-image"></button>
-            <button class="ql-formula"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-clean"></button>
-        </span>
+    <span class="ql-formats">
+    <select class="ql-font">
+    <option selected=""></option>
+    <option value="serif"></option>
+    <option value="monospace"></option>
+    </select>
+    <select class="ql-size">
+    <option value="small"></option>
+    <option selected=""></option>
+    <option value="large"></option>
+    <option value="huge"></option>
+    </select>
+    </span>
+    <span class="ql-formats">
+    <button class="ql-bold"></button>
+    <button class="ql-italic"></button>
+    <button class="ql-underline"></button>
+    <button class="ql-strike"></button>
+    </span>
+    <span class="ql-formats">
+    <select class="ql-color"></select>
+    <select class="ql-background"></select>
+    </span>
+    <span class="ql-formats">
+    <button class="ql-list" value="ordered"></button>
+    <button class="ql-list" value="bullet"></button>
+    </span>
+    <span class="ql-formats">
+    <button class="ql-blockquote"></button>
+    <button class="ql-code-block"></button>
+    <button class="ql-script" value="sub"></button>
+    <button class="ql-script" value="super"></button>
+    </span>
+    <span class="ql-formats">
+    <button class="ql-link"></button>
+    <button class="ql-image"></button>
+    <button class="ql-formula"></button>
+    </span>
+    <span class="ql-formats">
+    <button class="ql-clean"></button>
+    </span>
     </ToolbarContent>
     <EditorContent>
     </EditorContent>
-</BlazoredTextEditor>
-<h4><Icon Type="question-circle"></Icon> Tag this question (e.g. GK, Level-1, Physics etc.)</h4>
-<Select Mode="multiple"
-        Style="width: 100%"
-        Placeholder="Type to add tags..."
-        TItemValue="string" 
-        TItem="string">
+    </BlazoredTextEditor>
+    <h4><Icon Type="question-circle"></Icon> Tag this question (e.g. GK, Level-1, Physics etc.)</h4>
+    <Select Mode="multiple"
+    Style="width: 100%"
+    Placeholder="Type to add tags..."
+    TItemValue="string"
+    TItem="string">
     @foreach (var item in tags ?? Array.Empty<TagViewModel>())
     {
-        <SelectOption TItemValue="string" TItem="string" Value="@item.Id.ToString()">@item.Name</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value="@item.Id.ToString()">@item.Name</SelectOption>
     }
-</Select>
+    </Select>
 
-<h4>Question Type and Options</h4>
-<Space Size=@("Large")>
+    <h4>Question Type and Options</h4>
+    <Space Size=@("Large")>
     <SpaceItem>
-        <RadioGroup @bind-Value="@questionType" ButtonStyle="RadioButtonStyle.Solid">
-            <Radio RadioButton Value="@("1")">Objective</Radio>
-            <Radio RadioButton Value="@("2")">Subjective</Radio>
-        </RadioGroup>
+    <RadioGroup @bind-Value="@questionType" ButtonStyle="RadioButtonStyle.Solid">
+    <Radio RadioButton Value="@("1")">Objective</Radio>
+    <Radio RadioButton Value="@("2")">Subjective</Radio>
+    </RadioGroup>
     </SpaceItem>
     @if (questionType == "1")
     {
-        <SpaceItem>
-            <Select OnSelectedItemChanged="OnAnsOptionsCountChnage" DefaultValue="@("1")" TItem="string" TItemValue="string">
-                <SelectOption TItemValue="string" TItem="string" Value=@("1")>1 answer option</SelectOption>
-                <SelectOption TItemValue="string" TItem="string" Value=@("2")>2 answer options</SelectOption>
-                <SelectOption TItemValue="string" TItem="string" Value=@("3")>3 answer options</SelectOption>
-                <SelectOption TItemValue="string" TItem="string" Value=@("4")>4 answer options</SelectOption>
-                <SelectOption TItemValue="string" TItem="string" Value=@("5")>5 answer options</SelectOption>
-                <SelectOption TItemValue="string" TItem="string" Value=@("6")>6 answer options</SelectOption>
-            </Select>
-        </SpaceItem>
-        <SpaceItem>
-            <Button Type="dashed" @onclick="AddAnsOption" Icon="plus">Add</Button>
-        </SpaceItem>
+    <SpaceItem>
+    <Select OnSelectedItemChanged="OnAnsOptionsCountChnage" DefaultValue="@("1")" TItem="string" TItemValue="string">
+    <SelectOption TItemValue="string" TItem="string" Value=@("1")>1 answer option</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value=@("2")>2 answer options</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value=@("3")>3 answer options</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value=@("4")>4 answer options</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value=@("5")>5 answer options</SelectOption>
+    <SelectOption TItemValue="string" TItem="string" Value=@("6")>6 answer options</SelectOption>
+    </Select>
+    </SpaceItem>
+    <SpaceItem>
+    <Button Type="dashed" @onclick="AddAnsOption" Icon="plus">Add</Button>
+    </SpaceItem>
     }
     else
     {
-        <SpaceItem>
-            <p>Please tag your subjective question with appropriate categories and levels. That's all we need for the these questions.</p>
-        </SpaceItem>
+    <SpaceItem>
+    <p>Please tag your subjective question with appropriate categories and levels. That's all we need for the these questions.</p>
+    </SpaceItem>
     }
-</Space>
+    </Space>
 
-<div>
+    <div>
     @foreach (AnswerOptionViewModel item in question.AnswerOptions)
     {
-        <div>
-            <AnsOption AnswerModel="@item" RemoveItemCallback="DeleteAnsOption" />
-        </div>
+    <div>
+    <AnsOption AnswerModel="@item" RemoveItemCallback="DeleteAnsOption" />
+    </div>
     }
     <Button Icon="save" Type="default" @onclick="SaveQuestion">Save Question</Button>
-</div>
+    </div>
 
-@code
-{
+    @code
+    {
     protected override async Task OnInitializedAsync()
     {
-        tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/tags");
+    tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/tags");
     }
 
     private void OnChangeQuestionType(string option)
     {
-        
+
     }
 
     private void OnAnsOptionsCountChnage(string option)
     {
-        
+
     }
-} *@
+    } *@
