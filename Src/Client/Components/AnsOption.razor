@@ -1,4 +1,4 @@
-@using Kolpi.Shared.ViewModels
+@* @using Kolpi.Shared.ViewModels
 
 <Checkbox @bind-Value="AnswerModel.IsAnswer">Answer</Checkbox>
 <Button Type="primary" Danger Shape="circle" Icon="delete" Size="small" @onclick="RemoveItem"/>
@@ -18,4 +18,4 @@
     {
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
-}
+} *@

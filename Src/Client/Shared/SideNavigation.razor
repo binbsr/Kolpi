@@ -1,68 +1,26 @@
-<Sider Collapsible Width="200" Class="site-layout-background">
-    <Menu Theme="MenuTheme.Light"
-          DefaultSelectedKeys=@(new[]{"1"})
-          Mode="MenuMode.Inline"
-          Style="height: 100%; border-right: 0;">
-        <MenuItem Key="1">
-            <Icon Type="dashboard" Theme="outline" />
-            <span>Dashboard</span>
-        </MenuItem>
-        @{
-            RenderFragment questionTitle =
-            @<span>
-                <Icon Type="question" Theme="outline" />
-                <span>Question</span>
-            </span>;
-        }
-        <SubMenu Key="sub1" Title=questionTitle>
-            <MenuItem Key="question:1">
-                <MenuLink href="/question/add" Match="NavLinkMatch.All">Add Question</MenuLink>
-            </MenuItem>
-            <MenuItem Key="3">
-                <a title="Add Multiple Questions in Single Shot" href="Question/AddMultiple">Add Questions (In Bulk)</a>
-            </MenuItem>
-            <MenuItem Key="4">
-                <a title="Review Questions" href="#">Review</a>
-            </MenuItem>
-            <MenuItem Key="5">
-                <a title="Manage Question Tags" href="#">Manage Tags</a>
-            </MenuItem>
-        </SubMenu>
-        @{
-            RenderFragment questionPaperTitle =
-            @<span>
-                <Icon Type="file-add" Theme="outline" />
-                <span>Question Paper</span>
-            </span>;
-        }
-        <SubMenu Key="sub2" Title=questionPaperTitle>
-            <MenuItem Key="6">
-                <a href="#">Generate New</a>
-            </MenuItem>
-            <MenuItem Key="7">
-                <a href="#">Manage Papers</a>
-            </MenuItem>
-        </SubMenu>
+<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu Class="mud-width-full">
+        <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/dashboard" Icon="@Icons.Filled.Dashboard">Dashboard</MudNavLink>
+        <MudNavLink Href="/users" Icon="@Icons.Filled.Storage">Users</MudNavLink>
+        
+        <MudNavGroup Title="Questions" Icon="@Icons.Filled.QuestionMark" Expanded="true">
+                <MudNavLink Href="/question/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Questions</MudNavLink>
+                <MudNavLink Href="/question/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+        </MudNavGroup>
 
-        @{
-            RenderFragment examTitle =
-            @<span>
-                <Icon Type="bell" Theme="outline" />
-                <span>Exam</span>
-            </span>;
-        }
-        <SubMenu Key="sub3" Title=examTitle>
-            <MenuItem Key="8">
-                <a href="#">Schedule New</a>
-            </MenuItem>
-            <MenuItem Key="9">
-                <a href="#">Manage Exams</a>
-            </MenuItem>
-        </SubMenu>
-
-        <MenuItem Key="10">
-            <Icon Type="table" Theme="outline" />
-            <span>Results</span>
-        </MenuItem>
-    </Menu>
-</Sider>
+        <MudNavGroup Title="Admin" Icon="@Icons.Filled.AdminPanelSettings" Expanded="false">
+            <MudNavGroup Title="Tagging" Icon="@Icons.Filled.Tag" Expanded="true">
+                <MudNavLink Href="/tags/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
+                <MudNavLink Href="/tags/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Tag Categories" Icon="@Icons.Filled.Category" Expanded="true">
+                <MudNavLink Href="/tagtypes/index" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
+                <MudNavLink Href="/tagtypes/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+            </MudNavGroup>                
+        </MudNavGroup>
+        
+    </MudNavMenu>
+</MudPaper>

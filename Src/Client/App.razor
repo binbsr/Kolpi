@@ -12,6 +12,11 @@
                         <Kolpi.Client.Components.Results.NotAuthorizedResult />
                     }
                 </NotAuthorized>
+                <Authorizing>
+                    <MudSkeleton Animation="Animation.Wave" />
+                    <MudSkeleton Animation="Animation.Wave" />
+                    <MudSkeleton Animation="Animation.Wave" />
+                </Authorizing>
             </AuthorizeRouteView>
         </Found>
         <NotFound>
@@ -20,5 +25,9 @@
             </LayoutView>
         </NotFound>
     </Router>
-    <AntContainer />
+    
+    <MudThemeProvider/>
+    <MudDialogProvider/>
+    <MudSnackbarProvider/>
+
 </CascadingAuthenticationState>

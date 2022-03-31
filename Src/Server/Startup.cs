@@ -25,9 +25,9 @@ namespace Kolpi.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<KolpiDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionSqlServer")));
-                // options.UseSqlite(
-                //     Configuration.GetConnectionString("DefaultConnection")));
+                //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionSqlServer")));
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<KolpiUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<KolpiDbContext>();

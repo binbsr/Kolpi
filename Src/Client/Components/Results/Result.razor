@@ -1,0 +1,17 @@
+<MudAlert Severity="Severity.Error" 
+          NoIcon
+          Variant="Variant.Outlined" 
+          ContentAlignment="HorizontalAlignment.Center"
+          Class="mt-10 mx-5">
+        <MudText Typo="Typo.h3" Align="Align.Center">@Status</MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center">@Description</MudText>          
+</MudAlert>
+
+@code{
+
+    [Parameter]
+    public short Status { get; set; }
+    
+    [Parameter]
+    public string Description { get; set; } = "Oops, nothing in here!";
+}
