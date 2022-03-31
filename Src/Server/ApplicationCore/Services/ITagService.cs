@@ -9,5 +9,6 @@ namespace Kolpi.Server.ApplicationCore.Services
     public interface ITagService : IAsyncService<Tag, int>
     {
         Task<List<Tag>> GetAllAsync(int pageIndex, int pageSize);
+        Task<List<Tag>> GetAllAsync(string searchText, int pageIndex, int pageSize);
     }
 }

@@ -13,7 +13,7 @@ using System;
 
 namespace Kolpi.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TagsController : ControllerBase
@@ -28,9 +28,17 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagViewModel>>> Get([FromQuery] int pageIndex = 1, int pageSize = int.MaxValue)
+        public async Task<ActionResult<IEnumerable<TagViewModel>>> Get([FromQuery]string searchText = default, 
+            int pageIndex = 1, int pageSize = int.MaxValue)
         {
-            var tagModels = pageIndex == int.MaxValue   // If page size is not supplied, fetch all
+            List<Tag> tagModels;
+            if (searchText != default)
+            {
+                tagModels = await tagService.GetAllAsync(searchText, pageIndex, pageSize);
+                return Ok(tagModels);
+            }
+
+            tagModels = pageIndex == int.MaxValue   // If page size is not supplied, fetch all
                 ? await tagService.GetAllAsync()
                 : await tagService.GetAllAsync(pageIndex, pageSize);
             var tagViewModels = tagModels.ToViewModel();
