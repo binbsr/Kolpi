@@ -5,7 +5,7 @@
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-<Space Size=@("middle") Style="margin-bottom:10px">
+@*<Space Size=@("middle") Style="margin-bottom:10px">
     <SpaceItem>
         <Button Shape="round" Icon="plus" Type="dashed">
             <a href="/tags/add">Add Tag</a>
@@ -31,7 +31,7 @@
             <b>@selectedRows.Count()</b> rows selected
         </SpaceItem>
     }
-</Space>
+</Space>*@
 
 @if (tagViewModels == null)
 {
@@ -78,7 +78,7 @@ else
 
     List<TagViewModel> tagViewModels = new List<TagViewModel>();
     private string searchString = "";
-    private MudTable<TagViewModel> table;
+    private MudTable<TagViewModel> table = default!;
 
     private void OnSearch(string text)
     {
@@ -90,14 +90,14 @@ else
     {
         int pageIndex = state.Page;
         int pageSize = state.PageSize;
-        IEnumerable<TagViewModel> data = await http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}")
+        string url = $"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}"; 
+        TagsFilteredViewModel data = await http.GetFromJsonAsync<TagsFilteredViewModel>(url) ?? new TagsFilteredViewModel();
         
-        
-        return new TableData<TagViewModel>() { TotalItems = totalItems, Items = data };
+        return new TableData<TagViewModel>() { TotalItems = data.TotalCount, Items = data.Records };
     }
     
 
-    private async Task Delete()
+    @*private async Task Delete()
     {
         var deleteResult = await http.DeleteAsync($"api/tags");
         if (deleteResult.IsSuccessStatusCode)
@@ -113,5 +113,5 @@ else
 
             StateHasChanged();
         }
-    }
+    }*@
 }
