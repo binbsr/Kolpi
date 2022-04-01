@@ -1,7 +1,8 @@
-﻿@inject HttpClient Http
-
-@using Kolpi.Shared.ViewModels
+﻿@using Kolpi.Shared.ViewModels
 @using System.ComponentModel.DataAnnotations
+
+@inject HttpClient Http
+@inject ISnackbar SBar
 
 <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
 <DataAnnotationsValidator/>
@@ -11,11 +12,11 @@
                               @bind-Value="Model.Name" For="@(() => Model.Name)"/>
                 <MudTextField Label="Details" Class="mt-3"
                               @bind-Value="Model.Details" For="@(() => Model.Details)"/>
-                <MudAutocomplete T="string"
+                <MudAutocomplete T="TagTypeViewModel"
                              Label="Tag Category"
                              SearchFunc="Search"
                              ResetValueOnEmptyText=true
-                             @bind-Value="Model.TagTypeName"/>
+                             @bind-Value="TagType"/>
             </MudCardContent>
             <MudCardActions>
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
@@ -25,96 +26,60 @@
         </MudCard>
 </EditForm>
 
-
 @code {
 
     [Parameter]
     public TagViewModel Model { get; set; } = new TagViewModel();
-
-    bool success;
-    public string TagType { get; set; } = default!;
+    public TagTypeViewModel TagType { get; set; } = default!;
     public TagTypeViewModel[] TagTypes { get; set; } = default!;
 
-    private async Task<IEnumerable<string>> Search(string value)
+    bool isSaving = false;
+
+    private async Task<IEnumerable<TagTypeViewModel>> Search(string value)
     {
         TagTypes = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? Array.Empty<TagTypeViewModel>();
 
         if (string.IsNullOrEmpty(value))
-            return TagTypes.Select(x => x.Name);
-        return TagTypes.Select(x => x.Name)
-                       .Where(y => y.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return TagTypes;
+        return TagTypes.Where(y => y.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private void OnValidSubmit(EditContext context)
-    {
-        success = true;
-        StateHasChanged();
-    }
-}
-
-
-@*
-
-@code {
-    
-    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private readonly Func<string, SelectOption<string, string>, bool> FilterOptionValue = FilterOption;
-    int selectedTagTypeId = default;
-    bool isSaving = false;
-
-    private async Task OnFinish(EditContext editContext)
+    private async Task OnValidSubmit(EditContext context)
     {
         isSaving = true;
-        await InvokeAsync(StateHasChanged);
 
         Task<HttpResponseMessage> saveTask;
+        var tagTypeId = TagTypes.FirstOrDefault(x => x.Name == Model.TagTypeName)?.Id;
 
-        if (TagViewModel.Id == default)
+        if (Model.Id == default)
         {
             // Adding new
-            TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = http.PostAsJsonAsync("api/tags", TagViewModel);
+            Model.TagTypeId = TagType.Id;
+            saveTask = Http.PostAsJsonAsync("api/tags", Model);
         }
         else
         {
             // Modify existing
-            TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = http.PutAsJsonAsync($"api/tags/{TagViewModel.Id}", TagViewModel);
+            Model.TagTypeId = TagType.Id;
+            saveTask = Http.PutAsJsonAsync($"api/tags/{Model.Id}", Model);
         }
 
         await saveTask.ContinueWith(st =>
         {
             isSaving = false;
-            InvokeAsync(StateHasChanged);
 
             var result = st.Result;
 
             if (result.IsSuccessStatusCode)
             {
-                message.Success("Tag saved successfully.");
+                SBar.Add("The reactor is running at optimum temperature", Severity.Success);
             }
             else
             {
-                message.Error($"Error occured while saving tag. Problem: {result.ReasonPhrase}");
+                SBar.Add($"Error occured while saving tag. Problem: {result.ReasonPhrase}", Severity.Error);
             }
         });
-    }
 
-    private static bool FilterOption(string value, SelectOption<string, string> option)
-    {
-        var optionContent = option.Value.ToUpper();
-        return optionContent.Contains(value, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void OnChange(string value)
-    {
-        selectedTagTypeId = int.Parse(value);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        tagCategories = await http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
+        StateHasChanged();
     }
 }
-
-*@
