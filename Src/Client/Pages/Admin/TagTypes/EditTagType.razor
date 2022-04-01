@@ -4,28 +4,24 @@
 @inject HttpClient Http
 @inject ISnackbar SBar
 
-<MudContainer>
-    <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
-        <DataAnnotationsValidator />
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
-                <MudTextField Label="Details" Class="mt-3" @bind-Value="Model.Details" For="@(() => Model.Details)" />
-                <MudColorPicker Label="Category Color" ValueChanged="ColorChanged" ColorPickerView="ColorPickerView.Palette" />
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Disabled="isSaving"
-                           ButtonType="ButtonType.Submit"
-                           Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Save"
-                           Class="ml-auto">
-                    Save Category
-                </MudButton>
-            </MudCardActions>
-        </MudCard>
-    </EditForm>
-</MudContainer>
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
+            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details"
+                For="@(() => Model.Details)" />
+            <MudColorPicker Label="Color Code" ValueChanged="ColorChanged" ColorPickerView="ColorPickerView.Palette"
+                Variant="Variant.Filled" PickerVariant="PickerVariant.Dialog" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+                Save Category
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
 @code {
 
     [Parameter]
