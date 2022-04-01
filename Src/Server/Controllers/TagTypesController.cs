@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Kolpi.Server.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TagTypesController : ControllerBase

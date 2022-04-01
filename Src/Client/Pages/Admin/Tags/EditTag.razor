@@ -1,35 +1,42 @@
 ﻿@using Kolpi.Shared.ViewModels
-@using System.ComponentModel.DataAnnotations
 
 @inject HttpClient Http
 @inject ISnackbar SBar
 
-<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
-<DataAnnotationsValidator/>
+<MudContainer>
+    <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
         <MudCard>
             <MudCardContent>
-                <MudTextField Label="Name" HelperText="Max. 8 characters"
-                              @bind-Value="Model.Name" For="@(() => Model.Name)"/>
+                <MudTextField Label="Name"
+                              @bind-Value="Model.Name" For="@(() => Model.Name)" />
                 <MudTextField Label="Details" Class="mt-3"
-                              @bind-Value="Model.Details" For="@(() => Model.Details)"/>
+                              @bind-Value="Model.Details" For="@(() => Model.Details)" />
                 <MudAutocomplete T="TagTypeViewModel"
-                             Label="Tag Category"
-                             SearchFunc="Search"
-                             ResetValueOnEmptyText=true
-                             @bind-Value="TagType"/>
+                                 Label="Tag Category"
+                                 SearchFunc="Search"
+                                 ResetValueOnEmptyText=true
+                                 @bind-Value="TagType" />
             </MudCardContent>
             <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                <MudButton Disabled="isSaving"
+                           ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           Class="ml-auto">
                     Save Tag
                 </MudButton>
             </MudCardActions>
         </MudCard>
-</EditForm>
+    </EditForm>
+</MudContainer>
 
 @code {
 
     [Parameter]
     public TagViewModel Model { get; set; } = new TagViewModel();
+
     public TagTypeViewModel TagType { get; set; } = default!;
     public TagTypeViewModel[] TagTypes { get; set; } = default!;
 
@@ -72,7 +79,7 @@
 
             if (result.IsSuccessStatusCode)
             {
-                SBar.Add("The reactor is running at optimum temperature", Severity.Success);
+                SBar.Add("Tag saved successfully.", Severity.Success);
             }
             else
             {

@@ -11,7 +11,7 @@ using Kolpi.Server.Data;
 
 namespace Kolpi.Server.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class QuestionController : ControllerBase

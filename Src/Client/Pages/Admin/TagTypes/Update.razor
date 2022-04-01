@@ -6,11 +6,11 @@
 
 @if (tagTypeViewModel == null)
 {
-    
+    <MudSkeleton Animation="Animation.Wave"></MudSkeleton>
 }
 else
 {
-    <EditTagType TagTypeViewModel="tagTypeViewModel" />
+    <EditTagType Model="tagTypeViewModel" />
 }
 
 @code {
@@ -18,10 +18,8 @@ else
     [Parameter]
     public int Id { get; set; }
 
-    TagTypeViewModel tagTypeViewModel;
+    TagTypeViewModel tagTypeViewModel = default!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        tagTypeViewModel = await Http.GetFromJsonAsync<TagTypeViewModel>($"api/tagtypes/{Id}");
-    }
+    protected override async Task OnInitializedAsync() => tagTypeViewModel = 
+        await Http.GetFromJsonAsync<TagTypeViewModel>($"api/tagtypes/{Id}") ?? default!;
 }
