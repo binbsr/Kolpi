@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager NavigationManager
+
 <MudThemeProvider />
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -9,7 +11,7 @@
         <MudSpacer />
         <MudMenu Direction="Direction.Left" OffsetX="true" Class="mt-1 ml-4">
             <ActivatorContent>
-                <MudAvatar Image="/images/bishnu.jpg" />
+                <MudAvatar Image="/img/bishnu.jpg" />
             </ActivatorContent>
             <ChildContent>
                 <UserLogin />                
@@ -20,15 +22,45 @@
         <SideNavigation/>
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            @*Will not be seen on small and extra-small displays*@
+            <MudToolBar>
+                <MudBreadcrumbs Items="_items" SeparatorTemplate="@separatorBreadcrumb"></MudBreadcrumbs>                           
+            </MudToolBar>
+        </MudHidden>
+        <MudContainer>
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 @code {
     bool _drawerOpen = true;
+    public string currentUrl = default!;
+    public List<BreadcrumbItem> _items = new List<BreadcrumbItem>();
+    RenderFragment separatorBreadcrumb =@<MudIcon Icon="@Icons.Filled.ChevronRight" Class="mt-1" />;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _items.Clear();
+        currentUrl = NavigationManager.Uri;
+        var path = currentUrl.Replace(NavigationManager.BaseUri, "");
+
+        _items.Add(new BreadcrumbItem("Home", NavigationManager.BaseUri, NavigationManager.Uri == NavigationManager.BaseUri));
+
+        var fragments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var link in fragments)
+        {
+            var lastLink = _items.Last();
+            _items.Add(new BreadcrumbItem(link.ToUpper(), $"{lastLink.Href}/{link}", link == fragments.Last()));
+        }
+
+        base.OnParametersSet();
     }
 }

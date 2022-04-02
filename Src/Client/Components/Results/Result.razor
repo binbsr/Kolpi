@@ -1,4 +1,4 @@
-<MudAlert Severity="Severity.Error" 
+<MudAlert Severity=AlertType 
           NoIcon
           Variant="Variant.Outlined" 
           ContentAlignment="HorizontalAlignment.Center"
@@ -14,4 +14,7 @@
     
     [Parameter]
     public string Description { get; set; } = "Oops, nothing in here!";
+
+    [Parameter]
+    public Severity AlertType { get; set; } = Severity.Info;
 }

@@ -13,7 +13,7 @@ using System;
 
 namespace Kolpi.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TagsController : ControllerBase
@@ -28,13 +28,16 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagViewModel>>> Get([FromQuery] int pageIndex = 1, int pageSize = int.MaxValue)
+        public async Task<ActionResult<IEnumerable<TagsFilteredViewModel>>> Get([FromQuery] string searchText = default,
+            int pageIndex = 1, int pageSize = 10)
         {
-            var tagModels = pageIndex == int.MaxValue   // If page size is not supplied, fetch all
-                ? await tagService.GetAllAsync()
-                : await tagService.GetAllAsync(pageIndex, pageSize);
+            List<Tag> tagModels = searchText != default ?
+                await tagService.GetAllAsync(searchText, pageIndex, pageSize):// Search with paging
+                await tagService.GetAllAsync(pageIndex, pageSize);//No search, just paging may be
+
             var tagViewModels = tagModels.ToViewModel();
-            return Ok(tagViewModels);
+            int totalCount = tagModels.Count;
+            return Ok(new TagsFilteredViewModel { TotalCount = totalCount, Records = tagViewModels });
         }
 
         [HttpGet("totalcount")]
@@ -70,7 +73,7 @@ namespace Kolpi.Server.Controllers
             tagModel.AddCreatedStamps(userId);
 
             var rowsAdded = await tagService.AddAsync(tagModel);
-            
+
             if (rowsAdded <= 0)
                 return Problem("Could not insert into the store.", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Insert");
 
@@ -88,7 +91,7 @@ namespace Kolpi.Server.Controllers
             // Get userid creating this tag
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             tagModel.AddModifiedStamps(userId);
-            
+
             int rowsUpdated = 0;
             try
             {

@@ -27,6 +27,18 @@ namespace Kolpi.Server.ApplicationCore.Services
                 .ToListAsync();
         }
 
+        public Task<List<Tag>> GetAllAsync(string searchText, int pageIndex, int pageSize)
+        {
+            int skipCount = (pageIndex - 1) * pageSize;
+
+            return dbContext.Set<Tag>()
+                .Where(t => EF.Functions.Like(t.Name, $"%{searchText}%"))
+                .Include(t => t.TagType)
+                .Skip(skipCount)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
         public override Task<Tag> GetByIdAsync(int id)
         {
             return dbContext.Set<Tag>()

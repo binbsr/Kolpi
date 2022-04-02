@@ -18,7 +18,7 @@ namespace Kolpi.Server
 
         public static readonly TagType TagType2 = new TagType
         {
-            Name = "Subject Category",
+            Name = "Subject",
             Details = "Tags that defines subject categories of the question e.g. GK, GK-History, Physics etc.",
             ColorCode = "orange"
         };

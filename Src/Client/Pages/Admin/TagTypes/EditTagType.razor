@@ -1,62 +1,72 @@
-﻿@* 
+﻿@using Kolpi.Shared.ViewModels
+@using MudBlazor.Utilities
+
 @inject HttpClient Http
+@inject ISnackbar SBar
 
-@using Kolpi.Shared.ViewModels
-
-<Form Model="@TagTypeViewModel"
-      LabelCol="new ColLayoutParam { Span = 8 }"
-      WrapperCol="new ColLayoutParam { Span = 16 }"
-      OnFinish="OnFinish">
-
-    <FormItem Label="Name">
-        <Input @bind-Value="@context.Name" />
-    </FormItem>
-    <FormItem Label="Details">
-        <Input @bind-Value="@context.Details" />
-    </FormItem>
-    <FormItem Label="Color Code">
-        <Input @bind-Value="@context.ColorCode" />
-    </FormItem>
-
-    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
-        <Button Icon="save" HtmlType="submit" Loading="@isSaving">
-            Save Tagtype @context.Name
-        </Button>
-        <Button Icon="unordered-list" Type="dashed">
-            <a href="/tagtypes/index">To all tagtypes</a>
-        </Button> 
-    </FormItem>
-</Form>
-
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
+            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details"
+                For="@(() => Model.Details)" />
+            <MudColorPicker Label="Color Code" ValueChanged="ColorChanged" ColorPickerView="ColorPickerView.Palette"
+                Variant="Variant.Filled" PickerVariant="PickerVariant.Dialog" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+                Save Category
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
 @code {
 
     [Parameter]
-    public TagTypeViewModel TagTypeViewModel { get; set; } = new TagTypeViewModel();
+    public TagTypeViewModel Model { get; set; } = new TagTypeViewModel();
 
     bool isSaving = false;
 
-    private void OnFinish(EditContext editContext)
+    private void ColorChanged(MudColor color)
+    {
+        Model.ColorCode = color.Value;
+    }
+
+    private async Task OnValidSubmit(EditContext editContext)
     {
         isSaving = true;
-        InvokeAsync(StateHasChanged);
 
         Task<HttpResponseMessage> saveTask;
 
-        if (TagTypeViewModel.Id == default)
+        if (Model.Id == default)
         {
             // Adding new
-            saveTask = Http.PostAsJsonAsync("api/tagtypes", TagTypeViewModel);
+            saveTask = Http.PostAsJsonAsync("api/tagtypes", Model);
         }
         else
         {
             // Modifying existing
-            saveTask = Http.PutAsJsonAsync($"api/tagtypes/{TagTypeViewModel.Id}", TagTypeViewModel);
+            saveTask = Http.PutAsJsonAsync($"api/tagtypes/{Model.Id}", Model);
         }
 
-        saveTask.ContinueWith(t =>
+        await saveTask.ContinueWith(st =>
         {
             isSaving = false;
-            InvokeAsync(StateHasChanged);
+
+            var result = st.Result;
+
+            if (result.IsSuccessStatusCode)
+            {
+                SBar.Add("Tag category saved successfully.", Severity.Success);
+            }
+            else
+            {
+                SBar.Add($"Error occured while saving tag. Problem: {result.ReasonPhrase}", Severity.Error);
+            }
         });
+
+        StateHasChanged();
     }
-} *@
+}

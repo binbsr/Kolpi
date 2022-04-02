@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,7 +16,7 @@ namespace Kolpi.Shared.ViewModels
 
         public int TagTypeId { get; set; }
         
-        [DisplayName("Type")]
+        [DisplayName("Type"), Required]
         public string TagTypeName { get; set; }
 
         [DisplayName("Color Code")]

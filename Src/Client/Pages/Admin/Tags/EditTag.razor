@@ -1,107 +1,81 @@
-﻿@* @inject HttpClient http
-@inject MessageService message
+﻿@using Kolpi.Shared.ViewModels
 
-@using Kolpi.Shared.ViewModels
-@using OneOf
+@inject HttpClient Http
+@inject ISnackbar SBar
 
-<Form Model="@TagViewModel"
-      LabelCol="new ColLayoutParam { Span = 8 }"
-      WrapperCol="new ColLayoutParam { Span = 16 }"
-      OnFinish="OnFinish">
-
-    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
-        <Button Icon="unordered-list" Type="dashed">
-            <a href="/tags/index">Show All Tags</a>
-        </Button>
-    </FormItem>
-
-    <FormItem Label="Name">
-        <Input @bind-Value="@context.Name" />
-    </FormItem>
-    <FormItem Label="Details">
-        <TextArea @bind-Value="@context.Details" />
-    </FormItem>
-    <FormItem Label="Tag Category">
-        <Select ShowSearch DefaultValue="@context.TagTypeId.ToString()"
-                Style="width: 250px"
-                Placeholder="Tag Category..."
-                TItemValue="string"
-                TItem="string">
-
-            @foreach (var option in tagCategories)
-            {
-                <SelectOption TItemValue="string" TItem="string" Value="@option.Id.ToString()">@option.Name</SelectOption>
-            }
-
-        </Select>
-    </FormItem>
-    <FormItem WrapperCol="new ColLayoutParam{ Offset = 8, Span = 16 }">
-        <Button Icon="save" HtmlType="submit" Loading="@isSaving">
-            Save Tag @context.Name
-        </Button>
-    </FormItem>
-</Form>
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
+            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details" For="@(() => Model.Details)" />
+            <MudAutocomplete T="TagTypeViewModel" Label="Tag Category" SearchFunc="Search" ResetValueOnEmptyText=true
+                @bind-Value="TagType" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+                Save Tag
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
 
 @code {
 
     [Parameter]
-    public TagViewModel TagViewModel { get; set; } = new TagViewModel();
-    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private readonly Func<string, SelectOption<string, string>, bool> FilterOptionValue = FilterOption;
-    int selectedTagTypeId = default;
+    public TagViewModel Model { get; set; } = new TagViewModel();
+
+    public TagTypeViewModel TagType { get; set; } = default!;
+    public TagTypeViewModel[] TagTypes { get; set; } = default!;
+
     bool isSaving = false;
 
-    private async Task OnFinish(EditContext editContext)
+    private async Task<IEnumerable<TagTypeViewModel>> Search(string value)
+    {
+        TagTypes = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? Array.Empty<TagTypeViewModel>();
+
+        if (string.IsNullOrEmpty(value))
+            return TagTypes;
+        return TagTypes.Where(y => y.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task OnValidSubmit(EditContext context)
     {
         isSaving = true;
-        await InvokeAsync(StateHasChanged);
 
         Task<HttpResponseMessage> saveTask;
+        var tagTypeId = TagTypes.FirstOrDefault(x => x.Name == Model.TagTypeName)?.Id;
 
-        if (TagViewModel.Id == default)
+        if (Model.Id == default)
         {
             // Adding new
-            TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = http.PostAsJsonAsync("api/tags", TagViewModel);
+            Model.TagTypeId = TagType.Id;
+            saveTask = Http.PostAsJsonAsync("api/tags", Model);
         }
         else
         {
             // Modify existing
-            TagViewModel.TagTypeId = selectedTagTypeId;
-            saveTask = http.PutAsJsonAsync($"api/tags/{TagViewModel.Id}", TagViewModel);
+            Model.TagTypeId = TagType.Id;
+            saveTask = Http.PutAsJsonAsync($"api/tags/{Model.Id}", Model);
         }
 
         await saveTask.ContinueWith(st =>
         {
             isSaving = false;
-            InvokeAsync(StateHasChanged);
 
             var result = st.Result;
 
             if (result.IsSuccessStatusCode)
             {
-                message.Success("Tag saved successfully.");
+                SBar.Add("Tag saved successfully.", Severity.Success);
             }
             else
             {
-                message.Error($"Error occured while saving tag. Problem: {result.ReasonPhrase}");
+                SBar.Add($"Error occured while saving tag. Problem: {result.ReasonPhrase}", Severity.Error);
             }
         });
-    }
 
-    private static bool FilterOption(string value, SelectOption<string, string> option)
-    {
-        var optionContent = option.Value.ToUpper();
-        return optionContent.Contains(value, StringComparison.OrdinalIgnoreCase);
+        StateHasChanged();
     }
-
-    private void OnChange(string value)
-    {
-        selectedTagTypeId = int.Parse(value);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        tagCategories = await http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes");
-    }
-} *@
+}
