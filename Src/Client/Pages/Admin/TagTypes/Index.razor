@@ -1,37 +1,10 @@
 ﻿@page "/tagtypes/index"
 
 @inject HttpClient Http
+@inject ISnackbar Snackbar
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
-
-@*<Space Size=@("middle") Style="margin-bottom:10px">
-    <SpaceItem>
-        <Button Shape="round" Icon="plus" Type="dashed">
-            <a href="/tags/add">Add Tag</a>
-        </Button>
-    </SpaceItem>
-    <SpaceItem>
-        <Tooltip Title="@("Delete selected tags")" Placement="Placement.Left">
-            <Button Shape="round" Type="danger" Icon="delete" Disabled="@(!selectedRows?.Any() ?? true)">
-                Delete
-            </Button>
-        </Tooltip>
-    </SpaceItem>
-    <SpaceItem>
-        <Tooltip Title="@("Approve selected tags")" Placement="Placement.Left">
-            <Button Shape="round" Type="primary" Icon="check" Disabled="@(!selectedRows?.Any() ?? true)">
-                Approve
-            </Button>
-        </Tooltip>
-    </SpaceItem>
-    @if (selectedRows != null && selectedRows.Any())
-    {
-        <SpaceItem>
-            <b>@selectedRows.Count()</b> rows selected
-        </SpaceItem>
-    }
-</Space>*@
 
 @if (tagCategories == null)
 {
@@ -39,33 +12,34 @@
 }
 else if (tagCategories.Any())
 {
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<TagTypeViewModel>>>(ReloadServer))"
-          Dense="true" Hover="true" @ref="table">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Tag Categories</MudText>
-            <MudSpacer />
-            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        </ToolBarContent>
+    <MudTable Items="@tagCategories" Hover="@true" CanCancelEdit="@true" IsEditRowSwitchingBlocked="@true"
+        RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Category Name</MudTableSortLabel></MudTh>
             <MudTh>Details</MudTh>
+            <MudTh>Color Code</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr">@context.Name</MudTd>
-            <MudTd DataLabel="Sign">@context.Details</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Details">@context.Details</MudTd>
+            <MudTd DataLabel="Details">@context.ColorCode</MudTd>
         </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Name">
+                <MudTextField @bind-Value="@context.Name" Required />
+            </MudTd>
+            <MudTd DataLabel="Details">
+                <MudTextField @bind-Value="@context.Details" Required />
+            </MudTd>
+            <MudTd DataLabel="Color Code">@context.ColorCode</MudTd>
+        </RowEditingTemplate>
         <NoRecordsContent>
             <MudText>No matching records found</MudText>
         </NoRecordsContent>
         <LoadingContent>
             <MudText>Loading...</MudText>
         </LoadingContent>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
     </MudTable>
-
 }
 else
 {
@@ -74,25 +48,41 @@ else
 
 @code {
 
-    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
+    IEnumerable<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
     private string searchString = "";
     private MudTable<TagTypeViewModel> table = default!;
+    private TagTypeViewModel elementBeforeEdit = default!;
 
     private void OnSearch(string text)
     {
         searchString = text;
         table.ReloadServerData();
     }
-
-    private async Task<TableData<TagTypeViewModel>> ReloadServer(TableState state)
+    protected override async Task OnInitializedAsync()
     {
-        string url = $"api/tagtypes";         
-        TagTypeViewModel[] data = await Http.GetFromJsonAsync<TagTypeViewModel[]>(url) ?? default!;
-        
-        return new TableData<TagTypeViewModel>() { TotalItems = data.Length, Items = data };
+        tagCategories = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? default!;
+    }
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+        {
+            Name = ((TagTypeViewModel)element).Name,
+            Details = ((TagTypeViewModel)element).Details
+        };
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        Snackbar.Add($"{((TagTypeViewModel)element).Name} is updated successfully.", Severity.Success);
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((TagTypeViewModel)element).Name = elementBeforeEdit.Name;
+        ((TagTypeViewModel)element).Details = elementBeforeEdit.Details;        
     }
     
-
     @*private async Task Delete()
     {
         var deleteResult = await http.DeleteAsync($"api/tags");
