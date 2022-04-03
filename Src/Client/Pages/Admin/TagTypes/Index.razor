@@ -1,4 +1,4 @@
-﻿@page "/tagtypes/index"
+﻿@page "/tagtypes"
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -12,8 +12,17 @@
 }
 else if (tagCategories.Any())
 {
-    <MudTable Items="@tagCategories" Hover="@true" CanCancelEdit="@true" IsEditRowSwitchingBlocked="@true"
-        RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted">
+    <MudTable Items="@tagCategories" Hover="@true" MultiSelection="@true" @bind-SelectedItems="selectedItems">
+        <ToolBarContent>
+            <MudForm @ref="deleteForm">
+                <MudButton Color="Color.Error"
+                       Disabled="@(SelectedRowCount <= 0)"
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       OnClick="DeleteRows">
+                    @DeleteLabel
+                </MudButton>
+            </MudForm>
+        </ToolBarContent>
         <HeaderContent>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Category Name</MudTableSortLabel></MudTh>
             <MudTh>Details</MudTh>
@@ -22,17 +31,10 @@ else if (tagCategories.Any())
         <RowTemplate>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Details">@context.Details</MudTd>
-            <MudTd DataLabel="Details">@context.ColorCode</MudTd>
-        </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="Name">
-                <MudTextField @bind-Value="@context.Name" Required />
-            </MudTd>
             <MudTd DataLabel="Details">
-                <MudTextField @bind-Value="@context.Details" Required />
+                <span style="color:@context.ColorCode">@context.Name</span>
             </MudTd>
-            <MudTd DataLabel="Color Code">@context.ColorCode</MudTd>
-        </RowEditingTemplate>
+        </RowTemplate>
         <NoRecordsContent>
             <MudText>No matching records found</MudText>
         </NoRecordsContent>
@@ -48,56 +50,32 @@ else
 
 @code {
 
-    IEnumerable<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private string searchString = "";
+    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
     private MudTable<TagTypeViewModel> table = default!;
-    private TagTypeViewModel elementBeforeEdit = default!;
+    private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
+    public int SelectedRowCount => selectedItems.Count;
+    public string DeleteLabel => $"Delete {SelectedRowCount} Items";
+    MudForm deleteForm;
 
-    private void OnSearch(string text)
-    {
-        searchString = text;
-        table.ReloadServerData();
-    }
     protected override async Task OnInitializedAsync()
     {
-        tagCategories = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? default!;
+        tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes") ?? default!;
     }
 
-    private void BackupItem(object element)
+    private async Task DeleteRows(MouseEventArgs args)
     {
-        elementBeforeEdit = new()
-        {
-            Name = ((TagTypeViewModel)element).Name,
-            Details = ((TagTypeViewModel)element).Details
-        };
-    }
-
-    private void ItemHasBeenCommitted(object element)
-    {
-        Snackbar.Add($"{((TagTypeViewModel)element).Name} is updated successfully.", Severity.Success);
-    }
-
-    private void ResetItemToOriginalValues(object element)
-    {
-        ((TagTypeViewModel)element).Name = elementBeforeEdit.Name;
-        ((TagTypeViewModel)element).Details = elementBeforeEdit.Details;        
-    }
-    
-    @*private async Task Delete()
-    {
-        var deleteResult = await http.DeleteAsync($"api/tags");
+        var deleteResult = await Http.DeleteAsync($"api/tagtypes");
         if (deleteResult.IsSuccessStatusCode)
         {
-            await message.Success($"Tag deleted successfully.", 2);
+            Snackbar.Add("Tag(s) deleted successfully.", Severity.Success);
 
             // Remove selected from viewmodels as well
-            selectedRows.ForEach(item =>
+            selectedItems.ToList().ForEach(item =>
             {
-                tagViewModels.Remove(item);
-
+                tagCategories.Remove(item);
             });
 
             StateHasChanged();
         }
-    }*@
+    }
 }
