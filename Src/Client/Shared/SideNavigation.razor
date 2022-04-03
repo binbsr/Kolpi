@@ -3,22 +3,23 @@
         <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
         <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
         <MudDivider Class="my-2" />
-        <MudNavLink Href="/dashboard" Icon="@Icons.Filled.Dashboard">Dashboard</MudNavLink>
-        <MudNavLink Href="/users" Icon="@Icons.Filled.Storage">Users</MudNavLink>
+        <MudNavLink Href="/dashboard" Icon="@Icons.TwoTone.Dashboard">Dashboard</MudNavLink>
+        <MudNavLink Href="/questions" Icon="@Icons.TwoTone.QuestionAnswer" >Question Bank</MudNavLink>
         
-        <MudNavGroup Title="Questions" Icon="@Icons.Filled.QuestionMark" Expanded="true">
-                <MudNavLink Href="/questions" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Questions</MudNavLink>
-                <MudNavLink Href="/question/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+        <MudNavGroup Title="Questions" Icon="@Icons.TwoTone.QuestionMark" Expanded="true">
+                <MudNavLink Href="/question/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
+                <MudNavLink Href="/question/me" Icon="@Icons.TwoTone.Person" IconColor="Color.Info">My Content</MudNavLink>
+                <MudNavLink Href="/question/review" Icon="@Icons.TwoTone.Reviews" IconColor="Color.Info">Review</MudNavLink>
         </MudNavGroup>
 
-        <MudNavGroup Title="Admin" Icon="@Icons.Filled.AdminPanelSettings" Expanded="false">
-            <MudNavGroup Title="Tagging" Icon="@Icons.Filled.Tag" Expanded="true">
-                <MudNavLink Href="/tags" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
-                <MudNavLink Href="/tags/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+        <MudNavGroup Title="Admin" Icon="@Icons.TwoTone.AdminPanelSettings" Expanded="false">
+            <MudNavGroup Title="Tagging" Icon="@Icons.TwoTone.Tag" Expanded="true">
+                <MudNavLink Href="/tags" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
+                <MudNavLink Href="/tags/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
             </MudNavGroup>
-            <MudNavGroup Title="Tag Categories" Icon="@Icons.Filled.Category" Expanded="true">
-                <MudNavLink Href="/tagtypes" Icon="@Icons.Filled.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
-                <MudNavLink Href="/tagtypes/add" Icon="@Icons.Filled.Add" IconColor="Color.Info">Add New</MudNavLink>
+            <MudNavGroup Title="Tag Categories" Icon="@Icons.TwoTone.Category" Expanded="true">
+                <MudNavLink Href="/tagtypes" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
+                <MudNavLink Href="/tagtypes/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
             </MudNavGroup>                
         </MudNavGroup>
         

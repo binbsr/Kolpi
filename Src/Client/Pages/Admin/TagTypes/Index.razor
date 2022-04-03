@@ -12,27 +12,26 @@
 }
 else if (tagCategories.Any())
 {
-    <MudTable Items="@tagCategories" Hover="@true" MultiSelection="@true" @bind-SelectedItems="selectedItems">
-        <ToolBarContent>
-            <MudForm @ref="deleteForm">
-                <MudButton Color="Color.Error"
-                       Disabled="@(SelectedRowCount <= 0)"
-                       StartIcon="@Icons.Material.Filled.Delete"
-                       OnClick="DeleteRows">
-                    @DeleteLabel
-                </MudButton>
-            </MudForm>
-        </ToolBarContent>
+    <MudTable Items="@tagCategories" Hover="@true">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Category Name</MudTableSortLabel></MudTh>
             <MudTh>Details</MudTh>
             <MudTh>Color Code</MudTh>
+            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Details">@context.Details</MudTd>
             <MudTd DataLabel="Details">
                 <span style="color:@context.ColorCode">@context.Name</span>
+            </MudTd>
+            <MudTd>
+                <MudIconButton Color="Color.Error"
+                       Icon="@Icons.Material.Filled.Delete"
+                       Size="Size.Small"
+                       Title="Remove"
+                       OnClick="_ => DeleteRow(context)">                       
+                </MudIconButton>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
@@ -53,29 +52,28 @@ else
     List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
     private MudTable<TagTypeViewModel> table = default!;
     private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
-    public int SelectedRowCount => selectedItems.Count;
-    public string DeleteLabel => $"Delete {SelectedRowCount} Items";
-    MudForm deleteForm;
+    [Inject] private IDialogService DialogService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes") ?? default!;
     }
 
-    private async Task DeleteRows(MouseEventArgs args)
+    private async Task DeleteRow(TagTypeViewModel modelToDelete)
     {
-        var deleteResult = await Http.DeleteAsync($"api/tagtypes");
+        var result = await DialogService.ShowMessageBox("Delete Category", 
+            message: $"Are you sure to delete {modelToDelete.Name}?", 
+            yesText: "Delete",
+            cancelText: "Cancel");
+
+        if (result == null)
+            return;
+
+        var deleteResult = await Http.DeleteAsync($"api/tagtypes/{modelToDelete.Id}");
         if (deleteResult.IsSuccessStatusCode)
         {
-            Snackbar.Add("Tag(s) deleted successfully.", Severity.Success);
-
-            // Remove selected from viewmodels as well
-            selectedItems.ToList().ForEach(item =>
-            {
-                tagCategories.Remove(item);
-            });
-
-            StateHasChanged();
+            Snackbar.Add("Tag category deleted successfully.", Severity.Success);
+            tagCategories.Remove(modelToDelete);
         }
     }
 }
