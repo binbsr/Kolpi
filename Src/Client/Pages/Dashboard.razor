@@ -1,0 +1,124 @@
+﻿@page "/dashboard"
+
+@using Kolpi.Client.Components
+@using Kolpi.Shared.ViewModels
+
+@inject HttpClient Http
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="3">
+        <Statistic Title="Students" Value="23125" Href="/students" Icon="@Icons.Material.Filled.Groups"
+            IconColor="@Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <Statistic Title="Staffs" Value="2150" Href="/staffs" Icon="@Icons.Material.Filled.People"
+            IconColor="@Color.Secondary" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <Statistic Title="Schools" Value="34" Href="/schools" Icon="@Icons.Material.Filled.School"
+            IconColor="@Color.Success" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <Statistic Title="Budget Allocated" Value="34%" Href="/budget/education" Icon="@Icons.Material.Filled.Money"
+            IconColor="@Color.Warning" />
+    </MudItem>
+
+    <MudItem xs="12" sm="12" md="6">
+        <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@data" InputLabels="@labels">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="6">
+        <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
+            <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="12" md="6">
+        <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
+            <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%"
+                Height="350px"></MudChart>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="6">
+        <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
+            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%"
+                Height="350" ChartOptions="options"></MudChart>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Elevation="25">
+            <MudList Clickable="true">
+                <MudListSubheader>Recent Notices</MudListSubheader>
+                @foreach (var notice in notices)
+                {
+                    <MudListItem>
+                        <div class="d-flex flex-row">
+                            <MudChip Label="true" Style="width:100px;" Color="Color.Success">@notice.Dated ago</MudChip>
+                            <MudAvatar Class="ml-4 mud-elevation-25">
+                                <MudIcon Icon="@notice.Avatar" Class="mx-4" />
+                            </MudAvatar>
+                            <div class="ml-6">
+                                <MudText Typo="Typo.subtitle2">@notice.Title</MudText>
+                                <MudText Typo="Typo.body2">@notice.Description</MudText>
+                            </div>
+                            <MudChip Label="true" Color="Color.Secondary" Class="ml-auto mud-elevation-25">From
+                                @notice.School</MudChip>
+                        </div>
+                    </MudListItem>
+                }
+
+            </MudList>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private ChartOptions options = new ChartOptions();
+    public List<ChartSeries> Series = new List<ChartSeries>()
+{
+new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+};
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    public double[] data = { 50, 25, 20, 5 };
+    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+"Hydro", "Geothermal", "Fossile", "Nuclear", "Solar", "Wind", "Oil",
+"Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+    int totalTags;
+    int totalTagCategoriess;
+    protected override async Task OnInitializedAsync()
+    {
+        options.InterpolationOption = InterpolationOption.NaturalSpline;
+        totalTags = await Http.GetFromJsonAsync<int>("api/tags/totalcount");
+        totalTagCategoriess = await Http.GetFromJsonAsync<int>("api/tagtypes/totalcount");
+    }
+
+    Notice[] notices = new Notice[]
+    {
+new Notice
+{
+Description = "There are many variations of passages of Lorem Ipsum available...",
+Title = "Reactor Engineer",
+Avatar = Icons.Custom.Brands.Apple, School="Saraswati Ma. Vi.",
+Dated= TimeSpan.FromDays(1).ToString()
+},
+new Notice { Description = "There are many variations of passages of Lorem Ipsum available...", Title = "Developer",
+Avatar = Icons.Custom.Brands.Google, School="Saraswati Ma. Vi.", Dated=TimeSpan.FromDays(2).ToString() },
+new Notice { Description = "There are many variations of passages of Lorem Ipsum available...", Title = "CSS Magician",
+Avatar = Icons.Custom.Brands.Microsoft, School="Saraswati Ma. Vi.", Dated=TimeSpan.FromDays(3).ToString() },
+    };
+
+    class Notice
+    {
+        public string Avatar;
+        public string Title;
+        public string Description;
+        public string School;
+        public string Dated;
+    }
+}

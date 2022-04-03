@@ -58,7 +58,7 @@
         foreach (var link in fragments)
         {
             var lastLink = _items.Last();
-            _items.Add(new BreadcrumbItem(link.ToUpper(), $"{lastLink.Href}/{link}", link == fragments.Last()));
+            _items.Add(new BreadcrumbItem(link.ToUpper(), $"{lastLink.Href}{link}", link == fragments.Last()));
         }
 
         base.OnParametersSet();
