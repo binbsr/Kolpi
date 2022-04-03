@@ -25,6 +25,12 @@ namespace Kolpi.Server.Controllers
             this.kolpiDbContext = kolpiDbContext;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            return Ok();
+        }
+
         [HttpPost]
         public void Post([FromBody] QuestionViewModel questionViewModel)
         {
