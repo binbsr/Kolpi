@@ -1,78 +1,38 @@
-﻿@page "/tags/index"
+﻿@page "/tags"
 
 @inject HttpClient http
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
 
-@*<Space Size=@("middle") Style="margin-bottom:10px">
-    <SpaceItem>
-        <Button Shape="round" Icon="plus" Type="dashed">
-            <a href="/tags/add">Add Tag</a>
-        </Button>
-    </SpaceItem>
-    <SpaceItem>
-        <Tooltip Title="@("Delete selected tags")" Placement="Placement.Left">
-            <Button Shape="round" Type="danger" Icon="delete" Disabled="@(!selectedRows?.Any() ?? true)">
-                Delete
-            </Button>
-        </Tooltip>
-    </SpaceItem>
-    <SpaceItem>
-        <Tooltip Title="@("Approve selected tags")" Placement="Placement.Left">
-            <Button Shape="round" Type="primary" Icon="check" Disabled="@(!selectedRows?.Any() ?? true)">
-                Approve
-            </Button>
-        </Tooltip>
-    </SpaceItem>
-    @if (selectedRows != null && selectedRows.Any())
-    {
-        <SpaceItem>
-            <b>@selectedRows.Count()</b> rows selected
-        </SpaceItem>
-    }
-</Space>*@
-
-@if (tagViewModels == null)
-{
-    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave"></MudSkeleton>
-}
-else if (tagViewModels.Any())
-{
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<TagViewModel>>>(ServerReload))"
+<MudTable ServerData="@(new Func<TableState, Task<TableData<TagViewModel>>>(ServerReload))"
           Dense="true" Hover="true" @ref="table">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Question Tags</MudText>
-            <MudSpacer />
-            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Question Tags</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        </ToolBarContent>
-        <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagViewModel">Tag Name</MudTableSortLabel></MudTh>
-            <MudTh>Details</MudTh>
-            <MudTh><MudTableSortLabel SortLabel="category_field" T="TagViewModel">Tag Category</MudTableSortLabel></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Nr">@context.Name</MudTd>
-            <MudTd DataLabel="Sign">@context.Details</MudTd>
-            <MudTd DataLabel="Name">@context.TagTypeName</MudTd>
-        </RowTemplate>
-        <NoRecordsContent>
-            <MudText>No matching records found</MudText>
-        </NoRecordsContent>
-        <LoadingContent>
-            <MudText>Loading...</MudText>
-        </LoadingContent>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-    </MudTable>
-
-}
-else
-{
-    <EmptyResult />
-}
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="TagViewModel">Tag Name</MudTableSortLabel></MudTh>
+        <MudTh>Details</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="category_field" T="TagViewModel">Tag Category</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Name</MudTd>
+        <MudTd DataLabel="Sign">@context.Details</MudTd>
+        <MudTd DataLabel="Name">@context.TagTypeName</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
 @code {
 
@@ -90,28 +50,28 @@ else
     {
         int pageIndex = state.Page;
         int pageSize = state.PageSize;
-        string url = $"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}"; 
+        string url = $"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}";
         TagsFilteredViewModel data = await http.GetFromJsonAsync<TagsFilteredViewModel>(url) ?? new TagsFilteredViewModel();
-        
+
         return new TableData<TagViewModel>() { TotalItems = data.TotalCount, Items = data.Records };
     }
-    
+
 
     @*private async Task Delete()
-    {
+        {
         var deleteResult = await http.DeleteAsync($"api/tags");
         if (deleteResult.IsSuccessStatusCode)
         {
-            await message.Success($"Tag deleted successfully.", 2);
+        await message.Success($"Tag deleted successfully.", 2);
 
-            // Remove selected from viewmodels as well
-            selectedRows.ForEach(item =>
-            {
-                tagViewModels.Remove(item);
+        // Remove selected from viewmodels as well
+        selectedRows.ForEach(item =>
+        {
+        tagViewModels.Remove(item);
 
-            });
+        });
 
-            StateHasChanged();
+        StateHasChanged();
         }
-    }*@
+        }*@
 }
