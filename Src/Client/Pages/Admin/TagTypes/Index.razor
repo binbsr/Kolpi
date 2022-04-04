@@ -5,6 +5,7 @@
 
 @using Kolpi.Shared.ViewModels
 @using Kolpi.Client.Components.Results
+@using MudBlazor.Utilities
 
 @if (tagCategories == null)
 {
@@ -12,28 +13,55 @@
 }
 else if (tagCategories.Any())
 {
-    <MudTable Items="@tagCategories" Hover="@true">
+    <MudTable Items="@tagCategories" Hover="@true"
+          CanCancelEdit="true"
+          CommitEditTooltip="Save"
+          IsEditRowSwitchingBlocked="true"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="(e) => ItemHasBeenCommitted(e)">
+        <ToolBarContent>
+            <MudButton Color="Color.Tertiary"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add" 
+                   Href="/tagtypes/add">
+                Add Category
+            </MudButton>
+        </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Category Name</MudTableSortLabel></MudTh>
+            <MudTh></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Name</MudTableSortLabel></MudTh>
             <MudTh>Details</MudTh>
             <MudTh>Color Code</MudTh>
-            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd>
+                <MudIconButton Color="Color.Error"
+                           Icon="@Icons.Material.Filled.Delete"
+                           Size="Size.Small"
+                           Title="Remove"
+                           OnClick="_ => DeleteRow(context)">
+                </MudIconButton>
+            </MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Details">@context.Details</MudTd>
             <MudTd DataLabel="Details">
                 <span style="color:@context.ColorCode">@context.Name</span>
             </MudTd>
-            <MudTd>
-                <MudIconButton Color="Color.Error"
-                       Icon="@Icons.Material.Filled.Delete"
-                       Size="Size.Small"
-                       Title="Remove"
-                       OnClick="_ => DeleteRow(context)">                       
-                </MudIconButton>
-            </MudTd>
         </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd></MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField @bind-Value="@context.Name" Required />
+            </MudTd>
+            <MudTd DataLabel="Details">
+                <MudTextField @bind-Value="@context.Details" Required />
+            </MudTd>
+            <MudTd DataLabel="ColorCode">
+                <MudColorPicker ColorPickerView="ColorPickerView.Palette"
+                            Variant="Variant.Filled" @bind-Value="cColor" />
+            </MudTd>
+        </RowEditingTemplate>
         <NoRecordsContent>
             <MudText>No matching records found</MudText>
         </NoRecordsContent>
@@ -52,7 +80,12 @@ else
     List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
     private MudTable<TagTypeViewModel> table = default!;
     private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
-    [Inject] private IDialogService DialogService { get; set; }
+    private TagTypeViewModel categoryBeforeEdit;
+    private MudColor cColor;
+
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,8 +94,8 @@ else
 
     private async Task DeleteRow(TagTypeViewModel modelToDelete)
     {
-        var result = await DialogService.ShowMessageBox("Delete Category", 
-            message: $"Are you sure to delete {modelToDelete.Name}?", 
+        var result = await DialogService.ShowMessageBox("Delete Category",
+            message: $"Are you sure to delete {modelToDelete.Name}?",
             yesText: "Delete",
             cancelText: "Cancel");
 
@@ -75,5 +108,39 @@ else
             Snackbar.Add("Tag category deleted successfully.", Severity.Success);
             tagCategories.Remove(modelToDelete);
         }
+        else
+        {
+            Snackbar.Add($"Tag category delete failed. Error: {deleteResult.ReasonPhrase}", Severity.Error);
+        }
+    }
+
+    private void BackupItem(object element)
+    {
+        categoryBeforeEdit = new()
+            {
+                Name = ((TagTypeViewModel)element).Name,
+                Details = ((TagTypeViewModel)element).Details,
+                ColorCode = ((TagTypeViewModel)element).ColorCode,
+            };
+    }
+
+    private async Task ItemHasBeenCommitted(object element)
+    {
+        var modelToUpdate = (TagTypeViewModel)element;
+        modelToUpdate.ColorCode = cColor.Value;
+
+        //Update model to database
+        var updateResult = await Http.PutAsJsonAsync($"api/tagtypes/{modelToUpdate.Id}", modelToUpdate);
+        if (updateResult.IsSuccessStatusCode)
+            Snackbar.Add("Tag category updated successfully.", Severity.Success);
+        else
+            Snackbar.Add($"Tag category update failed. Error: {updateResult.ReasonPhrase}", Severity.Error);
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((TagTypeViewModel)element).Name = categoryBeforeEdit.Name;
+        ((TagTypeViewModel)element).Details = categoryBeforeEdit.Details;
+        ((TagTypeViewModel)element).ColorCode = categoryBeforeEdit.ColorCode;
     }
 }
