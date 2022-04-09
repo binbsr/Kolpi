@@ -9,12 +9,19 @@
         <MudCardContent>
             <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
             <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details" For="@(() => Model.Details)" />
-            <MudAutocomplete T="TagTypeViewModel" Label="Tag Category" SearchFunc="Search" ResetValueOnEmptyText=true
-                @bind-Value="TagType" />
+            <MudAutocomplete T="TagTypeViewModel"
+                             Label="Tag Category"
+                             SearchFunc="Search"
+                             CoerceText="true"
+                             Clearable="true"
+                             ResetValueOnEmptyText=true
+                             ToStringFunc="@(e => e.Name)"
+                             ValueChanged = "TagTypeChanged" />
+
         </MudCardContent>
         <MudCardActions>
-            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Tertiary"
+                       StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
                 Save Tag
             </MudButton>
         </MudCardActions>
@@ -25,11 +32,14 @@
 
     [Parameter]
     public TagViewModel Model { get; set; } = new TagViewModel();
-
-    public TagTypeViewModel TagType { get; set; } = default!;
     public TagTypeViewModel[] TagTypes { get; set; } = default!;
 
     bool isSaving = false;
+
+    private void TagTypeChanged(TagTypeViewModel tagTypeViewModel)
+    {
+        Model.TagTypeId = tagTypeViewModel.Id;
+    }
 
     private async Task<IEnumerable<TagTypeViewModel>> Search(string value)
     {
@@ -50,13 +60,11 @@
         if (Model.Id == default)
         {
             // Adding new
-            Model.TagTypeId = TagType.Id;
             saveTask = Http.PostAsJsonAsync("api/tags", Model);
         }
         else
         {
             // Modify existing
-            Model.TagTypeId = TagType.Id;
             saveTask = Http.PutAsJsonAsync($"api/tags/{Model.Id}", Model);
         }
 

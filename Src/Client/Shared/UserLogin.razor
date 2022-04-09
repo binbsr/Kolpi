@@ -55,7 +55,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Email = (await authenticationStateTask).User.Identity.Name ?? string.Empty;
+        var authState = await authenticationStateTask;
+
+        Email = authState?.User?.Identity?.Name ?? string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(Email))
+            return;
+        
         FirstName = Email.Substring(0, Email.IndexOf('@'));
         FirstLetterOfName = FirstName[0];
     }
