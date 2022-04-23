@@ -1,5 +1,6 @@
 ﻿using Kolpi.Server;
-using Kolpi.Shared.ViewModels;
+using Kolpi.WebShared;
+using Kolpi.WebShared.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

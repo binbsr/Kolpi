@@ -1,0 +1,27 @@
+﻿ @page "/tags/update/{Id:int}"
+
+@inject HttpClient Http
+
+@using Kolpi.WebShared.ViewModels
+
+@if (tagViewModel == null)
+{
+    <MudSkeleton Animation="Animation.Wave" />
+}
+else
+{
+    <EditTag Model="tagViewModel" />
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    TagViewModel tagViewModel = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tagViewModel = await Http.GetFromJsonAsync<TagViewModel>($"api/tags/{Id}") ?? default!;
+    }
+} 

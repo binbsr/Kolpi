@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Src\Shared\Kolpi.Shared.csproj" />
+    <ProjectReference Include="..\..\Src\Kolpi.ApplicationCore\Kolpi.ApplicationCore.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
-﻿using Kolpi.Server;
-using Kolpi.Server.Data;
+﻿using Kolpi.Infrastructure.Data;
+using Kolpi.Server;
 using Kolpi.Server.Extensions;
+using Kolpi.WebShared;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -54,7 +55,7 @@ namespace Kolpi.FunctionalTests
 
                         try
                         {
-                            SeedData.PopulateTestData(db);
+                            //SeedData.PopulateTestData(db);
                         }
                         catch (Exception ex)
                         {

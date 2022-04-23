@@ -1,4 +1,4 @@
-﻿using Kolpi.Shared.Models;
+﻿using Kolpi.ApplicationCore.Entities;
 
 namespace Kolpi.UnitTests
 {
