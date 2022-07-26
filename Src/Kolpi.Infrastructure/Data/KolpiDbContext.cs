@@ -7,13 +7,24 @@ using Duende.IdentityServer.EntityFramework.Options;
 
 namespace Kolpi.Infrastructure.Data
 {
-    public class KolpiDbContext : ApiAuthorizationDbContext<KolpiUser>
+    public class KolpiDbContext : DbContext
     {
         public KolpiDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+            DbContextOptions options) : base(options)
         {
         }
+
+        // Kolpi Db tables
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<AnswerOption> AnswerOptions { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<TagType> TagTypes { get; set; }
+        public DbSet<QuestionStatus> QuestionStatuses { get; set; }
+        public DbSet<PrivilegeLookup> PrivilegeLookups { get; set; }
+        public DbSet<ExamPaper> ExamPapers { get; set; }
+        public DbSet<Exam> Exams { get; set; }
+        public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
+        public DbSet<QuestionTag> QuestionTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,9 +35,13 @@ namespace Kolpi.Infrastructure.Data
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins")
+                .HasNoKey();
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles")
+                .HasKey(x => new { x.UserId, x.RoleId });
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens")
+                .HasNoKey();
+
 
             // Tag to tagtypes
             modelBuilder.Entity<Tag>()
@@ -67,17 +82,5 @@ namespace Kolpi.Infrastructure.Data
                 .WithMany(qs => qs.Questions)
                 .HasForeignKey(q => q.QuestionStatusId);
         }
-
-        // Kolpi Db tables
-        public DbSet<Question> Questions { get; set; }
-        public DbSet<AnswerOption> AnswerOptions { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<TagType> TagTypes { get; set; }
-        public DbSet<QuestionStatus> QuestionStatuses { get; set; }
-        public DbSet<PrivilegeLookup> PrivilegeLookups { get; set; }
-        public DbSet<ExamPaper> ExamPapers { get; set; }
-        public DbSet<Exam> Exams { get; set; }
-        public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
-        public DbSet<QuestionTag> QuestionTags { get; set; }
     }
 }

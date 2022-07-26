@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Kolpi.Admin\Kolpi.Admin.csproj" />
 		<ProjectReference Include="..\Kolpi.ApplicationCore\Kolpi.ApplicationCore.csproj" />
 		<ProjectReference Include="..\Kolpi.Infrastructure\Kolpi.Infrastructure.csproj" />
 		<ProjectReference Include="..\Kolpi.WebShared\Kolpi.WebShared.csproj" />

@@ -1,5 +1,5 @@
 <MudPaper Width="220px" Class="d-inline-flex py-3" Elevation="0">
-    <MudNavMenu Class="mud-width-full">
+    <MudNavMenu Class="mud-width-full" Dense>
         <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
         <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
         <MudDivider Class="my-2" />
@@ -13,11 +13,11 @@
         </MudNavGroup>
 
         <MudNavGroup Title="Admin" Icon="@Icons.TwoTone.AdminPanelSettings" Expanded="true">
-            <MudNavGroup Title="Tagging" Icon="@Icons.TwoTone.Tag" Expanded="true">
+            <MudNavGroup Title="Tagging" Icon="@Icons.TwoTone.Tag">
                 <MudNavLink Href="/tags" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
                 <MudNavLink Href="/tags/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
             </MudNavGroup>
-            <MudNavGroup Title="Tag Categories" Icon="@Icons.TwoTone.Category" Expanded="true">
+            <MudNavGroup Title="Tag Categories" Icon="@Icons.TwoTone.Category">
                 <MudNavLink Href="/tagtypes" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
                 <MudNavLink Href="/tagtypes/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
             </MudNavGroup>                
