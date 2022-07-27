@@ -17,9 +17,7 @@ namespace Kolpi.WebShared.Mapper
                 Name = model.Name,
                 Details = model.Details,
                 IsFinalized = model.IsFinalized,
-                CreatedBy = model.CreatedBy,
                 CreatedAt = model.CreatedAt.Relativize(),
-                ModifiedBy = model.ModifiedBy,
                 ModifiedAt = model.ModifiedAt.Relativize(),
                 TagTypeId = model.TagTypeId,
                 TagTypeName = model.TagType?.Name,
@@ -39,7 +37,7 @@ namespace Kolpi.WebShared.Mapper
                 Id = viewModel.Id,
                 Name = viewModel.Name,
                 Details = viewModel.Details,
-                IsFinalized = viewModel.IsFinalized,
+                IsFinalized = viewModel.IsFinalized ?? false,
                 TagTypeId = viewModel.TagTypeId
             };
 

@@ -1,8 +1,5 @@
 ﻿using Kolpi.ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Kolpi.Infrastructure.Data;
 
 namespace Kolpi.ApplicationCore.Services
@@ -18,18 +15,19 @@ namespace Kolpi.ApplicationCore.Services
 
         public Task<List<Tag>> GetAllAsync(int pageIndex, int pageSize)
         {
-            int skipCount = (pageIndex - 1) * pageSize;
+            int skipCount = pageIndex * pageSize;
 
-            return dbContext.Set<Tag>()
+            var results = dbContext.Set<Tag>()
                 .Include(t => t.TagType)
                 .Skip(skipCount)
                 .Take(pageSize)
                 .ToListAsync();
+            return results;
         }
 
         public Task<List<Tag>> GetAllAsync(string searchText, int pageIndex, int pageSize)
         {
-            int skipCount = (pageIndex - 1) * pageSize;
+            int skipCount = pageIndex * pageSize;
 
             return dbContext.Set<Tag>()
                 .Where(t => EF.Functions.Like(t.Name, $"%{searchText}%"))

@@ -24,9 +24,9 @@
         <MudTh><MudTableSortLabel SortLabel="category_field" T="TagViewModel">Tag Category</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Name</MudTd>
-        <MudTd DataLabel="Sign">@context.Details</MudTd>
-        <MudTd DataLabel="Name">@context.TagTypeName</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Details">@context.Details</MudTd>
+        <MudTd DataLabel="TagCategory">@context.TagTypeName</MudTd>
     </RowTemplate>
     <NoRecordsContent>
         <MudText>No matching records found</MudText>

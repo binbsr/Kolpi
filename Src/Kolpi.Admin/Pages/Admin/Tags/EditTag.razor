@@ -7,21 +7,31 @@
     <DataAnnotationsValidator />
     <MudCard>
         <MudCardContent>
-            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
-            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details" For="@(() => Model.Details)" />
+            <MudTextField Label="Name" 
+                HelperText="At least 2 characters"
+                @bind-Value="Model.Name" 
+                For="@(() => Model.Name)" />
+            <MudTextField Label="Details" 
+                Lines="3" 
+                Class="mt-3" 
+                @bind-Value="Model.Details" 
+                For="@(() => Model.Details)" />
             <MudAutocomplete T="TagTypeViewModel"
-                             Label="Tag Category"
-                             SearchFunc="Search"
-                             CoerceText="true"
-                             Clearable="true"
-                             ResetValueOnEmptyText=true
-                             ToStringFunc="@(e => e.Name)"
-                             ValueChanged = "TagTypeChanged" />
-
+                Label="Tag Category"
+                SearchFunc="Search"
+                CoerceText="true"
+                Clearable="true"
+                ResetValueOnEmptyText=true
+                ToStringFunc="@(e => e.Name)"
+                ValueChanged = "TagTypeChanged" />
         </MudCardContent>
         <MudCardActions>
-            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Tertiary"
-                       StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+            <MudButton Disabled="isSaving" 
+                ButtonType="ButtonType.Submit" 
+                Variant="Variant.Filled" 
+                Color="Color.Tertiary"
+                StartIcon="@Icons.Material.Filled.Save" 
+                Class="ml-auto">
                 Save Tag
             </MudButton>
         </MudCardActions>
@@ -32,6 +42,7 @@
 
     [Parameter]
     public TagViewModel Model { get; set; } = new TagViewModel();
+    
     public TagTypeViewModel[] TagTypes { get; set; } = default!;
 
     bool isSaving = false;
@@ -50,12 +61,11 @@
         return TagTypes.Where(y => y.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private async Task OnValidSubmit(EditContext context)
+    private async Task OnValidSubmit(EditContext editContext)
     {
         isSaving = true;
 
         Task<HttpResponseMessage> saveTask;
-        var tagTypeId = TagTypes.FirstOrDefault(x => x.Name == Model.TagTypeName)?.Id;
 
         if (Model.Id == default)
         {

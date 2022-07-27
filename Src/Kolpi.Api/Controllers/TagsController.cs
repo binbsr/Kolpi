@@ -31,9 +31,17 @@ namespace Kolpi.Server.Controllers
         public async Task<ActionResult<IEnumerable<TagsFilteredViewModel>>> Get([FromQuery] string searchText = default,
             int pageIndex = 1, int pageSize = 10)
         {
-            List<Tag> tagModels = searchText != default ?
-                await tagService.GetAllAsync(searchText, pageIndex, pageSize):// Search with paging
-                await tagService.GetAllAsync(pageIndex, pageSize);//No search, just paging may be
+            List<Tag> tagModels = default;
+            try
+            {
+                tagModels = searchText != default ?
+                    await tagService.GetAllAsync(searchText, pageIndex, pageSize) :// Search text with paging
+                    await tagService.GetAllAsync(pageIndex, pageSize);//No search text, just paging
+            }
+            catch(Exception e)
+            {
+                return Problem(e.StackTrace);
+            }
 
             var tagViewModels = tagModels.ToViewModel();
             int totalCount = tagModels.Count;
@@ -69,13 +77,18 @@ namespace Kolpi.Server.Controllers
             var tagModel = tagViewModel.ToModel();
 
             // Get userid creating this tag
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
             tagModel.AddCreatedStamps(userId);
 
-            var rowsAdded = await tagService.AddAsync(tagModel);
-
-            if (rowsAdded <= 0)
-                return Problem("Could not insert into the store.", nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Insert");
+            try
+            {
+                var rowsAdded = await tagService.AddAsync(tagModel);
+            }
+            catch (Exception ex)
+            {
+                return Problem($"Could not insert into the store. Error: {ex.StackTrace}", 
+                    nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Insert");
+            }
 
             return CreatedAtAction(nameof(Get), new { id = tagModel.Id }, tagModel);
         }

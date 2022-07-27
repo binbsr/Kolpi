@@ -8,8 +8,13 @@
     <DataAnnotationsValidator />
     <MudCard>
         <MudCardContent>
-            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
-            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details"
+            <MudTextField Label="Name" 
+                @bind-Value="Model.Name" 
+                For="@(() => Model.Name)" />
+            <MudTextField Label="Details" 
+                Lines="3" 
+                Class="mt-3" 
+                @bind-Value="Model.Details"
                 For="@(() => Model.Details)" />
             <MudColorPicker Label="Color Code" ValueChanged="ColorChanged" ColorPickerView="ColorPickerView.Palette"
                 Variant="Variant.Filled" PickerVariant="PickerVariant.Dialog" />
@@ -68,6 +73,5 @@
         });
 
         StateHasChanged();
-
     }
 }

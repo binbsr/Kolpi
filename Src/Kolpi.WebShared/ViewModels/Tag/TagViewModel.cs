@@ -12,22 +12,20 @@ namespace Kolpi.WebShared.ViewModels
         
         [MinLength(5), Required]
         public string Details { get; set; }
-        public bool IsFinalized { get; set; }
+        public bool? IsFinalized { get; set; }
 
         public int TagTypeId { get; set; }
         
-        [DisplayName("Type"), Required]
-        public string TagTypeName { get; set; }
+        [DisplayName("Type")]
+        public string? TagTypeName { get; set; }
 
         [DisplayName("Color Code")]
-        public string TagColorCode { get; set; }
+        public string? TagColorCode { get; set; }
 
         [DisplayName("Created")]
-        public string CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-
+        public string? CreatedAt { get; set; }
+        
         [DisplayName("Modified")]
-        public string ModifiedAt { get; set; }
-        public string ModifiedBy { get; set; }
+        public string? ModifiedAt { get; set; }
     }
 }
