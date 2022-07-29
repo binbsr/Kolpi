@@ -11,6 +11,6 @@ namespace Kolpi.ApplicationCore.Entities
         public byte DurationHours { get; set; }
         public string Attendees { get; set; }
 
-        public virtual List<ExamPaper> ExamPapers  { get; set; }
+        public virtual ICollection<ExamPaper> ExamPapers  { get; set; }
     }
 }

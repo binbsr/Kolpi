@@ -8,6 +8,6 @@ namespace Kolpi.ApplicationCore.Entities
         public string Title { get; set; }
         public string Details { get; set; }
 
-        public List<ExamPaperQuestion> ExamPaperQuestions  { get; set; }
+        public ICollection<Question> Questions  { get; set; }
     }
 }

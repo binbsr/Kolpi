@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Kolpi.ApplicationCore.Entities;
-using Duende.IdentityServer.EntityFramework.Options;
 
 namespace Kolpi.Infrastructure.Data
 {
@@ -23,8 +20,6 @@ namespace Kolpi.Infrastructure.Data
         public DbSet<PrivilegeLookup> PrivilegeLookups { get; set; }
         public DbSet<ExamPaper> ExamPapers { get; set; }
         public DbSet<Exam> Exams { get; set; }
-        public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
-        public DbSet<QuestionTag> QuestionTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,45 +37,59 @@ namespace Kolpi.Infrastructure.Data
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens")
                 .HasNoKey();
 
-
             // Tag to tagtypes
             modelBuilder.Entity<Tag>()
                 .HasOne(t => t.TagType)
                 .WithMany(tt => tt.Tags);
-
-            // Question and Tag, Join Table - many to many
-            modelBuilder.Entity<QuestionTag>()
-                .HasKey(t => new { t.QuestionId, t.TagId });
-
-            modelBuilder.Entity<QuestionTag>()
-                .HasOne(qt => qt.Question)
-                .WithMany(q => q.QuestionTags)
-                .HasForeignKey(qt => qt.QuestionId);
-
-            modelBuilder.Entity<QuestionTag>()
-                .HasOne(qt => qt.Tag)
-                .WithMany(t => t.QuestionTags)
-                .HasForeignKey(qt => qt.TagId);
-
-            // ExamPaper and Question, Join table - many to many
-            modelBuilder.Entity<ExamPaperQuestion>()
-            .HasKey(t => new { t.ExamPaperId, t.QuestionId });
-
-            modelBuilder.Entity<ExamPaperQuestion>()
-                .HasOne(epq => epq.ExamPaper)
-                .WithMany(e => e.ExamPaperQuestions)
-                .HasForeignKey(epq => epq.ExamPaperId);
-
-            modelBuilder.Entity<ExamPaperQuestion>()
-                .HasOne(epq => epq.Question)
-                .WithMany(q => q.ExamPaperQuestions)
-                .HasForeignKey(epq => epq.QuestionId);
 
             // Questionstatus to Question (one to many)
             modelBuilder.Entity<Question>()
                 .HasOne(q => q.QuestionStatus)
                 .WithMany(qs => qs.Questions)
                 .HasForeignKey(q => q.QuestionStatusId);
+
+            //Seeding
+
+            modelBuilder.Entity<TagType>()
+                .HasData(
+                    new TagType
+                    {
+                        Id = 1,
+                        Name = "Complexity",
+                        Details = "Tags that defines complexities of the question e.g. level-1, level-2 etc.",
+                        ColorCode = "green"
+                    },
+                    new TagType
+                    {
+                        Id = 2,
+                        Name = "Subject",
+                        Details = "Tags that defines subject categories of the question e.g. GK, GK-History, Physics etc.",
+                        ColorCode = "orange"
+                    }
+                );
+
+            modelBuilder.Entity<Tag>()
+                .HasData(
+                    new Tag
+                    {
+                        Id = 1,
+                        Name = "Level-1",
+                        Details = "Defines simplest objective questions.",
+                        TagTypeId = 1,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = "Test User",
+                    },
+                    new Tag
+                    {
+                        Id = 2,
+                        Name = "GK",
+                        Details = "Defines general knowledge questions.",
+                        TagTypeId = 2,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = "Test User",
+                    }
+                );
+
         }
     }
 }

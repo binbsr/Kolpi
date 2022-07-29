@@ -233,6 +233,32 @@ namespace Kolpi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Details = table.Column<string>(type: "TEXT", nullable: false),
+                    IsFinalized = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TagTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tags_TagTypes_TagTypeId",
+                        column: x => x.TagTypeId,
+                        principalTable: "TagTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnswerOptions",
                 columns: table => new
                 {
@@ -258,84 +284,72 @@ namespace Kolpi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExamPaperQuestions",
+                name: "ExamPaperQuestion",
                 columns: table => new
                 {
-                    ExamPaperId = table.Column<int>(type: "INTEGER", nullable: false),
-                    QuestionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ExamPapersId = table.Column<int>(type: "INTEGER", nullable: false),
+                    QuestionsId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExamPaperQuestions", x => new { x.ExamPaperId, x.QuestionId });
+                    table.PrimaryKey("PK_ExamPaperQuestion", x => new { x.ExamPapersId, x.QuestionsId });
                     table.ForeignKey(
-                        name: "FK_ExamPaperQuestions_ExamPapers_ExamPaperId",
-                        column: x => x.ExamPaperId,
+                        name: "FK_ExamPaperQuestion_ExamPapers_ExamPapersId",
+                        column: x => x.ExamPapersId,
                         principalTable: "ExamPapers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ExamPaperQuestions_Questions_QuestionId",
-                        column: x => x.QuestionId,
+                        name: "FK_ExamPaperQuestion_Questions_QuestionsId",
+                        column: x => x.QuestionsId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "QuestionTag",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Details = table.Column<string>(type: "TEXT", nullable: false),
-                    IsFinalized = table.Column<bool>(type: "INTEGER", nullable: false),
-                    TagTypeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    QuestionId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "TEXT", nullable: true)
+                    QuestionsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TagsId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionsId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_Tags_Questions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "Questions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Tags_TagTypes_TagTypeId",
-                        column: x => x.TagTypeId,
-                        principalTable: "TagTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QuestionTags",
-                columns: table => new
-                {
-                    QuestionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TagId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QuestionTags", x => new { x.QuestionId, x.TagId });
-                    table.ForeignKey(
-                        name: "FK_QuestionTags_Questions_QuestionId",
-                        column: x => x.QuestionId,
+                        name: "FK_QuestionTag_Questions_QuestionsId",
+                        column: x => x.QuestionsId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QuestionTags_Tags_TagId",
-                        column: x => x.TagId,
+                        name: "FK_QuestionTag_Tags_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "TagTypes",
+                columns: new[] { "Id", "ColorCode", "Details", "Name" },
+                values: new object[] { 1, "green", "Tags that defines complexities of the question e.g. level-1, level-2 etc.", "Complexity" });
+
+            migrationBuilder.InsertData(
+                table: "TagTypes",
+                columns: new[] { "Id", "ColorCode", "Details", "Name" },
+                values: new object[] { 2, "orange", "Tags that defines subject categories of the question e.g. GK, GK-History, Physics etc.", "Subject" });
+
+            migrationBuilder.InsertData(
+                table: "Tags",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "Details", "IsFinalized", "ModifiedAt", "ModifiedBy", "Name", "TagTypeId" },
+                values: new object[] { 1, new DateTime(2022, 7, 27, 23, 24, 44, 303, DateTimeKind.Local).AddTicks(8432), "Test User", "Defines simplest objective questions.", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Level-1", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Tags",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "Details", "IsFinalized", "ModifiedAt", "ModifiedBy", "Name", "TagTypeId" },
+                values: new object[] { 2, new DateTime(2022, 7, 27, 23, 24, 44, 303, DateTimeKind.Local).AddTicks(8451), "Test User", "Defines general knowledge questions.", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "GK", 2 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnswerOptions_QuestionId",
@@ -343,9 +357,9 @@ namespace Kolpi.Infrastructure.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamPaperQuestions_QuestionId",
-                table: "ExamPaperQuestions",
-                column: "QuestionId");
+                name: "IX_ExamPaperQuestion_QuestionsId",
+                table: "ExamPaperQuestion",
+                column: "QuestionsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamPapers_ExamId",
@@ -358,14 +372,9 @@ namespace Kolpi.Infrastructure.Migrations
                 column: "QuestionStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestionTags_TagId",
-                table: "QuestionTags",
-                column: "TagId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_QuestionId",
-                table: "Tags",
-                column: "QuestionId");
+                name: "IX_QuestionTag_TagsId",
+                table: "QuestionTag",
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_TagTypeId",
@@ -379,13 +388,13 @@ namespace Kolpi.Infrastructure.Migrations
                 name: "AnswerOptions");
 
             migrationBuilder.DropTable(
-                name: "ExamPaperQuestions");
+                name: "ExamPaperQuestion");
 
             migrationBuilder.DropTable(
                 name: "PrivilegeLookups");
 
             migrationBuilder.DropTable(
-                name: "QuestionTags");
+                name: "QuestionTag");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -412,19 +421,19 @@ namespace Kolpi.Infrastructure.Migrations
                 name: "ExamPapers");
 
             migrationBuilder.DropTable(
+                name: "Questions");
+
+            migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Exams");
 
             migrationBuilder.DropTable(
-                name: "Questions");
+                name: "QuestionStatuses");
 
             migrationBuilder.DropTable(
                 name: "TagTypes");
-
-            migrationBuilder.DropTable(
-                name: "QuestionStatuses");
         }
     }
 }

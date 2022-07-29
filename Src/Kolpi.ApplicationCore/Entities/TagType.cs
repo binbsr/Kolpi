@@ -8,6 +8,6 @@ namespace Kolpi.ApplicationCore.Entities
         public string Details { get; set; }
         public string ColorCode { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

@@ -11,13 +11,28 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kolpi.Infrastructure.Migrations
 {
     [DbContext(typeof(KolpiDbContext))]
-    [Migration("20220727163253_Initial")]
+    [Migration("20220727173944_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
+
+            modelBuilder.Entity("ExamPaperQuestion", b =>
+                {
+                    b.Property<int>("ExamPapersId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ExamPapersId", "QuestionsId");
+
+                    b.HasIndex("QuestionsId");
+
+                    b.ToTable("ExamPaperQuestion");
+                });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.AnswerOption", b =>
                 {
@@ -129,21 +144,6 @@ namespace Kolpi.Infrastructure.Migrations
                     b.HasIndex("ExamId");
 
                     b.ToTable("ExamPapers");
-                });
-
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.ExamPaperQuestion", b =>
-                {
-                    b.Property<int>("ExamPaperId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ExamPaperId", "QuestionId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("ExamPaperQuestions");
                 });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.KolpiUser", b =>
@@ -280,21 +280,6 @@ namespace Kolpi.Infrastructure.Migrations
                     b.ToTable("QuestionStatuses");
                 });
 
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.QuestionTag", b =>
-                {
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("QuestionId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("QuestionTags");
-                });
-
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -324,19 +309,38 @@ namespace Kolpi.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("QuestionId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TagTypeId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
-
                     b.HasIndex("TagTypeId");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2022, 7, 27, 23, 24, 44, 303, DateTimeKind.Local).AddTicks(8432),
+                            CreatedBy = "Test User",
+                            Details = "Defines simplest objective questions.",
+                            IsFinalized = false,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Level-1",
+                            TagTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2022, 7, 27, 23, 24, 44, 303, DateTimeKind.Local).AddTicks(8451),
+                            CreatedBy = "Test User",
+                            Details = "Defines general knowledge questions.",
+                            IsFinalized = false,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "GK",
+                            TagTypeId = 2
+                        });
                 });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.TagType", b =>
@@ -360,6 +364,22 @@ namespace Kolpi.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TagTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ColorCode = "green",
+                            Details = "Tags that defines complexities of the question e.g. level-1, level-2 etc.",
+                            Name = "Complexity"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ColorCode = "orange",
+                            Details = "Tags that defines subject categories of the question e.g. GK, GK-History, Physics etc.",
+                            Name = "Subject"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -468,6 +488,36 @@ namespace Kolpi.Infrastructure.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("QuestionTag", b =>
+                {
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("QuestionsId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("QuestionTag");
+                });
+
+            modelBuilder.Entity("ExamPaperQuestion", b =>
+                {
+                    b.HasOne("Kolpi.ApplicationCore.Entities.ExamPaper", null)
+                        .WithMany()
+                        .HasForeignKey("ExamPapersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kolpi.ApplicationCore.Entities.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.AnswerOption", b =>
                 {
                     b.HasOne("Kolpi.ApplicationCore.Entities.Question", "Question")
@@ -486,25 +536,6 @@ namespace Kolpi.Infrastructure.Migrations
                         .HasForeignKey("ExamId");
                 });
 
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.ExamPaperQuestion", b =>
-                {
-                    b.HasOne("Kolpi.ApplicationCore.Entities.ExamPaper", "ExamPaper")
-                        .WithMany("ExamPaperQuestions")
-                        .HasForeignKey("ExamPaperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kolpi.ApplicationCore.Entities.Question", "Question")
-                        .WithMany("ExamPaperQuestions")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExamPaper");
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Question", b =>
                 {
                     b.HasOne("Kolpi.ApplicationCore.Entities.QuestionStatus", "QuestionStatus")
@@ -516,31 +547,8 @@ namespace Kolpi.Infrastructure.Migrations
                     b.Navigation("QuestionStatus");
                 });
 
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.QuestionTag", b =>
-                {
-                    b.HasOne("Kolpi.ApplicationCore.Entities.Question", "Question")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kolpi.ApplicationCore.Entities.Tag", "Tag")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
                 {
-                    b.HasOne("Kolpi.ApplicationCore.Entities.Question", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("QuestionId");
-
                     b.HasOne("Kolpi.ApplicationCore.Entities.TagType", "TagType")
                         .WithMany("Tags")
                         .HasForeignKey("TagTypeId")
@@ -550,35 +558,34 @@ namespace Kolpi.Infrastructure.Migrations
                     b.Navigation("TagType");
                 });
 
+            modelBuilder.Entity("QuestionTag", b =>
+                {
+                    b.HasOne("Kolpi.ApplicationCore.Entities.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kolpi.ApplicationCore.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Exam", b =>
                 {
                     b.Navigation("ExamPapers");
                 });
 
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.ExamPaper", b =>
-                {
-                    b.Navigation("ExamPaperQuestions");
-                });
-
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Question", b =>
                 {
                     b.Navigation("AnswerOptions");
-
-                    b.Navigation("ExamPaperQuestions");
-
-                    b.Navigation("QuestionTags");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.QuestionStatus", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
-                {
-                    b.Navigation("QuestionTags");
                 });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.TagType", b =>

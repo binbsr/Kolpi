@@ -11,6 +11,6 @@ namespace Kolpi.ApplicationCore.Entities
         public int TagTypeId { get; set; }
         public TagType TagType { get; set; }
 
-        public List<QuestionTag> QuestionTags { get; set; }
+        public ICollection<Question> Questions { get; set; }
     }
 }
