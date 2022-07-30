@@ -5,16 +5,26 @@
 
 @inject HttpClient Http
 
-<MudContainer>
+<EditForm Model="@Question" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
     <MudText Typo="Typo.h6">
         Question
         <MudLink Class="" Href="https://katex.org/docs/supported.html" Target="_blank">Katex docs (<i>fx</i>)</MudLink>
     </MudText>
-
-    <Editor @bind-HTMLContent="question" PlaceHolder="Type your question here..." />
+    <Editor @bind-HTMLContent="Question.Body" PlaceHolder="Type your question here..." />
 
     <MudGrid>
-        <MudItem md="12">
+        @{
+            byte i = 1; 
+        }
+        @foreach (var option in Question.AnswerOptions)
+        {
+            var optionLabel = "Option " + i++;
+            <MudItem md="12" xs="12">
+                <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="DeleteAnsOption" />
+            </MudItem>
+        }
+        <MudItem md="12" xs="12">
             <MudChipSet AllClosable="true" OnClose="Closed">
                 @foreach (var tag in tagsSelected)
                 {
@@ -24,7 +34,7 @@
             </MudChipSet>
         </MudItem>
 
-        <MudItem md=" 12">
+        <MudItem md="12" xs="12">
             <MudAutocomplete T="TagViewModel"
                              Label="Tagging"
                              SearchFunc="Search"
@@ -34,30 +44,44 @@
                              MinCharacters="2"
                              ToStringFunc="@(e => e == null ? null : $"{e?.Name} ({e?.Details})")"
                              ValueChanged="OnSelectedValueChanged"
-                             Placeholder="Type to tag this question...">
+                             Placeholder="Start typing for tags...">
 
                 <ItemTemplate Context="e">
                     <MudText><b>@($"{e.Name}")</b>/@($"{e.TagTypeName} ({e.Details})")</MudText>
                 </ItemTemplate>
-
                 <NoItemsTemplate>
                     <MudText Align="Align.Center" Class="px-4 py-1">
                         No tags found
                     </MudText>
                 </NoItemsTemplate>
-
             </MudAutocomplete>
+        </MudItem>
+
+        <MudItem md="12" xs="12">
+            <MudButton Disabled="isSaving"
+                       ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Tertiary"
+                       StartIcon="@Icons.Material.Filled.Save"
+                       Class="ml-auto">
+                Save Question
+            </MudButton>
         </MudItem>
     </MudGrid>
 
-</MudContainer>
+</EditForm>
 
 @code {
 
-    private string question = default!;
+    private QuestionViewModel Question => new()
+        {
+            AnswerOptions = new List<AnswerOptionViewModel>() { new(), new(), new(), new() }
+        };
+
     private IEnumerable<TagViewModel> Tags { get; set; } = default!;
     private TagViewModel Value { get; set; } = default!;
     List<TagViewModel> tagsSelected = new List<TagViewModel>();
+    bool isSaving = false;
 
     Dictionary<string, Color> defaultColors = new()
         {
@@ -68,6 +92,16 @@
             ["#ff9800ff"] = Color.Warning,
             ["#f44336ff"] = Color.Error
         };
+
+    private void DeleteAnsOption()
+    {
+
+    }
+
+    private void OnValidSubmit()
+    {
+
+    }
 
     private void OnSelectedValueChanged(TagViewModel tag)
     {
@@ -94,76 +128,3 @@
         tagsSelected.Remove(tagViewModel);
     }
 }
-
-@*
-    <h4><Icon Type="question-circle"></Icon> Tag this question (e.g. GK, Level-1, Physics etc.)</h4>
-    <Select Mode="multiple"
-    Style="width: 100%"
-    Placeholder="Type to add tags..."
-    TItemValue="string"
-    TItem="string">
-    @foreach (var item in tags ?? Array.Empty<TagViewModel>())
-    {
-    <SelectOption TItemValue="string" TItem="string" Value="@item.Id.ToString()">@item.Name</SelectOption>
-    }
-    </Select>
-
-    <h4>Question Type and Options</h4>
-    <Space Size=@("Large")>
-    <SpaceItem>
-    <RadioGroup @bind-Value="@questionType" ButtonStyle="RadioButtonStyle.Solid">
-    <Radio RadioButton Value="@("1")">Objective</Radio>
-    <Radio RadioButton Value="@("2")">Subjective</Radio>
-    </RadioGroup>
-    </SpaceItem>
-    @if (questionType == "1")
-    {
-    <SpaceItem>
-    <Select OnSelectedItemChanged="OnAnsOptionsCountChnage" DefaultValue="@("1")" TItem="string" TItemValue="string">
-    <SelectOption TItemValue="string" TItem="string" Value=@("1")>1 answer option</SelectOption>
-    <SelectOption TItemValue="string" TItem="string" Value=@("2")>2 answer options</SelectOption>
-    <SelectOption TItemValue="string" TItem="string" Value=@("3")>3 answer options</SelectOption>
-    <SelectOption TItemValue="string" TItem="string" Value=@("4")>4 answer options</SelectOption>
-    <SelectOption TItemValue="string" TItem="string" Value=@("5")>5 answer options</SelectOption>
-    <SelectOption TItemValue="string" TItem="string" Value=@("6")>6 answer options</SelectOption>
-    </Select>
-    </SpaceItem>
-    <SpaceItem>
-    <Button Type="dashed" @onclick="AddAnsOption" Icon="plus">Add</Button>
-    </SpaceItem>
-    }
-    else
-    {
-    <SpaceItem>
-    <p>Please tag your subjective question with appropriate categories and levels. That's all we need for the these questions.</p>
-    </SpaceItem>
-    }
-    </Space>
-
-    <div>
-    @foreach (AnswerOptionViewModel item in question.AnswerOptions)
-    {
-    <div>
-    <AnsOption AnswerModel="@item" RemoveItemCallback="DeleteAnsOption" />
-    </div>
-    }
-    <Button Icon="save" Type="default" @onclick="SaveQuestion">Save Question</Button>
-    </div>
-
-    @code
-    {
-    protected override async Task OnInitializedAsync()
-    {
-    tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/tags");
-    }
-
-    private void OnChangeQuestionType(string option)
-    {
-
-    }
-
-    private void OnAnsOptionsCountChnage(string option)
-    {
-
-    }
-    } *@

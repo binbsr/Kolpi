@@ -1,8 +1,12 @@
-@* @using Kolpi.Admin.ViewModels
+@using Kolpi.WebShared.ViewModels
 
-<Checkbox @bind-Value="AnswerModel.IsAnswer">Answer</Checkbox>
-<Button Type="primary" Danger Shape="circle" Icon="delete" Size="small" @onclick="RemoveItem"/>
-<Input @bind-Value="AnswerModel.Body" />
+<MudContainer Class="d-flex gap-4 mx-0">
+    <MudTooltip Text="@ChkTooltip" Arrow Placement="Placement.Start">
+        <MudCheckBox @bind-Checked="AnswerModel.IsAnswer" Size="Size.Large" Color="Color.Primary" Class="d-inline-flex">Answer</MudCheckBox>
+    </MudTooltip>
+    <MudTextField @bind-Value="AnswerModel.Body" Label="@TextInputLabel" Variant="Variant.Text" Margin="Margin.Dense" Class="d-inline-flex" FullWidth></MudTextField>
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="RemoveItem" Class="d-inline-flex"></MudIconButton>
+</MudContainer>
 
 @code
 {
@@ -12,10 +16,12 @@
     [Parameter]
     public EventCallback<AnswerOptionViewModel> RemoveItemCallback { get; set; }
 
-    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Mark if its an answer.";
+    [Parameter]
+    public string TextInputLabel { get; set; } = "Option";
+    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if its an answer.";
 
     private async Task RemoveItem()
     {
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
-} *@
+}
