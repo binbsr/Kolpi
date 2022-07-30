@@ -28,8 +28,8 @@ namespace Kolpi.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagsFilteredViewModel>>> Get([FromQuery] string searchText = default,
-            int pageIndex = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<TagsFilteredViewModel>>> Get([FromQuery] string searchText,
+            int pageIndex, int pageSize=10)
         {
             List<Tag> tagModels = default;
             try
@@ -45,7 +45,7 @@ namespace Kolpi.Server.Controllers
 
             var tagViewModels = tagModels.ToViewModel();
             int totalCount = tagModels.Count;
-            return Ok(new TagsFilteredViewModel { TotalCount = totalCount, Records = tagViewModels });
+            return Ok(tagViewModels);
         }
 
         [HttpGet("totalcount")]

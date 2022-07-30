@@ -56,9 +56,9 @@
         int pageIndex = state.Page;
         int pageSize = state.PageSize;
         string url = $"api/tags?searchText={searchString}&pageIndex={pageIndex}&pageSize={pageSize}";
-        TagsFilteredViewModel data = await http.GetFromJsonAsync<TagsFilteredViewModel>(url) ?? new TagsFilteredViewModel();
+        tagViewModels = await http.GetFromJsonAsync<List<TagViewModel>>(url) ?? new List<TagViewModel>();
 
-        return new TableData<TagViewModel>() { TotalItems = data.TotalCount, Items = data.Records };
+        return new TableData<TagViewModel>() { TotalItems = tagViewModels.Count, Items = tagViewModels };
     }
 
 

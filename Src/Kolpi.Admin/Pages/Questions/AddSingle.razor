@@ -8,30 +8,45 @@
 <MudContainer>
     <MudText Typo="Typo.h6">
         Question
-        <MudText Typo="Typo.body2" Inline="true">
-            (For mathmetical equations [<i>fx</i> button], refer
-            <MudLink Href="https://katex.org/docs/supported.html" Target="_blank">Katex docs</MudLink>)
-        </MudText>
+        <MudLink Class="" Href="https://katex.org/docs/supported.html" Target="_blank">Katex docs (<i>fx</i>)</MudLink>
     </MudText>
 
     <Editor @bind-HTMLContent="question" PlaceHolder="Type your question here..." />
 
     <MudGrid>
-        <MudItem xs="12" md="12">
+        <MudItem md="12">
             <MudChipSet AllClosable="true" OnClose="Closed">
-                @foreach (var value in tagsDone)
+                @foreach (var tag in tagsSelected)
                 {
-                    <MudChip Text="@value"></MudChip>
+                    defaultColors.TryGetValue(tag.TagColorCode, out Color color);
+                    <MudChip Text="@tag.Name" Color="color"></MudChip>
                 }
             </MudChipSet>
         </MudItem>
 
-        <MudItem xs="12" md="12">
+        <MudItem md=" 12">
             <MudAutocomplete T="TagViewModel"
                              Label="Tagging"
                              SearchFunc="Search"
-                             ResetValueOnEmptyText=true
-                             ValueChanged="OnSelectedValueChanged" />
+                             Adornment="Adornment.End"
+                             AdornmentIcon="@Icons.Filled.Tag"
+                             Dense="true"
+                             MinCharacters="2"
+                             ToStringFunc="@(e => e == null ? null : $"{e?.Name} ({e?.Details})")"
+                             ValueChanged="OnSelectedValueChanged"
+                             Placeholder="Type to tag this question...">
+
+                <ItemTemplate Context="e">
+                    <MudText><b>@($"{e.Name}")</b>/@($"{e.TagTypeName} ({e.Details})")</MudText>
+                </ItemTemplate>
+
+                <NoItemsTemplate>
+                    <MudText Align="Align.Center" Class="px-4 py-1">
+                        No tags found
+                    </MudText>
+                </NoItemsTemplate>
+
+            </MudAutocomplete>
         </MudItem>
     </MudGrid>
 
@@ -42,28 +57,45 @@
     private string question = default!;
     private IEnumerable<TagViewModel> Tags { get; set; } = default!;
     private TagViewModel Value { get; set; } = default!;
-    List<string> tagsDone = new List<string>();
+    List<TagViewModel> tagsSelected = new List<TagViewModel>();
+
+    Dictionary<string, Color> defaultColors = new()
+        {
+            ["#594ae2ff"] = Color.Primary,
+            ["#ff4081ff"] = Color.Secondary,
+            ["#2196f3ff"] = Color.Info,
+            ["#00c853ff"] = Color.Success,
+            ["#ff9800ff"] = Color.Warning,
+            ["#f44336ff"] = Color.Error
+        };
 
     private void OnSelectedValueChanged(TagViewModel tag)
     {
         Value = tag;
-        tagsDone.Add(tag.Name);
+        if (tagsSelected.Any(x => x.Name == tag.Name))
+            return;
+        tagsSelected.Add(tag);
     }
 
     private async Task<IEnumerable<TagViewModel>> Search(string value)
     {
-        Tags = await Http.GetFromJsonAsync<TagViewModel[]>("api/tags") ?? Array.Empty<TagViewModel>();
+        var emptyModel = Array.Empty<TagViewModel>();
 
-        if (string.IsNullOrEmpty(value))
-            return Tags;
-        return Tags.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        if (string.IsNullOrWhiteSpace(value))
+            return emptyModel;
+
+        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}");
+        return Tags ?? emptyModel;
     }
 
-    private void Closed(MudChip chip) => tagsDone.Remove(chip.Text);
+    private void Closed(MudChip chip)
+    {
+        var tagViewModel = tagsSelected.FirstOrDefault(x => x.Name == chip.Text);
+        tagsSelected.Remove(tagViewModel);
+    }
 }
 
 @*
-
     <h4><Icon Type="question-circle"></Icon> Tag this question (e.g. GK, Level-1, Physics etc.)</h4>
     <Select Mode="multiple"
     Style="width: 100%"
