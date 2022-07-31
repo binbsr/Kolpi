@@ -1,16 +1,12 @@
 ﻿using Kolpi.ApplicationCore.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace Kolpi.ApplicationCore.Services
 {
     public interface IAsyncService<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
         Task<List<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity?> GetByIdAsync(TKey id);
         Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression);
         Task<int> GetTotalCountAsync();
 

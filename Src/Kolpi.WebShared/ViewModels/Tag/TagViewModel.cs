@@ -8,10 +8,10 @@ namespace Kolpi.WebShared.ViewModels
         public int Id { get; set; }
 
         [MinLength(2), Required]
-        public string Name { get; set; }        
-        
+        public string Name { get; set; } = string.Empty;
+
         [MinLength(5), Required]
-        public string Details { get; set; }
+        public string Details { get; set; } = string.Empty;
         public bool? IsFinalized { get; set; }
 
         public int TagTypeId { get; set; }

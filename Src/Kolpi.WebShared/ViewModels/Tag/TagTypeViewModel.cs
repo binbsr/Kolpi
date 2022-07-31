@@ -9,13 +9,13 @@ namespace Kolpi.WebShared.ViewModels
         
         [DisplayName("Tagtpye Name")]
         [MinLength(2), Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [DisplayName("Details")]
         [MinLength(5), Required]
-        public string Details { get; set; }
+        public string Details { get; set; } = string.Empty;
 
         [DisplayName("Color Code")]
-        public string ColorCode { get; set; }
+        public string ColorCode { get; set; } = string.Empty;
     }
 }

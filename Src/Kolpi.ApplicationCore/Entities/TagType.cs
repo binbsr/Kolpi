@@ -4,10 +4,10 @@ namespace Kolpi.ApplicationCore.Entities
 {
     public class TagType : BaseEntity<int>
     {
-        public string Name { get; set; }
-        public string Details { get; set; }
-        public string ColorCode { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Details { get; set; } = string.Empty;
+        public string ColorCode { get; set; } = string.Empty;
 
-        public ICollection<Tag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; } = default!;
     }
 }

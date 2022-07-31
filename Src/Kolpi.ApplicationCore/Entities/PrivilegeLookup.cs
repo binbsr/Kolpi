@@ -15,8 +15,8 @@ namespace Kolpi.ApplicationCore.Entities
     public class PrivilegeLookup
     {
         public int Id { get; set; }
-        public string Label { get; set; }
-        public string Details { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string Details { get; set; } = string.Empty;
         public int QuestionsCount { get; set; }
         public int SubjectiveAnswersCount { get; set; }
         public int ObjectiveAnswersCount { get; set; }

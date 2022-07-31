@@ -40,11 +40,8 @@ namespace Kolpi.Infrastructure.Services.Questions
                 .ToListAsync();
         }
 
-        public override Task<Question?> GetByIdAsync(int id)
-        {
-            return dbContext.Set<Question>()
+        public override Task<Question?> GetByIdAsync(int id) => dbContext.Set<Question>()
                 .Include(t => t.AnswerOptions)
-                .SingleOrDefaultAsync(o => o.Id.Equals(id));
-        }
+                .Where(o => o.Id.Equals(id)).FirstOrDefaultAsync();
     }
 }

@@ -40,11 +40,8 @@ namespace Kolpi.Infrastructure.Services.Tags
                 .ToListAsync();
         }
 
-        public override Task<Tag> GetByIdAsync(int id)
-        {
-            return dbContext.Set<Tag>()
-                .Include(t => t.TagType)
-                .SingleOrDefaultAsync(o => o.Id.Equals(id));
-        }
+        public override Task<Tag?> GetByIdAsync(int id) => dbContext.Set<Tag>()
+            .Include(t => t.TagType)
+            .Where(o => o.Id == id).FirstOrDefaultAsync();
     }
 }

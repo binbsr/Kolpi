@@ -9,7 +9,7 @@ namespace Kolpi.Shared.Mapper
         public static TagTypeViewModel ToViewModel(this TagType model)
         {
             if (model == null)
-                return null;
+                return default!;
 
             var tagTypeViewModel = new TagTypeViewModel { 
                     Id = model.Id,
@@ -24,7 +24,7 @@ namespace Kolpi.Shared.Mapper
         public static TagType ToModel(this TagTypeViewModel viewModel)
         {
             if (viewModel == null)
-                return null;
+                return default!;
                 
             var tagTypeModel = new TagType
             {

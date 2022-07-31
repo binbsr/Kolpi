@@ -38,9 +38,9 @@
 
         <MudItem md="12" xs="12">
             <MudChipSet AllClosable="true" OnClose="Closed">
-                @foreach (var tag in tagsSelected)
+                @foreach (TagViewModel tag in tagsSelected)
                 {
-                    defaultColors.TryGetValue(tag.TagColorCode, out Color color);
+                    defaultColors.TryGetValue(tag.TagColorCode ?? string.Empty, out Color color);
                     <MudChip Text="@tag.Name" Color="color"></MudChip>
                 }
             </MudChipSet>
@@ -85,15 +85,11 @@
 
 @code {
     private QuestionViewModel Question => new();
-
     List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
-
-
-    private IEnumerable<TagViewModel> Tags { get; set; } = default!;
+    private List<TagViewModel> Tags { get; set; } = default!;
     private TagViewModel Value { get; set; } = default!;
     List<TagViewModel> tagsSelected = new List<TagViewModel>();
     bool isSaving = false;
-
     Dictionary<string, Color> defaultColors = new()
         {
             ["#594ae2ff"] = Color.Primary,
@@ -163,18 +159,20 @@
 
     private async Task<IEnumerable<TagViewModel>> Search(string value)
     {
-        var emptyModel = Array.Empty<TagViewModel>();
+        List<TagViewModel> emptyModel = new();
 
         if (string.IsNullOrWhiteSpace(value))
             return emptyModel;
 
-        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}");
-        return Tags ?? emptyModel;
+        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
+        return Tags;
     }
 
     private void Closed(MudChip chip)
     {
         var tagViewModel = tagsSelected.FirstOrDefault(x => x.Name == chip.Text);
+        if (tagViewModel is null)
+            return;
         tagsSelected.Remove(tagViewModel);
     }
 }
