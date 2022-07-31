@@ -8,19 +8,19 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="3">
         <Statistic Title="Students" Value="23125" Href="/students" Icon="@Icons.Material.Filled.Groups"
-            IconColor="@Color.Primary" />
+                   IconColor="@Color.Primary" />
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
         <Statistic Title="Staffs" Value="2150" Href="/staffs" Icon="@Icons.Material.Filled.People"
-            IconColor="@Color.Secondary" />
+                   IconColor="@Color.Secondary" />
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
         <Statistic Title="Schools" Value="34" Href="/schools" Icon="@Icons.Material.Filled.School"
-            IconColor="@Color.Success" />
+                   IconColor="@Color.Success" />
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
         <Statistic Title="Budget Allocated" Value="34%" Href="/budget/education" Icon="@Icons.Material.Filled.Money"
-            IconColor="@Color.Warning" />
+                   IconColor="@Color.Warning" />
     </MudItem>
 
     <MudItem xs="12" sm="12" md="6">
@@ -38,13 +38,13 @@
     <MudItem xs="12" sm="12" md="6">
         <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
             <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%"
-                Height="350px"></MudChart>
+                      Height="350px"></MudChart>
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="12" md="6">
         <MudPaper Elevation="25" Class="d-flex align-center justify-center mud-width-full">
             <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%"
-                Height="350" ChartOptions="options"></MudChart>
+                      Height="350" ChartOptions="options"></MudChart>
         </MudPaper>
     </MudItem>
 
@@ -64,8 +64,10 @@
                                 <MudText Typo="Typo.subtitle2">@notice.Title</MudText>
                                 <MudText Typo="Typo.body2">@notice.Description</MudText>
                             </div>
-                            <MudChip Label="true" Color="Color.Secondary" Class="ml-auto mud-elevation-25">From
-                                @notice.School</MudChip>
+                            <MudChip Label="true" Color="Color.Secondary" Class="ml-auto mud-elevation-25">
+                                From
+                                @notice.School
+                            </MudChip>
                         </div>
                     </MudListItem>
                 }
@@ -78,17 +80,21 @@
 @code {
     private ChartOptions options = new ChartOptions();
     public List<ChartSeries> Series = new List<ChartSeries>()
-{
-new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
-};
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     public double[] data = { 50, 25, 20, 5 };
-    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
-"Hydro", "Geothermal", "Fossile", "Nuclear", "Solar", "Wind", "Oil",
-"Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+    public string[] labels = 
+    { 
+        "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+        "Hydro", "Geothermal", "Fossile", "Nuclear", "Solar", "Wind", "Oil",
+        "Coal", "Gas", "Biomass", "Hydro", "Geothermal" 
+    };
+
     int totalTags;
     int totalTagCategoriess;
     protected override async Task OnInitializedAsync()
@@ -100,25 +106,35 @@ new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 
 
     Notice[] notices = new Notice[]
     {
-new Notice
-{
-Description = "There are many variations of passages of Lorem Ipsum available...",
-Title = "Reactor Engineer",
-Avatar = Icons.Custom.Brands.Apple, School="Saraswati Ma. Vi.",
-Dated= TimeSpan.FromDays(1).ToString()
-},
-new Notice { Description = "There are many variations of passages of Lorem Ipsum available...", Title = "Developer",
-Avatar = Icons.Custom.Brands.Google, School="Saraswati Ma. Vi.", Dated=TimeSpan.FromDays(2).ToString() },
-new Notice { Description = "There are many variations of passages of Lorem Ipsum available...", Title = "CSS Magician",
-Avatar = Icons.Custom.Brands.Microsoft, School="Saraswati Ma. Vi.", Dated=TimeSpan.FromDays(3).ToString() },
-    };
+        new Notice
+        {
+            Description = "There are many variations of passages of Lorem Ipsum available...",
+            Title = "Reactor Engineer",
+            Avatar = Icons.Custom.Brands.Apple, School="Saraswati Ma. Vi.",
+            Dated= TimeSpan.FromDays(1).ToString()
+        },
+        new Notice 
+        { 
+            Description = "There are many variations of passages of Lorem Ipsum available...", 
+            Title = "Developer",
+            Avatar = Icons.Custom.Brands.Google, 
+            School="Saraswati Ma. Vi.", 
+            Dated=TimeSpan.FromDays(2).ToString() 
+        },
+        new Notice 
+        { 
+            Description = "There are many variations of passages of Lorem Ipsum available...", 
+            Title = "CSS Magician",
+            Avatar = Icons.Custom.Brands.Microsoft, School="Saraswati Ma. Vi.", 
+            Dated=TimeSpan.FromDays(3).ToString() },
+        };
 
-    class Notice
-    {
-        public string Avatar;
-        public string Title;
-        public string Description;
-        public string School;
-        public string Dated;
-    }
+        class Notice
+        {
+            public string? Avatar;
+            public string? Title;
+            public string? Description;
+            public string? School;
+            public string? Dated;
+        }
 }

@@ -1,8 +1,9 @@
 ﻿using Kolpi.ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.Infrastructure.Data;
+using Kolpi.ApplicationCore.Services;
 
-namespace Kolpi.ApplicationCore.Services
+namespace Kolpi.Infrastructure.Services.Tags
 {
     public class TagService : AsyncService<Tag, int>, ITagService
     {
@@ -21,6 +22,7 @@ namespace Kolpi.ApplicationCore.Services
                 .Include(t => t.TagType)
                 .Skip(skipCount)
                 .Take(pageSize)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
             return results;
         }
@@ -34,6 +36,7 @@ namespace Kolpi.ApplicationCore.Services
                 .Include(t => t.TagType)
                 .Skip(skipCount)
                 .Take(pageSize)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
         }
 

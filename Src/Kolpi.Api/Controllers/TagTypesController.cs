@@ -5,9 +5,9 @@ using Kolpi.Server.Infrastructure.Logging;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
-using Kolpi.ApplicationCore.Services;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.ApplicationCore.Entities;
+using Kolpi.Infrastructure.Services.TagTypes;
 
 namespace Kolpi.Server.Controllers
 {

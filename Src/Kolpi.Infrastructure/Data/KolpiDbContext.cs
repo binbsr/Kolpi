@@ -11,6 +11,14 @@ namespace Kolpi.Infrastructure.Data
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KolpiServerContext-014917e0-fcbe-4c08-8874-ace3897c77b4;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
+        }
+
         // Kolpi Db tables
         public DbSet<Question> Questions { get; set; }
         public DbSet<AnswerOption> AnswerOptions { get; set; }

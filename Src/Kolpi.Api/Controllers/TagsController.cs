@@ -6,10 +6,10 @@ using Kolpi.Shared.Mapper;
 using System.Net;
 using System.Security.Claims;
 using System;
-using Kolpi.ApplicationCore.Services;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.ApplicationCore.Entities;
 using Kolpi.WebShared.Mapper;
+using Kolpi.Infrastructure.Services.Tags;
 
 namespace Kolpi.Server.Controllers
 {

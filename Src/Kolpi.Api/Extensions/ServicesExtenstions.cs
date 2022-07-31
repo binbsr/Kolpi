@@ -1,5 +1,7 @@
-﻿using Kolpi.ApplicationCore.Services;
-using Kolpi.Infrastructure.External;
+﻿using Kolpi.Infrastructure.External;
+using Kolpi.Infrastructure.Services.Questions;
+using Kolpi.Infrastructure.Services.Tags;
+using Kolpi.Infrastructure.Services.TagTypes;
 using Kolpi.Server.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,7 @@ namespace Kolpi.Server.Extensions
         {
             services.AddScoped<ITagTypeService, TagTypeService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IQuestionService, QuestionService>();
             return services;
         }
         public static IServiceCollection AddKolpiLogger(this IServiceCollection services)

@@ -39,11 +39,11 @@
 </MudTable>
 
 @code {
-    private IEnumerable<Element> pagedData;
-    private MudTable<Element> table;
+    private IEnumerable<Element> pagedData = default!;
+    private MudTable<Element> table = default!;
 
     private int totalItems;
-    private string searchString = null;
+    private string searchString = default!;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server

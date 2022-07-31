@@ -11,14 +11,14 @@
 @code
 {
     [Parameter]
-    public AnswerOptionViewModel AnswerModel { get; set; }
+    public AnswerOptionViewModel AnswerModel { get; set; } = new();
 
     [Parameter]
     public EventCallback<AnswerOptionViewModel> RemoveItemCallback { get; set; }
 
     [Parameter]
     public string TextInputLabel { get; set; } = "Option";
-    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if its an answer.";
+    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
 
     private async Task RemoveItem()
     {

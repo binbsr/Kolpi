@@ -2,5 +2,8 @@
 - As DBContext is UOW and DbSets are repositories, I settled down on generic services pattern, redundant repository classes omitted for now
 
 EF CLI
--dotnet ef migrations add Initial -s ..\Kolpi.Api\
--dotnet ef migrations add Initial -s ..\Kolpi.Api\
+>dotnet ef migrations add Initial -s ..\Kolpi.Api\
+>dotnet ef migrations add Initial -s ..\Kolpi.Api\
+
+Code generator
+>dotnet-aspnet-codegenerator controller -name QuestionsController -async -api -actions -m Question -dc KolpiDbContext -outDir .\Controllers\

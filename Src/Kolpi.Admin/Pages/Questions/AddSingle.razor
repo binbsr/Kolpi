@@ -4,6 +4,7 @@
 @using Kolpi.WebShared.ViewModels
 
 @inject HttpClient Http
+@inject ISnackbar SBar
 
 <EditForm Model="@Question" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
@@ -15,15 +16,26 @@
 
     <MudGrid>
         @{
-            byte i = 1; 
+            byte i = 1;
         }
-        @foreach (var option in Question.AnswerOptions)
-        {
-            var optionLabel = "Option " + i++;
-            <MudItem md="12" xs="12">
-                <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="DeleteAnsOption" />
-            </MudItem>
-        }
+        <MudItem md="12" xs="12">
+            <MudPaper Elevation="3">
+                <MudList>
+                    @foreach (var option in answerOptionViewModels)
+                    {
+                        var optionLabel = "Option " + i++;
+                        <MudListItem>
+                            <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="DeleteAnsOption" />
+                        </MudListItem>
+                    }
+                    <MudListItem>
+                        <MudFab Color="Color.Tertiary" Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="AddNewOption"/>
+                    </MudListItem>
+
+                </MudList>
+            </MudPaper>
+        </MudItem>
+
         <MudItem md="12" xs="12">
             <MudChipSet AllClosable="true" OnClose="Closed">
                 @foreach (var tag in tagsSelected)
@@ -72,11 +84,10 @@
 </EditForm>
 
 @code {
+    private QuestionViewModel Question => new();
 
-    private QuestionViewModel Question => new()
-        {
-            AnswerOptions = new List<AnswerOptionViewModel>() { new(), new(), new(), new() }
-        };
+    List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
+
 
     private IEnumerable<TagViewModel> Tags { get; set; } = default!;
     private TagViewModel Value { get; set; } = default!;
@@ -93,14 +104,53 @@
             ["#f44336ff"] = Color.Error
         };
 
-    private void DeleteAnsOption()
+    private void AddNewOption()
     {
-
+        answerOptionViewModels.Add(new());
     }
 
-    private void OnValidSubmit()
+    private void DeleteAnsOption(AnswerOptionViewModel answerOptionViewModel)
     {
+        answerOptionViewModels.Remove(answerOptionViewModel);
+    }
 
+    private async Task OnValidSubmit(EditContext editContext)
+    {
+        isSaving = true;
+
+        Task<HttpResponseMessage> saveTask;
+
+        Question.AnswerOptions = answerOptionViewModels;
+        Question.Tags = tagsSelected;
+
+        if (Question.Id == default)
+        {
+            // Adding new
+            saveTask = Http.PostAsJsonAsync("api/questions", Question);
+        }
+        else
+        {
+            // Modify existing
+            saveTask = Http.PutAsJsonAsync($"api/questions/{Question.Id}", Question);
+        }
+
+        await saveTask.ContinueWith(st =>
+        {
+            isSaving = false;
+
+            var result = st.Result;
+
+            if (result.IsSuccessStatusCode)
+            {
+                SBar.Add("Question saved successfully.", Severity.Success);
+            }
+            else
+            {
+                SBar.Add($"Error occured while saving question. Problem: {result.ReasonPhrase}", Severity.Error);
+            }
+        });
+
+        StateHasChanged();
     }
 
     private void OnSelectedValueChanged(TagViewModel tag)

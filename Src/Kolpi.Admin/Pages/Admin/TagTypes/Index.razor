@@ -78,13 +78,12 @@ else
 @code {
 
     List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private MudTable<TagTypeViewModel> table = default!;
     private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
-    private TagTypeViewModel categoryBeforeEdit;
-    private MudColor cColor;
+    private TagTypeViewModel categoryBeforeEdit = new();
+    private MudColor cColor = default!;
 
     [Inject]
-    private IDialogService DialogService { get; set; }
+    private IDialogService DialogService { get; set; } = default!;
 
 
     protected override async Task OnInitializedAsync()

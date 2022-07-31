@@ -8,7 +8,7 @@ namespace Kolpi.WebShared.Mapper
     {
         public static TagViewModel ToViewModel(this Tag model)
         {
-            if (model == null)
+            if (model is null)
                 return default!;
 
             var tagViewModel = new TagViewModel
@@ -30,7 +30,7 @@ namespace Kolpi.WebShared.Mapper
         public static Tag ToModel(this TagViewModel viewModel)
         {
             if (viewModel == null)
-                return null;
+                return default!;
 
             var tagModel = new Tag
             {
