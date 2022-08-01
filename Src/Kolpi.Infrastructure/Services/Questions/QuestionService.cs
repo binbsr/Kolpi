@@ -40,6 +40,8 @@ namespace Kolpi.Infrastructure.Services.Questions
                 .ToListAsync();
         }
 
+        public Task<List<string>> GetAllQuestionsBodyAsync() => dbContext.Set<Question>().Select(x => x.Body).ToListAsync();
+
         public override Task<Question?> GetByIdAsync(int id) => dbContext.Set<Question>()
                 .Include(t => t.AnswerOptions)
                 .Where(o => o.Id.Equals(id)).FirstOrDefaultAsync();

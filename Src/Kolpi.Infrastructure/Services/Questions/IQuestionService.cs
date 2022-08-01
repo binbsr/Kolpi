@@ -7,5 +7,6 @@ namespace Kolpi.Infrastructure.Services.Questions
     {
         Task<List<Question>> GetAllAsync(int pageIndex, int pageSize);
         Task<List<Question>> GetAllAsync(string searchText, int pageIndex, int pageSize);
+        Task<List<string>> GetAllQuestionsBodyAsync();
     }
 }

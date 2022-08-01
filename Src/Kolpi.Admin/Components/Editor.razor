@@ -58,14 +58,11 @@
     public string PlaceHolder { get; set; } = "Type here...";
 
     [Parameter]
-    public string HTMLContent { get; set; } = default!;
+    public EventCallback<string> HTMLContentFetch { get; set; }
 
-    [Parameter]
-    public EventCallback<string> HTMLContentChanged { get; set; }
-
-    public async void OnHTMLContentChanged()
+    public async Task FocusOut()
     {
-        HTMLContent = await this.QuillHtml.GetHTML();
-        StateHasChanged();
+        var htmlContent = await this.QuillHtml.GetHTML();
+        await HTMLContentFetch.InvokeAsync(htmlContent);
     }
 }

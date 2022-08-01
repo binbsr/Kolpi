@@ -9,6 +9,7 @@ using Kolpi.ApplicationCore.Entities;
 using Kolpi.Infrastructure.Data;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.WebShared.Mapper;
+using Kolpi.Infrastructure.Services.Questions;
 
 namespace Kolpi.Api.Controllers
 {
@@ -16,23 +17,23 @@ namespace Kolpi.Api.Controllers
     [ApiController]
     public class QuestionsController : ControllerBase
     {
-        private readonly KolpiDbContext _context;
+        private readonly IQuestionService questionService;
 
-        public QuestionsController(KolpiDbContext context)
+        public QuestionsController(IQuestionService questionService)
         {
-            _context = context;
+            this.questionService = questionService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
+        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions(string searchText, int pageIndex, int pageSize = 10)
         {
-            return await _context.Questions.ToListAsync();
+            return await questionService.GetAllAsync(searchText, pageIndex, pageSize);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Question>> GetQuestion(int id)
         {
-            var question = await _context.Questions.FindAsync(id);
+            var question = await questionService.GetByIdAsync(id);
 
             if (question == null)
             {
@@ -50,11 +51,9 @@ namespace Kolpi.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(question).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await questionService.UpdateAsync(question);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,10 +73,16 @@ namespace Kolpi.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Question>> PostQuestion(QuestionViewModel questionViewModel)
         {
-            var question = questionViewModel.ToModel();
-            _context.Questions.Add(question);
-
-            await _context.SaveChangesAsync();
+            Question question; 
+            try
+            {
+                question = questionViewModel.ToModel();
+                await questionService.AddAsync(question);
+            }
+            catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
 
             return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
         }
@@ -85,21 +90,20 @@ namespace Kolpi.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
-            var question = await _context.Questions.FindAsync(id);
+            var question = await questionService.GetByIdAsync(id);
             if (question == null)
             {
                 return NotFound();
             }
 
-            _context.Questions.Remove(question);
-            await _context.SaveChangesAsync();
+            await questionService.DeleteAsync(id);
 
             return NoContent();
         }
 
         private bool QuestionExists(int id)
         {
-            return _context.Questions.Any(e => e.Id == id);
+            return questionService.GetByIdAsync(id).Result is not null;
         }
     }
 }
