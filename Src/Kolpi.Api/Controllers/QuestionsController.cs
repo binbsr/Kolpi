@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.ApplicationCore.Entities;
-using Kolpi.Infrastructure.Data;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.WebShared.Mapper;
 using Kolpi.Infrastructure.Services.Questions;
@@ -77,6 +74,7 @@ namespace Kolpi.Api.Controllers
             try
             {
                 question = questionViewModel.ToModel();
+                question.QuestionStatusId = 1;
                 await questionService.AddAsync(question);
             }
             catch(Exception ex)

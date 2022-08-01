@@ -83,20 +83,46 @@ namespace Kolpi.Infrastructure.Data
                         Name = "Level-1",
                         Details = "Defines simplest objective questions.",
                         TagTypeId = 1,
-                        CreatedAt = DateTime.Now,
-                        CreatedBy = "Test User",
+                        CreatedAt = DateTime.Now
                     },
                     new Tag
                     {
                         Id = 2,
+                        Name = "Level-2",
+                        Details = "Defines questions harder than level-1",
+                        TagTypeId = 1,
+                        CreatedAt = DateTime.Now
+                    },
+                    new Tag
+                    {
+                        Id = 3,
                         Name = "GK",
                         Details = "Defines general knowledge questions.",
                         TagTypeId = 2,
-                        CreatedAt = DateTime.Now,
-                        CreatedBy = "Test User",
+                        CreatedAt = DateTime.Now
                     }
                 );
 
+            modelBuilder.Entity<QuestionStatus>()
+                .HasData(
+                new QuestionStatus 
+                {
+                    Id = 1,
+                    Name = "New",
+                    Details = "QUestion just added"
+                },
+                new QuestionStatus 
+                {
+                    Id= 2,
+                    Name = "Review",
+                    Details = "Question is being reviewed"
+                },
+                new QuestionStatus
+                {
+                    Id = 3,
+                    Name = "Publish",
+                    Details = "Question finalized and can be published"
+                });
         }
     }
 }
