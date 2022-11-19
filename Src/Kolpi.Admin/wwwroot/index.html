@@ -17,19 +17,13 @@
 </head>
 
 <body>
-    <app>
-        <div class='container'>
-            <div class='loader'>
-                <div class='loader--dot'></div>
-                <div class='loader--dot'></div>
-                <div class='loader--dot'></div>
-                <div class='loader--dot'></div>
-                <div class='loader--dot'></div>
-                <div class='loader--dot'></div>
-                <div class='loader--text'></div>
-            </div>
-        </div>
-    </app>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -38,7 +32,7 @@
     </div>
 
     <!--<script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>-->
-    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
+    <!--<script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>-->
     <script src="_framework/blazor.webassembly.js"></script>
 
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
