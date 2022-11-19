@@ -10,13 +10,14 @@ namespace Kolpi.ApplicationCore.Services
         Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression);
         Task<int> GetTotalCountAsync();
 
-        Task<int> AddAsync(TEntity entity);
-        Task<int> AddAsync(IEnumerable<TEntity> entities);
+        Task<int> AddAsync(TEntity entity, bool commit = true);
+        Task<int> AddAsync(IEnumerable<TEntity> entities, bool commit = true);
 
-        Task<int> UpdateAsync(TEntity entity);
-        Task<int> UpdateAsync(IEnumerable<TEntity> entities);
+        Task<int> UpdateAsync(TEntity entity, bool commit = true);
+        Task<int> UpdateAsync(IEnumerable<TEntity> entities, bool commit = true);
 
-        Task<int> DeleteAsync(TKey id);
-        Task<int> DeleteAsync(IEnumerable<TKey> ids);
+        Task<int> DeleteAsync(TKey id, bool commit = true);
+        Task<int> DeleteAsync(IEnumerable<TKey> ids, bool commit = true);
+        Task<int> CommitAsync();
     }
 }

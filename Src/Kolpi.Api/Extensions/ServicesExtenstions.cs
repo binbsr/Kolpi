@@ -1,4 +1,5 @@
 ﻿using Kolpi.Infrastructure.External;
+using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.Tags;
 using Kolpi.Infrastructure.Services.TagTypes;
@@ -16,6 +17,8 @@ namespace Kolpi.Server.Extensions
             services.AddScoped<ITagTypeService, TagTypeService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnswerOptionService, AnswerOptionService>();
+
             services.AddScoped<QuestionMatcher>();
 
             return services;

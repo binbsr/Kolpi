@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Src\Kolpi.Api\Kolpi.Api.csproj" />
-    <ProjectReference Include="..\..\Src\Kolpi.WebShared\Kolpi.WebShared.csproj" />
   </ItemGroup>
 
 </Project>

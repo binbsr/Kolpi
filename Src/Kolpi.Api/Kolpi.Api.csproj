@@ -40,4 +40,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Kolpi.FunctionalTests" />
+	</ItemGroup>
+
 </Project>

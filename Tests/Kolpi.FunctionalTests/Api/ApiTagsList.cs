@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,11 @@ using Xunit;
 
 namespace Kolpi.FunctionalTests.Api
 {
-    public class ApiTagsList : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ApiTagsList : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient client;
 
-        public ApiTagsList(CustomWebApplicationFactory<Startup> applicationFactory)
+        public ApiTagsList(CustomWebApplicationFactory<Program> applicationFactory)
         {
             client = applicationFactory.WithWebHostBuilder(builder =>
             {

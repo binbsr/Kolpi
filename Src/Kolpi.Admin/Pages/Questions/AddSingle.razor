@@ -6,6 +6,12 @@
 @inject HttpClient Http
 @inject ISnackbar SBar
 
+<style>
+    .ql-container {
+        font-size: 20px !important;
+    }
+</style>
+
 <MudContainer>
     <MudText Typo="Typo.h6">
         Question
@@ -22,10 +28,13 @@
                     <option value="monospace"></option>
                 </select>
                 <select class="ql-size">
-                    <option value="small"></option>
-                    <option selected=""></option>
-                    <option value="large"></option>
-                    <option value="huge"></option>
+                    <option value="10px">10px</option>
+                    <option value="12px">12px</option>
+                    <option value="14px">14px</option>
+                    <option value="16px">16px</option>
+                    <option selected="">20px</option>
+                    <option value="24px">24px</option>
+                    <option value="36px">36px</option>
                 </select>
             </span>
             <span class="ql-formats">
@@ -76,7 +85,9 @@
                         </MudListItem>
                     }
                     <MudListItem>
-                        <MudFab Color="Color.Tertiary" Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="AddNewOption" />
+                        <MudContainer>
+                            <MudFab Color="Color.Tertiary" Title="Add new answer option" Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="AddNewOption" />
+                        </MudContainer>
                     </MudListItem>
 
                 </MudList>
@@ -157,7 +168,7 @@
     {
         answerOptionViewModels.Remove(answerOptionViewModel);
     }
-        
+
     private async Task OnValidSubmit()
     {
         isSaving = true;

@@ -16,19 +16,19 @@ namespace Kolpi.ApplicationCore.Services
             entities = context.Set<TEntity>();
         }
 
-        public Task<int> AddAsync(TEntity model)
+        public Task<int> AddAsync(TEntity model, bool commit = true)
         {
-            entities.Add(model);
-            return context.SaveChangesAsync();
+            entities.Add(model);            
+            return commit ? CommitAsync() : Task.FromResult(0);
         }
 
-        public Task<int> AddAsync(IEnumerable<TEntity> models)
+        public Task<int> AddAsync(IEnumerable<TEntity> models, bool commit = true)
         {
             entities.AddRange(models);
-            return context.SaveChangesAsync();
+            return commit ? CommitAsync() : Task.FromResult(0);
         }
 
-        public Task<int> DeleteAsync(TKey id)
+        public Task<int> DeleteAsync(TKey id, bool commit = true)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
@@ -37,17 +37,17 @@ namespace Kolpi.ApplicationCore.Services
                 throw new Exception($"Deletion: Can't find record with id {id}");
 
             entities.Remove(entityToDelete);
-            return context.SaveChangesAsync();
+            return commit ? CommitAsync() : Task.FromResult(0);
         }
 
-        public Task<int> DeleteAsync(IEnumerable<TKey> ids)
+        public Task<int> DeleteAsync(IEnumerable<TKey> ids, bool commit = true)
         {
             if (!entities.Any()) throw new ArgumentNullException(nameof(entities));
             var entitiesToDelete = entities.Where(e => ids.Contains(e.Id));
 
             entities.RemoveRange(entitiesToDelete);
 
-            return context.SaveChangesAsync();
+            return commit ? CommitAsync() : Task.FromResult(0);
         }
 
         public virtual Task<List<TEntity>> GetAllAsync() => entities.ToListAsync();
@@ -58,16 +58,22 @@ namespace Kolpi.ApplicationCore.Services
 
         public Task<int> GetTotalCountAsync() => entities.CountAsync();
 
-        public Task<int> UpdateAsync(TEntity model)
+        public Task<int> UpdateAsync(TEntity model, bool commit = true)
         {
             entities.Update(model);
-            return context.SaveChangesAsync();
+            return commit ? CommitAsync() : Task.FromResult(0);
         }
 
-        public Task<int> UpdateAsync(IEnumerable<TEntity> models)
+        public Task<int> UpdateAsync(IEnumerable<TEntity> models, bool commit = true)
         {
             entities.UpdateRange(models);
-            return context.SaveChangesAsync();
+            return commit ? CommitAsync() : Task.FromResult(0);
+        }
+
+        public Task<int> CommitAsync()
+        {
+            var rowsAffectedTask = context.SaveChangesAsync();
+            return rowsAffectedTask;
         }
     }
 }

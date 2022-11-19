@@ -7,6 +7,7 @@ using Kolpi.ApplicationCore.Entities;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.WebShared.Mapper;
 using Kolpi.Infrastructure.Services.Questions;
+using Kolpi.Infrastructure.Services.AnswerOptions;
 
 namespace Kolpi.Api.Controllers
 {
@@ -74,7 +75,10 @@ namespace Kolpi.Api.Controllers
             try
             {
                 question = questionViewModel.ToModel();
+
                 question.QuestionStatusId = 1;
+
+                
                 await questionService.AddAsync(question);
             }
             catch(Exception ex)

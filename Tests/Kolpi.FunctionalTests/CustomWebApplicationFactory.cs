@@ -1,5 +1,5 @@
 ﻿using Kolpi.Infrastructure.Data;
-using Kolpi.Server;
+using Kolpi.Api;
 using Kolpi.Server.Extensions;
 using Kolpi.WebShared;
 using Microsoft.AspNetCore.Hosting;
@@ -15,7 +15,7 @@ using System.Text;
 
 namespace Kolpi.FunctionalTests
 {
-    public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<Startup>
+    public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -43,25 +43,22 @@ namespace Kolpi.FunctionalTests
                     var sp = services.BuildServiceProvider();
 
                     // Create a scope to obtain a reference to the database context
+                    using var scope = sp.CreateScope();
+                    var scopedServices = scope.ServiceProvider;
+                    var db = scopedServices.GetRequiredService<KolpiDbContext>();
+                    var logger = scopedServices
+                        .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
-                    using (var scope = sp.CreateScope())
+                    db.Database.EnsureCreated();
+
+                    try
                     {
-                        var scopedServices = scope.ServiceProvider;
-                        var db = scopedServices.GetRequiredService<KolpiDbContext>();
-                        var logger = scopedServices
-                            .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
-
-                        db.Database.EnsureCreated();
-
-                        try
-                        {
-                            //SeedData.PopulateTestData(db);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.LogError(ex, "An error occurred seeding the " +
-                            $"database with test messages. Error: {ex.Message}");
-                        }
+                        //SeedData.PopulateTestData(db);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "An error occurred seeding the " +
+                        $"database with test messages. Error: {ex.Message}");
                     }
                 });
         }

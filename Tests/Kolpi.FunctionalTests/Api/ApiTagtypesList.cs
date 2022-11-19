@@ -15,11 +15,11 @@ using Xunit;
 
 namespace Kolpi.FunctionalTests.Api
 {
-    public class ApiTagtypesList : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ApiTagtypesList : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient client;
 
-        public ApiTagtypesList(CustomWebApplicationFactory<Startup> applicationFactory)
+        public ApiTagtypesList(CustomWebApplicationFactory<Program> applicationFactory)
         {
             client = applicationFactory.WithWebHostBuilder(builder =>
             {
