@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-07-25T03:17:14.498Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.183" etag="zeZopUwbya8-clB2Gv-A" version="21.6.5" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2023-07-25T07:26:33.947Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.183" etag="Dl6S2Vb1tmEXGduGrQ36" version="21.6.5" type="github" pages="2">
   <diagram id="QfRjNa3fz2MPJ_dg_Rw2" name="pipes">
     <mxGraphModel dx="1050" dy="602" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -102,7 +102,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="sBzS85lGANglPzLfuBB_-1" value="" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;fontColor=#36a4f2;labelBackgroundColor=#8d7777;imageBackground=#977878;" vertex="1" parent="1">
+        <mxCell id="sBzS85lGANglPzLfuBB_-1" value="" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;fontColor=#36a4f2;labelBackgroundColor=#5ae7de;imageBackground=#977878;" vertex="1" parent="1">
           <mxGeometry x="100" y="100" width="720" height="620" as="geometry" />
         </mxCell>
         <mxCell id="sBzS85lGANglPzLfuBB_-2" value="Page 1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
@@ -111,14 +111,14 @@
         <mxCell id="sBzS85lGANglPzLfuBB_-3" value="https://www.draw.io" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
           <mxGeometry x="130" y="60" width="250" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="sBzS85lGANglPzLfuBB_-44" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#e2c5c5;imageAspect=0;aspect=fixed;image=https://cdn2.iconfinder.com/data/icons/web-development-and-studio/512/118_forest_camping_jungle_tree_pines_camping_camp-128.png;imageBackground=#977878;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
-          <mxGeometry x="175" y="220" width="370" height="370" as="geometry" />
-        </mxCell>
         <mxCell id="sBzS85lGANglPzLfuBB_-45" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Pine Trees&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=16;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
-          <mxGeometry x="310" y="180" width="100" height="40" as="geometry" />
+          <mxGeometry x="310" y="184" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sBzS85lGANglPzLfuBB_-47" value="" style="shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;image=https://th.bing.com/th/id/R.e2bc3d8c3125fba202013234190eae3f?rik=zRqA6mA0D9zUwQ&amp;riu=http%3a%2f%2fdreamicus.com%2fdata%2fpine%2fpine-04.jpg&amp;ehk=dX1ji4hXn%2fLhdqHeEivXpmp0W6WkHCfAzDy3VqwwMrM%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
+          <mxGeometry x="114" y="220" width="480" height="360" as="geometry" />
         </mxCell>
         <mxCell id="sBzS85lGANglPzLfuBB_-34" value="" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=#DEE2E6;html=1;whiteSpace=wrap;fillColor=#ffffff;fontColor=#0085FC;fontSize=14;" vertex="1" parent="sBzS85lGANglPzLfuBB_-1">
-          <mxGeometry x="236" y="140" width="248" height="30" as="geometry" />
+          <mxGeometry x="230" y="140" width="248" height="30" as="geometry" />
         </mxCell>
         <mxCell id="sBzS85lGANglPzLfuBB_-35" value="Prev" style="strokeColor=inherit;fillColor=inherit;gradientColor=inherit;html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.leftButton;rSize=5;perimeter=none;whiteSpace=wrap;resizeHeight=1;fontColor=#36a4f2;fontSize=14;" vertex="1" parent="sBzS85lGANglPzLfuBB_-34">
           <mxGeometry width="70" height="30" relative="1" as="geometry" />
