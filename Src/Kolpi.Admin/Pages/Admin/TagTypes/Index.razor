@@ -2,89 +2,61 @@
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 @using Kolpi.WebShared.ViewModels
 @using Kolpi.Admin.Components.Results
 @using MudBlazor.Utilities
 
-@if (tagCategories == null)
+@if (tagCategories is null)
 {
-    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave"></MudSkeleton>
+    <Loading></Loading>
 }
-else if (tagCategories.Any())
+else
 {
-    <MudTable Items="@tagCategories" Hover="@true"          
-          CanCancelEdit="true"
-          CommitEditTooltip="Save"
-          IsEditRowSwitchingBlocked="true"
-          RowEditPreview="BackupItem"
-          RowEditCancel="ResetItemToOriginalValues"
-          RowEditCommit="(e) => ItemHasBeenCommitted(e)">
+    <MudTable Items="@tagCategories" Hover="@true">
         <ToolBarContent>
-            <MudButton Color="Color.Tertiary"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Add" 
-                   Href="/tagtypes/add">
+            <MudButton Color="Color.Tertiary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
+                Href="/tagtypes/add">
                 Add Category
             </MudButton>
         </ToolBarContent>
         <HeaderContent>
             <MudTh></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Name</MudTableSortLabel></MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<TagTypeViewModel, object>(x => x.Name)"
+                    InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel>
+            </MudTh>
             <MudTh>Details</MudTh>
             <MudTh>Color Code</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>
-                <MudIconButton Color="Color.Error"
-                           Icon="@Icons.Material.Filled.Delete"
-                           Size="Size.Small"
-                           Title="Remove"
-                           OnClick="_ => DeleteRow(context)">
+                <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Title="Remove"
+                    OnClick="_ => DeleteRow(context)">
                 </MudIconButton>
+                <a href="/tagtypes/update/@context.Id">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" Size="Size.Small" Title="Edit"></MudIconButton>
+                </a>
             </MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Details">@context.Details</MudTd>
-            <MudTd DataLabel="Details">                
+            <MudTd DataLabel="Details">
                 <span style="color:@context.ColorCode">@context.Name</span>
             </MudTd>
-        </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd></MudTd>
-            <MudTd DataLabel="Name">
-                <MudTextField @bind-Value="@context.Name" Required />
-            </MudTd>
-            <MudTd DataLabel="Details">
-                <MudTextField @bind-Value="@context.Details" Required />
-            </MudTd>
-            <MudTd DataLabel="ColorCode">
-                <MudColorPicker ColorPickerView="ColorPickerView.Palette"
-                            Variant="Variant.Filled" @bind-Value="cColor" />
-            </MudTd>
-        </RowEditingTemplate>
-        <NoRecordsContent>
-            <MudText>No matching records found</MudText>
-        </NoRecordsContent>
-        <LoadingContent>
-            <MudText>Loading...</MudText>
-        </LoadingContent>
-    </MudTable>
-}
-else
-{
-    <EmptyResult />
+        </RowTemplate>        
+         <NoRecordsContent>
+             <MudText>No tagtypes found</MudText>
+         </NoRecordsContent>
+         <LoadingContent>
+             <MudText>Loading...</MudText>
+         </LoadingContent>         
+     </MudTable>
 }
 
 @code {
 
-    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
-    private TagTypeViewModel categoryBeforeEdit = new();
-    private MudColor cColor = default!;
-
-    [Inject]
-    private IDialogService DialogService { get; set; } = default!;
-
+    List<TagTypeViewModel> tagCategories = default!; 
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,9 +66,9 @@ else
     private async Task DeleteRow(TagTypeViewModel modelToDelete)
     {
         var result = await DialogService.ShowMessageBox("Delete Category",
-            message: $"Are you sure to delete {modelToDelete.Name}?",
-            yesText: "Delete",
-            cancelText: "Cancel");
+        message: $"Are you sure to delete {modelToDelete.Name}?",
+        yesText: "Delete",
+        cancelText: "Cancel");
 
         if (result == null)
             return;
@@ -111,35 +83,5 @@ else
         {
             Snackbar.Add($"Tag category delete failed. Error: {deleteResult.ReasonPhrase}", Severity.Error);
         }
-    }
-
-    private void BackupItem(object element)
-    {
-        categoryBeforeEdit = new()
-            {
-                Name = ((TagTypeViewModel)element).Name,
-                Details = ((TagTypeViewModel)element).Details,
-                ColorCode = ((TagTypeViewModel)element).ColorCode,
-            };
-    }
-
-    private async Task ItemHasBeenCommitted(object element)
-    {
-        var modelToUpdate = (TagTypeViewModel)element;
-        modelToUpdate.ColorCode = cColor.Value;
-
-        //Update model to database
-        var updateResult = await Http.PutAsJsonAsync($"api/tagtypes/{modelToUpdate.Id}", modelToUpdate);
-        if (updateResult.IsSuccessStatusCode)
-            Snackbar.Add("Tag category updated successfully.", Severity.Success);
-        else
-            Snackbar.Add($"Tag category update failed. Error: {updateResult.ReasonPhrase}", Severity.Error);
-    }
-
-    private void ResetItemToOriginalValues(object element)
-    {
-        ((TagTypeViewModel)element).Name = categoryBeforeEdit.Name;
-        ((TagTypeViewModel)element).Details = categoryBeforeEdit.Details;
-        ((TagTypeViewModel)element).ColorCode = categoryBeforeEdit.ColorCode;
     }
 }

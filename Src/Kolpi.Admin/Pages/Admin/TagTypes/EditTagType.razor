@@ -8,31 +8,18 @@
     <DataAnnotationsValidator />
     <MudCard>
         <MudCardContent>
-            <MudTextField Label="Name"
-                          @bind-Value="Model.Name"
-                          For="@(() => Model.Name)" />
-            <MudTextField Label="Details"
-                          Lines="3"
-                          Class="mt-3"
-                          @bind-Value="Model.Details"
-                          For="@(() => Model.Details)" />
+            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" />
 
-            <MudGrid>
-                <MudItem xs="4" Class="py-8">
-                    <MudText>Color Code</MudText>
-                </MudItem>
-                <MudItem xs="8">
-                    <MudColorPicker ValueChanged="ColorChanged" 
-                        Label="Color Code"
-                        ColorPickerView="ColorPickerView.Palette"
-                        Palette="CustomPallete" 
-                        PickerVariant="PickerVariant.Static"/>
-                </MudItem>
-            </MudGrid>
+            <MudTextField Label="Details" Lines="3" Class="mt-3" @bind-Value="Model.Details"
+                For="@(() => Model.Details)" />
+                
+            <MudField Label="Color code">
+                <input type="color" @bind-value="Model.ColorCode" /><span class="ml-3">@Model.ColorCode</span>
+            </MudField>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Tertiary"
-                       StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
+            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
                 Save Category
             </MudButton>
         </MudCardActions>
@@ -45,7 +32,7 @@
 
     public IEnumerable<MudColor> CustomPallete => new MudColor[]
     {
-        "#594ae2ff", "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff"
+"#594ae2ff", "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff"
     };
 
     bool isSaving = false;

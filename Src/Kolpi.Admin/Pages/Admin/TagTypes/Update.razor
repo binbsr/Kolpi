@@ -2,11 +2,9 @@
 
 @inject HttpClient Http
 
-@using Kolpi.WebShared.ViewModels
-
 @if (tagTypeViewModel == null)
 {
-    <MudSkeleton Animation="Animation.Wave"></MudSkeleton>
+    <Loading></Loading>
 }
 else
 {
