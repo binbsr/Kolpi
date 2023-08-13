@@ -1,10 +1,10 @@
-@using Kolpi.WebShared.ViewModels
+@*@using Kolpi.WebShared.ViewModels
 
 <MudContainer Class="d-flex gap-2 mx-0">
     <MudTooltip Text="@ChkTooltip" Arrow Placement="Placement.Start">
         <MudCheckBox @bind-Checked="AnswerModel.IsAnswer" Size="Size.Large" Color="Color.Primary" Class="d-inline-flex">Answer</MudCheckBox>
     </MudTooltip>
-    <MudTextField @bind-Value="AnswerModel.Body" Label="@TextInputLabel" Variant="Variant.Outlined" Class="d-inline-flex" FullWidth></MudTextField>
+    <MudTextField @bind-Value="AnswerModel.Body" Label="@TextInputLabel" Variant="MudBlazor.Variant.Outlined" Class="d-inline-flex" FullWidth></MudTextField>
     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="RemoveItem" Class="d-inline-flex"></MudIconButton>
 </MudContainer>
 
@@ -25,3 +25,4 @@
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
 }
+*@

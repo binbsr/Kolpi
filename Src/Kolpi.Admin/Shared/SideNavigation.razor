@@ -1,27 +1,15 @@
-<MudPaper Width="220px" Class="d-inline-flex py-3" Elevation="0">
-    <MudNavMenu Class="mud-width-full" Dense="true">
-        <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
-        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/dashboard" Icon="@Icons.TwoTone.Dashboard">Dashboard</MudNavLink>
-        <MudNavLink Href="/questions" Icon="@Icons.TwoTone.QuestionAnswer" >Question Bank</MudNavLink>
-        
-        <MudNavGroup Title="Questions" Icon="@Icons.TwoTone.QuestionMark" Expanded="true">
-                <MudNavLink Href="/question/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
-                <MudNavLink Href="/question/me" Icon="@Icons.TwoTone.Person" IconColor="Color.Info">My Content</MudNavLink>
-                <MudNavLink Href="/question/review" Icon="@Icons.TwoTone.Reviews" IconColor="Color.Info">Review</MudNavLink>
-        </MudNavGroup>
 
-        <MudNavGroup Title="Admin" Icon="@Icons.TwoTone.AdminPanelSettings" Expanded="true">
-            <MudNavGroup Title="Tagging" Icon="@Icons.TwoTone.Tag">
-                <MudNavLink Href="/tags" Match="NavLinkMatch.All" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Tags</MudNavLink>
-                <MudNavLink Href="/tags/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
-            </MudNavGroup>
-            <MudNavGroup Title="Tag Categories" Icon="@Icons.TwoTone.Category">
-                <MudNavLink Href="/tagtypes" Match="NavLinkMatch.All" Icon="@Icons.TwoTone.TableRows" IconColor="Color.Info">All Categories</MudNavLink>
-                <MudNavLink Href="/tagtypes/add" Icon="@Icons.TwoTone.Add" IconColor="Color.Info">Add New</MudNavLink>
-            </MudNavGroup>                
-        </MudNavGroup>
-        
-    </MudNavMenu>
-</MudPaper>
+<RadzenPanelMenu Multiple="@true" Style="margin:0">
+    <RadzenPanelMenuItem Text="Dashboard" Path="/dashboard" Icon="dashboard" />
+    <RadzenPanelMenuItem Text="Question Bank" Path="/questions" Icon="question_answer" />
+    <RadzenPanelMenuItem Text="Admin" Icon="admin_panel_settings">
+        <RadzenPanelMenuItem Text="Tags" Icon="local_offer">
+            <RadzenPanelMenuItem Text="All" Icon="style" Path="/tags"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="New Tag" Icon="add" Path="/tags/add"></RadzenPanelMenuItem>
+        </RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Tag Categories" Icon="category">
+            <RadzenPanelMenuItem Text="All" Icon="category" Path="/tagtypes" Match="NavLinkMatch.All"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="New Category" Icon="add" Path="/tagtypes/add" Match="NavLinkMatch.All"></RadzenPanelMenuItem>
+        </RadzenPanelMenuItem>
+    </RadzenPanelMenuItem>
+</RadzenPanelMenu>

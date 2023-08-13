@@ -1,65 +1,25 @@
 ﻿@inherits LayoutComponentBase
 
-@inject NavigationManager NavigationManager
-
-<MudLayout>
-    <MudAppBar Elevation="1" Color="Color.Tertiary">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-            OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Kolpi</MudText>
-        <MudSpacer />
-        <MudMenu AnchorOrigin="Origin.TopLeft" Class="mt-1 ml-4">
-            <ActivatorContent>
-                <MudAvatar Image="/img/me.jpg" />
-            </ActivatorContent>
-            <ChildContent>
-                <UserLogin />                
-            </ChildContent>
-        </MudMenu>
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <SideNavigation/>
-    </MudDrawer>
-    <MudMainContent>
-        <MudHidden Breakpoint="Breakpoint.SmAndDown">
-            @*Will not be seen on small and extra-small displays*@
-            <MudToolBar>
-                <MudBreadcrumbs Items="_items" SeparatorTemplate="@separatorBreadcrumb"></MudBreadcrumbs>                           
-            </MudToolBar>
-        </MudHidden>
-        <MudContainer>
+<RadzenLayout Style="grid-template-columns: 1fr auto; grid-template-areas: 'rz-header rz-header' 'rz-body rz-sidebar'">
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" AlignItems="AlignItems.Center" Gap="1rem">            
+            <RadzenLabel Text="KOLPI" />
+            <RadzenSidebarToggle Click="@(() => _drawerOpen = !_drawerOpen)" Class="rz-m-0" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Expanded="@_drawerOpen">
+        <SideNavigation />
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4">           
             @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+        </div>
+    </RadzenBody>
+</RadzenLayout>
+
+<RadzenDialog />
+<RadzenNotification />
 
 @code {
     bool _drawerOpen = true;
-    public string currentUrl = default!;
-    public List<BreadcrumbItem> _items = new List<BreadcrumbItem>();
-    RenderFragment separatorBreadcrumb =@<MudIcon Icon="@Icons.Filled.ChevronRight" Class="mt-1" />;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    protected override void OnParametersSet()
-    {
-        _items.Clear();
-        currentUrl = NavigationManager.Uri;
-        var path = currentUrl.Replace(NavigationManager.BaseUri, "");
-
-        _items.Add(new BreadcrumbItem("Home", NavigationManager.BaseUri, NavigationManager.Uri == NavigationManager.BaseUri));
-
-        var fragments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var link in fragments)
-        {
-            var lastLink = _items.Last();
-            _items.Add(new BreadcrumbItem(link.ToUpper(), $"{lastLink.Href}{link}", link == fragments.Last()));
-        }
-
-        base.OnParametersSet();
-    }
 }

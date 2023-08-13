@@ -1,4 +1,4 @@
-﻿@using Kolpi.WebShared.ViewModels
+﻿@*@using Kolpi.WebShared.ViewModels
 
 @inject HttpClient Http
 @inject ISnackbar SBar
@@ -26,10 +26,10 @@
                 ValueChanged = "TagTypeChanged" />
         </MudCardContent>
         <MudCardActions>
-            <MudButton Disabled="isSaving" 
-                ButtonType="ButtonType.Submit" 
-                Variant="Variant.Filled" 
-                Color="Color.Tertiary"
+            <MudButton Disabled="isSaving"
+                       ButtonType="MudBlazor.ButtonType.Submit"
+                       Variant="MudBlazor.Variant.Filled"
+                       Color="Color.Tertiary"
                 StartIcon="@Icons.Material.Filled.Save" 
                 Class="ml-auto">
                 Save Tag
@@ -97,3 +97,4 @@
         StateHasChanged();
     }
 }
+*@

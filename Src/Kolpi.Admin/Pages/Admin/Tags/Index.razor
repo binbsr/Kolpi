@@ -1,4 +1,4 @@
-﻿@page "/tags"
+﻿@*@page "/tags"
 
 @inject HttpClient http
 
@@ -9,7 +9,7 @@
           Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudButton Color="Color.Tertiary"
-                   Variant="Variant.Filled"
+                   Variant="MudBlazor.Variant.Filled"
                    StartIcon="@Icons.Material.Filled.Add" 
                    Href="/tags/add">
                 Add Tag
@@ -78,5 +78,6 @@
 
         StateHasChanged();
         }
-        }*@
+        }
 }
+*@
