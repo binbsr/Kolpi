@@ -1,75 +1,14 @@
 @page "/question/add"
 
-@using Kolpi.Admin.Components
-@using Kolpi.WebShared.ViewModels
+<Editor />
 
-@inject HttpClient Http
-@inject ISnackbar SBar
-
-<style>
-    .ql-container {
-        font-size: 20px !important;
-    }
-</style>
-
+@*
 <MudContainer>
     <MudText Typo="Typo.h6">
         Question
         <MudLink Class="" Href="https://katex.org/docs/supported.html" Target="_blank">Katex docs (<i>fx</i>)</MudLink>
     </MudText>
-
-    @*Text Editor*@
-    <BlazoredTextEditor @ref="@QuillHtml" Placeholder="Type your question here">
-        <ToolbarContent>
-            <span class="ql-formats">
-                <select class="ql-font">
-                    <option selected=""></option>
-                    <option value="serif"></option>
-                    <option value="monospace"></option>
-                </select>
-                <select class="ql-size">
-                    <option value="10px">10px</option>
-                    <option value="12px">12px</option>
-                    <option value="14px">14px</option>
-                    <option value="16px">16px</option>
-                    <option selected="">20px</option>
-                    <option value="24px">24px</option>
-                    <option value="36px">36px</option>
-                </select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <select class="ql-color"></select>
-                <select class="ql-background"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-blockquote"></button>
-                <button class="ql-code-block"></button>
-                <button class="ql-script" value="sub"></button>
-                <button class="ql-script" value="super"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-link"></button>
-                @*<button class="ql-image"></button>*@
-                <button class="ql-formula"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-clean"></button>
-            </span>
-        </ToolbarContent>
-        <EditorContent>
-        </EditorContent>
-    </BlazoredTextEditor>
-
+    <Editor />
     <MudGrid>
         @{
             byte i = 1;
@@ -118,121 +57,27 @@
 
                 <ItemTemplate Context="e">
                     <MudText><b>@($"{e.Name}")</b>/@($"{e.TagTypeName} ({e.Details})")</MudText>
-                </ItemTemplate>
-                <NoItemsTemplate>
-                    <MudText Align="Align.Center" Class="px-4 py-1">
-                        No tags found
-                    </MudText>
-                </NoItemsTemplate>
-            </MudAutocomplete>
-        </MudItem>
+                    </ItemTemplate>
+                    <NoItemsTemplate>
+                        <MudText Align="Align.Center" Class="px-4 py-1">
+                            No tags found
+                        </MudText>
+                    </NoItemsTemplate>
+                </MudAutocomplete>
+            </MudItem>
 
-        <MudItem md="12" xs="12">
-            <MudButton Disabled="isSaving"
-                       OnClick="OnValidSubmit"
-                       Variant="Variant.Filled"
-                       Color="Color.Tertiary"
-                       StartIcon="@Icons.Material.Filled.Save"
-                       Class="ml-auto">
-                Save Question
-            </MudButton>
-        </MudItem>
-    </MudGrid>
+            <MudItem md="12" xs="12">
+                <MudButton Disabled="isSaving"
+                           OnClick="OnValidSubmit"
+                           Variant="MudBlazor.Variant.Filled"
+                           Color="Color.Tertiary"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           Class="ml-auto">
+                    Save Question
+                </MudButton>
+            </MudItem>
+        </MudGrid>
 
-</MudContainer>
+    </MudContainer>
 
-@code {
-    BlazoredTextEditor QuillHtml;
-    private QuestionViewModel Question = new();
-    List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
-    private List<TagViewModel> Tags { get; set; } = default!;
-    private TagViewModel Value { get; set; } = default!;
-    List<TagViewModel> tagsSelected = new List<TagViewModel>();
-    bool isSaving = false;
-    Dictionary<string, Color> defaultColors = new()
-        {
-            ["#594ae2ff"] = Color.Primary,
-            ["#ff4081ff"] = Color.Secondary,
-            ["#2196f3ff"] = Color.Info,
-            ["#00c853ff"] = Color.Success,
-            ["#ff9800ff"] = Color.Warning,
-            ["#f44336ff"] = Color.Error
-        };
-
-    private void AddNewOption()
-    {
-        answerOptionViewModels.Add(new());
-    }
-
-    private void DeleteAnsOption(AnswerOptionViewModel answerOptionViewModel)
-    {
-        answerOptionViewModels.Remove(answerOptionViewModel);
-    }
-
-    private async Task OnValidSubmit()
-    {
-        isSaving = true;
-
-        Task<HttpResponseMessage> saveTask;
-
-        Question.AnswerOptions = answerOptionViewModels;
-        Question.Tags = tagsSelected;
-        Question.Body = await this.QuillHtml.GetHTML();
-
-        if (Question.Id == default)
-        {
-            // Adding new
-            saveTask = Http.PostAsJsonAsync("api/questions", Question);
-        }
-        else
-        {
-            // Modify existing
-            saveTask = Http.PutAsJsonAsync($"api/questions/{Question.Id}", Question);
-        }
-
-        await saveTask.ContinueWith(st =>
-        {
-            isSaving = false;
-
-            var result = st.Result;
-
-            if (result.IsSuccessStatusCode)
-            {
-                SBar.Add("Question saved successfully.", Severity.Success);
-            }
-            else
-            {
-                SBar.Add($"Error occured while saving question. Problem: {result.ReasonPhrase}", Severity.Error);
-            }
-        });
-
-        StateHasChanged();
-    }
-
-    private void OnSelectedValueChanged(TagViewModel tag)
-    {
-        Value = tag;
-        if (tagsSelected.Any(x => x.Name == tag.Name))
-            return;
-        tagsSelected.Add(tag);
-    }
-
-    private async Task<IEnumerable<TagViewModel>> Search(string value)
-    {
-        List<TagViewModel> emptyModel = new();
-
-        if (string.IsNullOrWhiteSpace(value))
-            return emptyModel;
-
-        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
-        return Tags;
-    }
-
-    private void Closed(MudChip chip)
-    {
-        var tagViewModel = tagsSelected.FirstOrDefault(x => x.Name == chip.Text);
-        if (tagViewModel is null)
-            return;
-        tagsSelected.Remove(tagViewModel);
-    }
-}
+*@
