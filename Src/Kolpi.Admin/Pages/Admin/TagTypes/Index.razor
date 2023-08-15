@@ -5,18 +5,17 @@
 @inject NotificationService Notification
 @inject DialogService DialogService
 
-@using Kolpi.WebShared.ViewModels
-@using Kolpi.Admin.Components.Results
-
-<RadzenDataGrid AllowColumnResize="true"
+<RadzenDataGrid GridLines="DataGridGridLines.None"
+                @ref="categoriesGrid"
+                AllowColumnResize="true"
                 AllowFiltering="true"
-                FilterMode="FilterMode.Simple"
+                FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                PageSize="5"
+                PageSize="10"
                 AllowPaging="true"
                 ShowPagingSummary="true"
                 Data="@tagCategories"
-                TItem="TagTypeViewModel"
+                TItem="TagTypeViewModel"                
                 IsLoading="tagCategories is null">
     <HeaderTemplate>
         <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="New Tag Category" Click="AddNewCategory" />
@@ -34,12 +33,23 @@
                 <div style="height:20px; width:100%; background-color:@category.ColorCode"></div>
             </Template>
         </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
+            <Template Context="category">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" Click="@(args => EditRow(category))" @onclick:stopPropagation="true">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(category))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>            
+        </RadzenDataGridColumn>
+
     </Columns>
 </RadzenDataGrid>
 
 @code {
 
     List<TagTypeViewModel> tagCategories = default!;
+    RadzenDataGrid<TagTypeViewModel> categoriesGrid;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,9 +61,9 @@
 
     private async Task DeleteRow(TagTypeViewModel modelToDelete)
     {
-        var result = await DialogService.Confirm($"Are you sure to delete {modelToDelete.Name}?", "Delete Category");
+        var result = await DialogService.Confirm($"Are you sure to delete '{modelToDelete.Name}' tag category?", "Delete Category");
 
-        if (result.HasValue || !result.Value)
+        if (result == null || !result.Value)
             return;
 
         var deleteResult = await Http.DeleteAsync($"api/tagtypes/{modelToDelete.Id}");
@@ -68,6 +78,7 @@
                     }
             );
             tagCategories.Remove(modelToDelete);
+            await categoriesGrid.Reload();
         }
         else
         {
@@ -80,5 +91,10 @@
                     }
             );
         }
+    }
+
+    private void EditRow(TagTypeViewModel tagTypeViewModel)
+    {
+        Nav.NavigateTo($"/tagtypes/update/{tagTypeViewModel.Id}");
     }
 }

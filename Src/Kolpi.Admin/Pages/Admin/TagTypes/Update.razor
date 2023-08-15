@@ -1,4 +1,4 @@
-﻿@*@page "/tagtypes/update/{Id:int}"
+﻿@page "/tagtypes/update/{Id:int}"
 
 @inject HttpClient Http
 
@@ -21,4 +21,3 @@ else
     protected override async Task OnInitializedAsync() => tagTypeViewModel = 
         await Http.GetFromJsonAsync<TagTypeViewModel>($"api/tagtypes/{Id}") ?? default!;
 }
-*@
