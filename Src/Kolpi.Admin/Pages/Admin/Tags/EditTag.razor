@@ -1,42 +1,35 @@
-﻿@*@using Kolpi.WebShared.ViewModels
+﻿@using Kolpi.WebShared.ViewModels
 
 @inject HttpClient Http
-@inject ISnackbar SBar
+@inject NotificationService Notification
+@inject NavigationManager Navigation
 
-<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator />
-    <MudCard>
-        <MudCardContent>
-            <MudTextField Label="Name" 
-                HelperText="At least 2 characters"
-                @bind-Value="Model.Name" 
-                For="@(() => Model.Name)" />
-            <MudTextField Label="Details" 
-                Lines="3" 
-                Class="mt-3" 
-                @bind-Value="Model.Details" 
-                For="@(() => Model.Details)" />
-            <MudAutocomplete T="TagTypeViewModel"
-                Label="Tag Category"
-                SearchFunc="Search"
-                CoerceText="true"
-                Clearable="true"
-                ResetValueOnEmptyText=true
-                ToStringFunc="@(e => e.Name)"
-                ValueChanged = "TagTypeChanged" />
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Disabled="isSaving"
-                       ButtonType="MudBlazor.ButtonType.Submit"
-                       Variant="MudBlazor.Variant.Filled"
-                       Color="Color.Tertiary"
-                StartIcon="@Icons.Material.Filled.Save" 
-                Class="ml-auto">
-                Save Tag
-            </MudButton>
-        </MudCardActions>
-    </MudCard>
-</EditForm>
+<RadzenRow Gap="1rem">
+    <RadzenColumn Size="12">
+        <RadzenStack>
+            <RadzenFormField Text="Name" Variant="Variant.Flat">
+                <RadzenTextBox @bind-Value="@Model.Name" />
+            </RadzenFormField>
+            <RadzenFormField Text="Details" Variant="Variant.Flat">
+                <RadzenTextArea @bind-Value="@Model.Details" Rows="5" />
+            </RadzenFormField>
+            <RadzenFormField Text="Tag Category" Variant="Variant.Flat">
+                <RadzenDropDown
+                    @bind-Value=@Model.TagTypeId 
+                    Data=@TagTypes 
+                    TextProperty="Name" 
+                    ValueProperty="Id" 
+                    AllowClear=true 
+                    Placeholder="Select tag category" 
+                    Style="width: 100%" />
+            </RadzenFormField>
+            <RadzenFormField>
+                <RadzenButton Text="Cancel" Click="Cancel" ButtonStyle="ButtonStyle.Info" />
+                <RadzenButton Text="Save" Click="SaveTag" IsBusy="@isSaving" BusyText="Saving..." ButtonStyle="ButtonStyle.Warning"/>
+            </RadzenFormField>
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
 
 @code {
 
@@ -52,16 +45,17 @@
         Model.TagTypeId = tagTypeViewModel.Id;
     }
 
-    private async Task<IEnumerable<TagTypeViewModel>> Search(string value)
+    private void Cancel()
     {
-        TagTypes = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? Array.Empty<TagTypeViewModel>();
-
-        if (string.IsNullOrEmpty(value))
-            return TagTypes;
-        return TagTypes.Where(y => y.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        Navigation.NavigateTo("/tags");
     }
 
-    private async Task OnValidSubmit(EditContext editContext)
+    protected override async Task OnInitializedAsync()
+    {
+        TagTypes = await Http.GetFromJsonAsync<TagTypeViewModel[]>("api/tagtypes") ?? Array.Empty<TagTypeViewModel>();
+    }
+
+    private async Task SaveTag()
     {
         isSaving = true;
 
@@ -86,15 +80,26 @@
 
             if (result.IsSuccessStatusCode)
             {
-                SBar.Add("Tag saved successfully.", Severity.Success);
+                Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = $"Tag saved successfully",
+                        Severity = NotificationSeverity.Success,
+                        Duration = 4000
+                    }
+            );
             }
             else
             {
-                SBar.Add($"Error occured while saving tag. Problem: {result.ReasonPhrase}", Severity.Error);
+                Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = $"Tag save failed. Error: {result.ReasonPhrase}",
+                        Severity = NotificationSeverity.Error,
+                        Duration = 4000
+                    }
+            );
             }
         });
-
-        StateHasChanged();
     }
 }
-*@

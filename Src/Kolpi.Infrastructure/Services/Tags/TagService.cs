@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Kolpi.Infrastructure.Data;
 using Kolpi.ApplicationCore.Services;
+using System.Linq.Dynamic.Core;
 
 namespace Kolpi.Infrastructure.Services.Tags
 {
@@ -14,30 +15,22 @@ namespace Kolpi.Infrastructure.Services.Tags
             this.dbContext = dbContext;
         }
 
-        public Task<List<Tag>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<(int Count, List<Tag> Tags)> GetAllAsync(string filter, int skip, int take, string orderBy)
         {
-            int skipCount = pageIndex * pageSize;
+            var query = dbContext.Set<Tag>().Include(t => t.TagType).AsQueryable();
+            if (filter is not null and not "")
+            {
+                query = query.Where(filter);
+            }
 
-            var results = dbContext.Set<Tag>()
-                .Include(t => t.TagType)
-                .Skip(skipCount)
-                .Take(pageSize)
-                .OrderBy(x => x.Name)
-                .ToListAsync();
-            return results;
-        }
+            if (orderBy is not null and not "")
+            {
+                query = query.OrderBy(orderBy);
+            }
 
-        public Task<List<Tag>> GetAllAsync(string searchText, int pageIndex, int pageSize)
-        {
-            int skipCount = pageIndex * pageSize;
-
-            return dbContext.Set<Tag>()
-                .Where(t => EF.Functions.Like(t.Name, $"%{searchText}%"))
-                .Include(t => t.TagType)
-                .Skip(skipCount)
-                .Take(pageSize)
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+            var count = await query.CountAsync();
+            var result = await query.Skip(skip).Take(take).ToListAsync();
+            return (count, result);
         }
 
         public override Task<Tag?> GetByIdAsync(int id) => dbContext.Set<Tag>()
