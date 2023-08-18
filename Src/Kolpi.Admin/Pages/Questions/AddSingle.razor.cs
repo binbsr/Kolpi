@@ -8,24 +8,19 @@ public partial class AddSingle
 {
     [Inject]
     public HttpClient Http { get; set; }
-    //[Inject]
-    //public ISnackbar SBar { get; set; }
 
     private QuestionViewModel Question = new();
     List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
     private List<TagViewModel> Tags { get; set; } = default!;
     private TagViewModel Value { get; set; } = default!;
-    List<TagViewModel> tagsSelected = new List<TagViewModel>();
+    List<int> tagsSelected = new List<int>();
     bool isSaving = false;
-    //Dictionary<string, Color> defaultColors = new()
-    //{
-    //    ["#594ae2ff"] = Color.Primary,
-    //    ["#ff4081ff"] = Color.Secondary,
-    //    ["#2196f3ff"] = Color.Info,
-    //    ["#00c853ff"] = Color.Success,
-    //    ["#ff9800ff"] = Color.Warning,
-    //    ["#f44336ff"] = Color.Error
-    //};
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<TagsFilteredViewModel>($"api/tags?take=999999") ?? new TagsFilteredViewModel();
+        Tags = result.Records;
+    }
 
     public void AddNewOption()
     {
@@ -44,7 +39,7 @@ public partial class AddSingle
         Task<HttpResponseMessage> saveTask;
 
         Question.AnswerOptions = answerOptionViewModels;
-        Question.Tags = tagsSelected;
+        //Question.Tags = tagsSelected;
         //Question.Body = await this.QuillHtml.GetHTML();
 
         if (Question.Id == default)
@@ -75,13 +70,6 @@ public partial class AddSingle
         });
     }
 
-    public void OnSelectedValueChanged(TagViewModel tag)
-    {
-        Value = tag;
-        if (tagsSelected.Any(x => x.Name == tag.Name))
-            return;
-        tagsSelected.Add(tag);
-    }
 
     public async Task<IEnumerable<TagViewModel>> Search(string value)
     {
@@ -94,11 +82,8 @@ public partial class AddSingle
         return Tags;
     }
 
-    public void Closed(string chip)
+    public void OnInput(string body)
     {
-        //var tagViewModel = tagsSelected.FirstOrDefault(x => x.Name == chip.Text);
-        //if (tagViewModel is null)
-        //    return;
-        //tagsSelected.Remove(tagViewModel);
+        
     }
 }

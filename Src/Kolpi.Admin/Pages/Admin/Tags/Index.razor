@@ -1,4 +1,5 @@
 ﻿@page "/tags"
+@using Kolpi.Shared.Extentions;
 
 @inject HttpClient http
 @inject NavigationManager Navigation
@@ -12,7 +13,7 @@
                 AllowFiltering="true"
                 FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                PageSize="5"
+                PageSize="10"
                 AllowPaging="true"
                 ShowPagingSummary="true"
                 TItem="TagViewModel"
@@ -29,7 +30,11 @@
         <RadzenDataGridColumn TItem="TagViewModel" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="Details" Title="Details" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeId" Title="Tag Category" />
-        <RadzenDataGridColumn TItem="TagViewModel" Property="CreatedAt" Title="Created" />
+        <RadzenDataGridColumn TItem="TagViewModel" Property="CreatedAt" Title="Created">
+            <Template Context="tag">
+                @tag.CreatedAt.Relativize()
+            </Template>
+            </RadzenDataGridColumn>
 
         <RadzenDataGridColumn TItem="TagViewModel" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
             <Template Context="tag">

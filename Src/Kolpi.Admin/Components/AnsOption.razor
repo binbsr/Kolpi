@@ -1,12 +1,27 @@
-@*@using Kolpi.WebShared.ViewModels
+@using Kolpi.WebShared.ViewModels
 
-<MudContainer Class="d-flex gap-2 mx-0">
-    <MudTooltip Text="@ChkTooltip" Arrow Placement="Placement.Start">
-        <MudCheckBox @bind-Checked="AnswerModel.IsAnswer" Size="Size.Large" Color="Color.Primary" Class="d-inline-flex">Answer</MudCheckBox>
-    </MudTooltip>
-    <MudTextField @bind-Value="AnswerModel.Body" Label="@TextInputLabel" Variant="MudBlazor.Variant.Outlined" Class="d-inline-flex" FullWidth></MudTextField>
-    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="RemoveItem" Class="d-inline-flex"></MudIconButton>
-</MudContainer>
+@inject TooltipService tooltipService
+
+<RadzenRow JustifyContent="JustifyContent.Right" AlignItems="AlignItems.Center" Gap="1rem" Style="width: 100%;">
+    <RadzenColumn class="rz-text-align-left">
+        <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-right: 4px; vertical-align: middle;" />
+        <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
+    </RadzenColumn>
+    <RadzenColumn Size="8" class="rz-text-align-left">
+        <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%;" />
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="2" class="rz-text-align-left">
+        <RadzenFormField Variant="@Variant.Outlined" Style="width: 100%;">
+            <RadzenDropDown Data=@ansTypes @bind-Value="@selectedAnsType" AllowClear="@true" Placeholder="Select answer type" Style="width: 100%;" />
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn class="rz-text-align-right">
+        <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem"></RadzenButton>
+    </RadzenColumn>
+</RadzenRow>
 
 @code
 {
@@ -20,9 +35,16 @@
     public string TextInputLabel { get; set; } = "Option";
     public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
 
+    private string[] ansTypes = { "Text", "Image", "Audio", "Video" };
+    private string selectedAnsType = "Text";
+
     private async Task RemoveItem()
     {
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
+
+    private void ShowTooltip(ElementReference elementReference, TooltipOptions options = null)
+    {
+        tooltipService.Open(elementReference, ChkTooltip, options);
+    }
 }
-*@

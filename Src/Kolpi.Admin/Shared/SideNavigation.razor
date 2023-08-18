@@ -2,6 +2,18 @@
 <RadzenPanelMenu Multiple="@true" Style="margin:0">
     <RadzenPanelMenuItem Text="Dashboard" Path="/dashboard" Icon="dashboard" />
     <RadzenPanelMenuItem Text="Question Bank" Path="/questions" Icon="question_answer" />
+
+    <RadzenPanelMenuItem Text="Questions" Icon="question_mark">
+        <RadzenPanelMenuItem Text="Add New (UI)" Icon="checklist" Path="/question/add"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Add Multiple (Text)" Icon="text_fields" Path="/question/multiple"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Review" Icon="rate_review" Path="/question/review"></RadzenPanelMenuItem>
+    </RadzenPanelMenuItem>
+
+    <RadzenPanelMenuItem Text="Question Paper" Icon="quiz">
+        <RadzenPanelMenuItem Text="Add New" Icon="note_add" Path="/paper/add"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Schedule" Icon="schedule" Path="/paper/schedule"></RadzenPanelMenuItem>
+    </RadzenPanelMenuItem>
+
     <RadzenPanelMenuItem Text="Admin" Icon="admin_panel_settings">
         <RadzenPanelMenuItem Text="Tags" Icon="local_offer">
             <RadzenPanelMenuItem Text="All" Icon="style" Path="/tags"></RadzenPanelMenuItem>

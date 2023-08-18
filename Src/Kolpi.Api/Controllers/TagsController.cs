@@ -28,8 +28,8 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<TagsFilteredViewModel>> Get([FromQuery] string filter,
-        string orderBy, int skip = 0, int take = 10)
+    public async Task<ActionResult<TagsFilteredViewModel>> Get([FromQuery] string filter = "",
+        string orderBy = "", int skip = 0, int take = 10)
     {        
         try
         {
