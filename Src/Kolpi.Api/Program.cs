@@ -18,7 +18,7 @@ builder.Services
 
 builder.Services
     .AddDbContext<KolpiDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetSection("ConnectionStrings:DefaultConnection").Value));
+        options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings:KolpiSqlServerConnection").Value));
 
 //builder.Services
 //    .AddDefaultIdentity<KolpiUser>(options => options.SignIn.RequireConfirmedAccount = false)

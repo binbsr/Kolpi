@@ -14,7 +14,7 @@ namespace Kolpi.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KolpiServerContext-014917e0-fcbe-4c08-8874-ace3897c77b4;Trusted_Connection=True;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KolpiStudyDb;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 
