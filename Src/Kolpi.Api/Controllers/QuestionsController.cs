@@ -41,6 +41,25 @@ namespace Kolpi.Api.Controllers
             return question;
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Question>> PostQuestion(QuestionViewModel questionViewModel)
+        {
+            Question question;
+            try
+            {
+                question = questionViewModel.ToModel();
+                question.QuestionStatusId = 1;
+
+                await questionService.AddAsync(question);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+
+            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutQuestion(int id, Question question)
         {
@@ -67,28 +86,7 @@ namespace Kolpi.Api.Controllers
 
             return NoContent();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(QuestionViewModel questionViewModel)
-        {
-            Question question; 
-            try
-            {
-                question = questionViewModel.ToModel();
-
-                question.QuestionStatusId = 1;
-
-                
-                await questionService.AddAsync(question);
-            }
-            catch(Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
-        }
-
+             
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {

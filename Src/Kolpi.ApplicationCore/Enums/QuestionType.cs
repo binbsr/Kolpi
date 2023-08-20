@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kolpi.ApplicationCore.Enums
+﻿namespace Kolpi.ApplicationCore.Enums;
+public enum QuestionType
 {
-    public enum QuestionType
-    {
-        Objective,
-        Subjective
-    }
+    Objective,
+    Subjective
 }

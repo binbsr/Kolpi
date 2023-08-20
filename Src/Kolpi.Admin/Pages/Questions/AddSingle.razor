@@ -6,7 +6,7 @@
                   Input="@OnInput"
                   UploadUrl="upload/image" />
 
-<RadzenDropDown @bind-Value=@tagsSelected Data=@Tags TextProperty="Name" ValueProperty="Id"
+<RadzenDropDown @bind-Value=@tagsSelected TValue="List<TagViewModel>" Data=@Tags Context="tag"
                 Multiple=true
                 AllowClear=true
                 AllowSelectAll=false
@@ -18,7 +18,11 @@
                 FilterAsYouType=true
                 FilterCaseSensitivity=FilterCaseSensitivity.CaseInsensitive
                 FilterOperator="StringFilterOperator.Contains"
-                MaxSelectedLabels="8" />
+                MaxSelectedLabels="8">
+                <Template>
+                    @tag.Name
+                </Template>
+</RadzenDropDown>
 
 <RadzenRow class="rz-border-info-light rz-p-4" Gap="1rem" RowGap="1rem">
     @{
@@ -35,4 +39,4 @@
     <RadzenButton Icon="add" Text="New Option" ButtonStyle="ButtonStyle.Danger" Click="AddNewOption" title="Add new option" Style="height:20px" />
 </RadzenRow>
 
-<RadzenButton Icon="save" Text="Save Question" ButtonStyle="ButtonStyle.Success" Click="AddNewOption" title="Add new option" class="rz-mt-4" Style="float: right" />
+<RadzenButton Icon="save" Text="Save Question" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" Click="OnSave" class="rz-mt-4" Style="float: right" />

@@ -1,5 +1,6 @@
 ﻿using Kolpi.WebShared.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Radzen;
 using System.Net.Http.Json;
 
 namespace Kolpi.Admin.Pages.Questions;
@@ -9,11 +10,13 @@ public partial class AddSingle
     [Inject]
     public HttpClient Http { get; set; }
 
+    [Inject]
+    public NotificationService Notification { get; set; }
+
     private QuestionViewModel Question = new();
     List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
     private List<TagViewModel> Tags { get; set; } = default!;
-    private TagViewModel Value { get; set; } = default!;
-    List<int> tagsSelected = new List<int>();
+    List<TagViewModel> tagsSelected = new();
     bool isSaving = false;
 
     protected override async Task OnInitializedAsync()
@@ -32,15 +35,14 @@ public partial class AddSingle
         answerOptionViewModels.Remove(answerOptionViewModel);
     }
 
-    public async Task OnValidSubmit()
+    public async Task OnSave()
     {
         isSaving = true;
 
         Task<HttpResponseMessage> saveTask;
 
         Question.AnswerOptions = answerOptionViewModels;
-        //Question.Tags = tagsSelected;
-        //Question.Body = await this.QuillHtml.GetHTML();
+        Question.Tags = tagsSelected;
 
         if (Question.Id == default)
         {
@@ -61,11 +63,23 @@ public partial class AddSingle
 
             if (result.IsSuccessStatusCode)
             {
-                //SBar.Add("Question saved successfully.", Severity.Success);
+                Notification.Notify(
+                   new NotificationMessage
+                   {
+                       Summary = $"Question saved successfully",
+                       Severity = NotificationSeverity.Success,
+                       Duration = 4000
+                   });
             }
             else
             {
-                //SBar.Add($"Error occured while saving question. Problem: {result.ReasonPhrase}", Severity.Error);
+                Notification.Notify(
+                  new NotificationMessage
+                  {
+                      Summary = $"Error occured while saving question. Problem: {result.ReasonPhrase}",
+                      Severity = NotificationSeverity.Success,
+                      Duration = 4000
+                  });
             }
         });
     }
@@ -84,6 +98,6 @@ public partial class AddSingle
 
     public void OnInput(string body)
     {
-        
+
     }
 }
