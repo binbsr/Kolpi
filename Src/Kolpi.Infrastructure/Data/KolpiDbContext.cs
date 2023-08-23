@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Kolpi.ApplicationCore.Entities;
+using Microsoft.Extensions.Hosting;
+using Duende.IdentityServer.EntityFramework.Entities;
 
 namespace Kolpi.Infrastructure.Data
 {
@@ -55,8 +57,18 @@ namespace Kolpi.Infrastructure.Data
                 .WithMany(qs => qs.Questions)
                 .HasForeignKey(q => q.QuestionStatusId);
 
-            //Seeding
+            // Question to AnsOptions (one to many)            
+            modelBuilder.Entity<Question>()
+                .HasMany(q => q.AnswerOptions)
+                .WithOne(q => q.Question)
+                .HasForeignKey(q => q.QuestionId)
+                .HasPrincipalKey(e => e.Id);
 
+            modelBuilder.Entity<Question>()
+                .HasMany(e => e.Tags)
+                .WithMany();
+
+            //Seeding
             modelBuilder.Entity<TagType>()
                 .HasData(
                     new TagType
@@ -105,15 +117,15 @@ namespace Kolpi.Infrastructure.Data
 
             modelBuilder.Entity<QuestionStatus>()
                 .HasData(
-                new QuestionStatus 
+                new QuestionStatus
                 {
                     Id = 1,
                     Name = "New",
                     Details = "QUestion just added"
                 },
-                new QuestionStatus 
+                new QuestionStatus
                 {
-                    Id= 2,
+                    Id = 2,
                     Name = "Review",
                     Details = "Question is being reviewed"
                 },

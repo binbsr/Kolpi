@@ -24,7 +24,7 @@ namespace Kolpi.WebShared.Mapper
             if (!answerOptionViewModels.Any())
                 return default!;
 
-            List<AnswerOption> answerOptionModels = new List<AnswerOption>();
+            List<AnswerOption> answerOptionModels = new();
             foreach (var model in answerOptionViewModels)
             {
                 answerOptionModels.Add(model.ToModel());

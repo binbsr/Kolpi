@@ -26,6 +26,6 @@ namespace Kolpi.WebShared.ViewModels
         public DateTime CreatedAt { get; set; }
         
         [DisplayName("Modified")]
-        public DateTime ModifiedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
     }
 }

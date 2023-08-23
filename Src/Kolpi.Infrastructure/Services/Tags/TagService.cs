@@ -36,5 +36,10 @@ namespace Kolpi.Infrastructure.Services.Tags
         public override Task<Tag?> GetByIdAsync(int id) => dbContext.Set<Tag>()
             .Include(t => t.TagType)
             .Where(o => o.Id == id).FirstOrDefaultAsync();
+        
+        public void AttachTags(IEnumerable<Tag> tags)
+        {
+            dbContext.Tags.AttachRange(tags);
+        }
     }
 }

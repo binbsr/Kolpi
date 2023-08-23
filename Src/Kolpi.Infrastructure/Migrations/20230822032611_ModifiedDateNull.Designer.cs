@@ -4,6 +4,7 @@ using Kolpi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kolpi.Infrastructure.Migrations
 {
     [DbContext(typeof(KolpiDbContext))]
-    partial class KolpiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230822032611_ModifiedDateNull")]
+    partial class ModifiedDateNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,7 +362,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5532),
+                            CreatedAt = new DateTime(2023, 8, 22, 9, 11, 11, 316, DateTimeKind.Local).AddTicks(1980),
                             Details = "Defines simplest objective questions.",
                             IsFinalized = false,
                             Name = "Level-1",
@@ -368,7 +371,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5544),
+                            CreatedAt = new DateTime(2023, 8, 22, 9, 11, 11, 316, DateTimeKind.Local).AddTicks(1994),
                             Details = "Defines questions harder than level-1",
                             IsFinalized = false,
                             Name = "Level-2",
@@ -377,7 +380,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5574),
+                            CreatedAt = new DateTime(2023, 8, 22, 9, 11, 11, 316, DateTimeKind.Local).AddTicks(1996),
                             Details = "Defines general knowledge questions.",
                             IsFinalized = false,
                             Name = "GK",
@@ -542,13 +545,13 @@ namespace Kolpi.Infrastructure.Migrations
 
             modelBuilder.Entity("QuestionTag", b =>
                 {
-                    b.Property<int>("QuestionId")
+                    b.Property<int>("QuestionsId")
                         .HasColumnType("int");
 
                     b.Property<int>("TagsId")
                         .HasColumnType("int");
 
-                    b.HasKey("QuestionId", "TagsId");
+                    b.HasKey("QuestionsId", "TagsId");
 
                     b.HasIndex("TagsId");
 
@@ -614,7 +617,7 @@ namespace Kolpi.Infrastructure.Migrations
                 {
                     b.HasOne("Kolpi.ApplicationCore.Entities.Question", null)
                         .WithMany()
-                        .HasForeignKey("QuestionId")
+                        .HasForeignKey("QuestionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

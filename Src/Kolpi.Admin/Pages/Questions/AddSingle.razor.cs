@@ -77,7 +77,7 @@ public partial class AddSingle
                   new NotificationMessage
                   {
                       Summary = $"Error occured while saving question. Problem: {result.ReasonPhrase}",
-                      Severity = NotificationSeverity.Success,
+                      Severity = NotificationSeverity.Error,
                       Duration = 4000
                   });
             }

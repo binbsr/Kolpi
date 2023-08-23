@@ -8,6 +8,7 @@ using Kolpi.WebShared.ViewModels;
 using Kolpi.WebShared.Mapper;
 using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
+using Kolpi.Infrastructure.Services.Tags;
 
 namespace Kolpi.Api.Controllers
 {
@@ -16,10 +17,17 @@ namespace Kolpi.Api.Controllers
     public class QuestionsController : ControllerBase
     {
         private readonly IQuestionService questionService;
+        private readonly IAnswerOptionService answerOptionService;
+        private readonly ITagService tagService;
 
-        public QuestionsController(IQuestionService questionService)
+        public QuestionsController(
+            IQuestionService questionService, 
+            IAnswerOptionService answerOptionService,
+            ITagService tagService)
         {
             this.questionService = questionService;
+            this.answerOptionService = answerOptionService;
+            this.tagService = tagService;
         }
 
         [HttpGet]
@@ -44,20 +52,21 @@ namespace Kolpi.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Question>> PostQuestion(QuestionViewModel questionViewModel)
         {
-            Question question;
             try
             {
-                question = questionViewModel.ToModel();
+                Question question = questionViewModel.ToModel();
                 question.QuestionStatusId = 1;
 
+                tagService.AttachTags(question.Tags);
+
+                await answerOptionService.AddAsync(question.AnswerOptions, false);
                 await questionService.AddAsync(question);
+                return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
             }
             catch (Exception ex)
             {
                 return Problem(ex.Message);
             }
-
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
         }
 
         [HttpPut("{id}")]
