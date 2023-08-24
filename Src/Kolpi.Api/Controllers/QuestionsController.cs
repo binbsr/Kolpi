@@ -61,7 +61,7 @@ namespace Kolpi.Api.Controllers
 
                 await answerOptionService.AddAsync(question.AnswerOptions, false);
                 await questionService.AddAsync(question);
-                return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+                return CreatedAtAction(nameof(GetQuestion), new { question.Id }, question.Id);
             }
             catch (Exception ex)
             {

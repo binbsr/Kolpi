@@ -359,7 +359,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5532),
+                            CreatedAt = new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3651),
                             Details = "Defines simplest objective questions.",
                             IsFinalized = false,
                             Name = "Level-1",
@@ -368,7 +368,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5544),
+                            CreatedAt = new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3664),
                             Details = "Defines questions harder than level-1",
                             IsFinalized = false,
                             Name = "Level-2",
@@ -377,7 +377,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 8, 23, 9, 48, 18, 535, DateTimeKind.Local).AddTicks(5574),
+                            CreatedAt = new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3666),
                             Details = "Defines general knowledge questions.",
                             IsFinalized = false,
                             Name = "GK",

@@ -57,13 +57,7 @@ namespace Kolpi.Infrastructure.Data
                 .WithMany(qs => qs.Questions)
                 .HasForeignKey(q => q.QuestionStatusId);
 
-            // Question to AnsOptions (one to many)            
-            modelBuilder.Entity<Question>()
-                .HasMany(q => q.AnswerOptions)
-                .WithOne(q => q.Question)
-                .HasForeignKey(q => q.QuestionId)
-                .HasPrincipalKey(e => e.Id);
-
+            // Question to tag (manay to many - unidirectioanl)
             modelBuilder.Entity<Question>()
                 .HasMany(e => e.Tags)
                 .WithMany();

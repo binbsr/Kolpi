@@ -26,7 +26,7 @@ namespace Kolpi.Infrastructure.Migrations
                     Attendees = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -199,7 +199,7 @@ namespace Kolpi.Infrastructure.Migrations
                     ExamId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -222,7 +222,7 @@ namespace Kolpi.Infrastructure.Migrations
                     QuestionStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -248,7 +248,7 @@ namespace Kolpi.Infrastructure.Migrations
                     TagTypeId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -273,7 +273,7 @@ namespace Kolpi.Infrastructure.Migrations
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -315,15 +315,15 @@ namespace Kolpi.Infrastructure.Migrations
                 name: "QuestionTag",
                 columns: table => new
                 {
-                    QuestionsId = table.Column<int>(type: "int", nullable: false),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
                     TagsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionsId, x.TagsId });
+                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_QuestionTag_Questions_QuestionsId",
-                        column: x => x.QuestionsId,
+                        name: "FK_QuestionTag_Questions_QuestionId",
+                        column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -359,9 +359,9 @@ namespace Kolpi.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Details", "IsFinalized", "ModifiedAt", "ModifiedBy", "Name", "TagTypeId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 8, 20, 20, 45, 53, 873, DateTimeKind.Local).AddTicks(7693), null, "Defines simplest objective questions.", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Level-1", 1 },
-                    { 2, new DateTime(2023, 8, 20, 20, 45, 53, 873, DateTimeKind.Local).AddTicks(7706), null, "Defines questions harder than level-1", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Level-2", 1 },
-                    { 3, new DateTime(2023, 8, 20, 20, 45, 53, 873, DateTimeKind.Local).AddTicks(7707), null, "Defines general knowledge questions.", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "GK", 2 }
+                    { 1, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3651), null, "Defines simplest objective questions.", false, null, null, "Level-1", 1 },
+                    { 2, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3664), null, "Defines questions harder than level-1", false, null, null, "Level-2", 1 },
+                    { 3, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3666), null, "Defines general knowledge questions.", false, null, null, "GK", 2 }
                 });
 
             migrationBuilder.CreateIndex(
