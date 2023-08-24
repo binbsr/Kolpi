@@ -1,3 +1,4 @@
+@using Kolpi.ApplicationCore.Enums;
 @using Kolpi.WebShared.ViewModels
 
 @inject TooltipService tooltipService
@@ -7,34 +8,34 @@
     <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
     <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;"/>
 
-    @if (selectedAnsType == ansTypes[0])
+    @if (AnswerModel.Type == AnswerType.ShortText)
     {
         <RadzenFormField Text="@TextInputLabel" Style="width: 100%;" Variant="Variant.Outlined">
             <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%;" />
         </RadzenFormField>
     }
-    else if (selectedAnsType == ansTypes[1])
+    else if (AnswerModel.Type == AnswerType.Paragraph)
     {
         <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
             <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="3" />
         </RadzenFormField>
     }
-    else if (selectedAnsType == ansTypes[2])
+    else if (AnswerModel.Type == AnswerType.Image)
     {
         <RadzenFileInput TValue="string" Style="width: 100%;" ChooseText="Select image" />
     }
-    else if (selectedAnsType == ansTypes[3])
+    else if (AnswerModel.Type == AnswerType.Audio)
     {
         <RadzenFileInput TValue="string" Style="width: 100%;" Accept="audio/*" ChooseText="Select audio file" />
     }
-    else if (selectedAnsType == ansTypes[4])
+    else if (AnswerModel.Type == AnswerType.Video)
     {
         <RadzenFileInput TValue="string" Style="width: 100%;" Accept="video/*" ChooseText="Select video file" />
     }
 
 
     <RadzenFormField Variant="@Variant.Outlined">
-        <RadzenDropDown Data=@ansTypes @bind-Value="@selectedAnsType" Style="width:100px;" />
+        <RadzenDropDown Data="@(Enum.GetValues<AnswerType>().Cast<Enum>())" @bind-Value=@AnswerModel.Type Style="width:100px;" />
     </RadzenFormField>
 
     <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem" class="rz-mt-2"></RadzenButton>
@@ -51,10 +52,8 @@
 
     [Parameter]
     public string TextInputLabel { get; set; } = "Option";
-    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
 
-    private string[] ansTypes = { "Short Text", "Paragraph", "Image", "Audio", "Video" };
-    public string selectedAnsType = "Short Text";
+    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
 
     private async Task RemoveItem()
     {

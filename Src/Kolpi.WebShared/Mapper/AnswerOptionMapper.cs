@@ -13,7 +13,8 @@ namespace Kolpi.WebShared.Mapper
             {
                 Id = answerOptionViewModel.Id,
                 IsAnswer = answerOptionViewModel.IsAnswer,
-                Body = answerOptionViewModel.Body,
+                Type = answerOptionViewModel.Type,
+                Body = answerOptionViewModel.Body
             };
 
             return answerOption;

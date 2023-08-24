@@ -24,14 +24,14 @@
                 </Template>
 </RadzenDropDown>
 
-<RadzenRow class="rz-border-info-light rz-p-4" Gap="1rem" RowGap="1rem">
+<RadzenRow class="rz-border-info-lighter rz-p-4" Gap="1rem" RowGap="1rem">
     @{
         char i = 'A';
     }
     @foreach (var option in answerOptionViewModels)
     {
         var optionLabel = "Option " + i++;
-        <RadzenColumn SizeMD="6" class="rz-background-color-info-lighter">
+        <RadzenColumn SizeMD="6" class="rz-background-color-base-200">
             <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="DeleteAnsOption" />
         </RadzenColumn>
     }
