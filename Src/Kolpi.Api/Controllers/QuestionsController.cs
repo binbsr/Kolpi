@@ -9,6 +9,7 @@ using Kolpi.WebShared.Mapper;
 using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
+using Kolpi.ApplicationCore.Enums;
 
 namespace Kolpi.Api.Controllers
 {
@@ -57,10 +58,15 @@ namespace Kolpi.Api.Controllers
                 Question question = questionViewModel.ToModel();
                 question.QuestionStatusId = 1;
 
+                // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
                 tagService.AttachTags(question.Tags);
 
+                // Just add answer options to EF
                 await answerOptionService.AddAsync(question.AnswerOptions, false);
+
+                // Add question model to EF and commit all changes made to conext so far (UoW)
                 await questionService.AddAsync(question);
+
                 return CreatedAtAction(nameof(GetQuestion), new { question.Id }, question.Id);
             }
             catch (Exception ex)

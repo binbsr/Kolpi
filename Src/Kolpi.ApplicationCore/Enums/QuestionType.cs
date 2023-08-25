@@ -1,6 +1,6 @@
 ﻿namespace Kolpi.ApplicationCore.Enums;
 public enum QuestionType
 {
-    Objective,
+    Objective = 1,
     Subjective
 }

@@ -4,6 +4,7 @@ using Kolpi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kolpi.Infrastructure.Migrations
 {
     [DbContext(typeof(KolpiDbContext))]
-    partial class KolpiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230825112403_AnsTypeCol")]
+    partial class AnsTypeCol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,9 +273,6 @@ namespace Kolpi.Infrastructure.Migrations
                     b.Property<int>("QuestionStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionStatusId");
@@ -365,7 +365,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 8, 25, 22, 15, 32, 846, DateTimeKind.Local).AddTicks(9607),
+                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1678),
                             Details = "Defines simplest objective questions.",
                             IsFinalized = false,
                             Name = "Level-1",
@@ -374,7 +374,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 8, 25, 22, 15, 32, 846, DateTimeKind.Local).AddTicks(9627),
+                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1690),
                             Details = "Defines questions harder than level-1",
                             IsFinalized = false,
                             Name = "Level-2",
@@ -383,7 +383,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 8, 25, 22, 15, 32, 846, DateTimeKind.Local).AddTicks(9629),
+                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1692),
                             Details = "Defines general knowledge questions.",
                             IsFinalized = false,
                             Name = "GK",
