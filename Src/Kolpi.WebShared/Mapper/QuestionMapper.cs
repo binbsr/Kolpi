@@ -20,4 +20,35 @@ public static class QuestionMapper
 
         return question;
     }
+
+    public static QuestionViewModel ToViewModel(this Question question)
+    {
+        if (question is null)
+            return default!;
+
+        QuestionViewModel questionViewModel = new()
+        {
+            Id = question.Id,
+            Body = question.Body,
+            Type = question.Type,
+            AnswerOptions = question.AnswerOptions.ToViewModel(),
+            Tags = question.Tags.ToViewModel()
+        };
+
+        return questionViewModel;
+    }
+
+    public static List<QuestionViewModel> ToViewModel(this IEnumerable<Question> questions)
+    {
+        if (!questions.Any())
+            return default!;
+
+        List<QuestionViewModel> questionnModels = new();
+        foreach (var model in questions)
+        {
+            questionnModels.Add(model.ToViewModel());
+        }
+
+        return questionnModels;
+    }
 }

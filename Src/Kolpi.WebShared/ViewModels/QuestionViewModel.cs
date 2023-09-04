@@ -8,5 +8,4 @@ public class QuestionViewModel
     public QuestionType Type { get; set; } = QuestionType.Objective;
     public List<TagViewModel> Tags { get; set; } = default!;
     public List<AnswerOptionViewModel> AnswerOptions { get; set; } = default!;
-    public QuestionType QuestionType { get; set; }
 }

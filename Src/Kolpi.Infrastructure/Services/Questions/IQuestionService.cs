@@ -5,8 +5,7 @@ namespace Kolpi.Infrastructure.Services.Questions
 {
     public interface IQuestionService : IAsyncService<Question, int>
     {
-        Task<List<Question>> GetAllAsync(int pageIndex, int pageSize);
-        Task<List<Question>> GetAllAsync(string searchText, int pageIndex, int pageSize);
+        Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy);
         Task<List<string>> GetAllQuestionsBodyAsync();
     }
 }

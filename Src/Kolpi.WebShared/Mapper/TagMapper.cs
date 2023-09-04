@@ -48,7 +48,7 @@ namespace Kolpi.WebShared.Mapper
 
         public static List<TagViewModel> ToViewModel(this IEnumerable<Tag> tagModels)
         {
-            List<TagViewModel> tagViewModels = new List<TagViewModel>();
+            List<TagViewModel> tagViewModels = new();
             foreach (var model in tagModels)
             {
                 tagViewModels.Add(model.ToViewModel());
@@ -59,7 +59,7 @@ namespace Kolpi.WebShared.Mapper
 
         public static List<Tag> ToModel(this IEnumerable<TagViewModel> tagViewModels)
         {
-            List<Tag> tagModels = new List<Tag>();
+            List<Tag> tagModels = new();
             foreach (var model in tagViewModels)
             {
                 tagModels.Add(model.ToModel());

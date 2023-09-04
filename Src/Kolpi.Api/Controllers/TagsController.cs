@@ -28,7 +28,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<TagsFilteredViewModel>> Get([FromQuery] string filter = "",
+    public async Task<ActionResult<TagsMetaViewModel>> Get([FromQuery] string filter = "",
         string orderBy = "", int skip = 0, int take = 10)
     {        
         try
@@ -36,7 +36,7 @@ public class TagsController : ControllerBase
             var result = await tagService.GetAllAsync(filter, skip, take, orderBy);
             var tagViewModels = result.Tags.ToViewModel();
             int totalCount = result.Count;
-            return new TagsFilteredViewModel { TotalCount = totalCount, Records = tagViewModels };
+            return new TagsMetaViewModel { TotalCount = totalCount, Records = tagViewModels };
         }
         catch(Exception e)
         {

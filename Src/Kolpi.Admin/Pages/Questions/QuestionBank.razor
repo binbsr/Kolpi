@@ -1,121 +1,26 @@
 ﻿@page "/questions"
-@*
-@using System.Net.Http.Json
-@using System.Text.Json.Serialization
 
-@inject HttpClient httpClient
+<RadzenStack Gap="2rem">    
+    <RadzenDataFilter @ref="dataFilter" Auto=@false Data="@questions" TItem="QuestionViewModel" ViewChanged=@(view => questionsGrid.Reload())>
+        <Properties>
+            <RadzenDataFilterProperty TItem="QuestionViewModel" Property="Type" Title="Question Type" />
+            <RadzenDataFilterProperty TItem="QuestionViewModel" Property="Tags" Title="Tags" />
+        </Properties>
+    </RadzenDataFilter>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="nr_field" T="Element">Nr</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="sign_field" T="Element">Sign</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="name_field" T="Element">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="position_field" T="Element">Position</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="mass_field" T="Element">Molar mass</MudTableSortLabel></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Number</MudTd>
-        <MudTd DataLabel="Sign">@context.Sign</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Position">@context.Position</MudTd>
-        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
-    </RowTemplate>
-    <NoRecordsContent>
-        <MudText>No matching records found</MudText>
-    </NoRecordsContent>
-    <LoadingContent>
-        <MudText>Loading...</MudText>
-    </LoadingContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
+    <RadzenDataGrid @ref="@questionsGrid" AllowPaging="@true" AllowSorting="@true" IsLoading="@isLoading"
+                    Data="@(filteredQuestions)" TItem="QuestionViewModel" Count="@totalItems" LoadData="@LoadData"
+                    ColumnWidth="200px" PageSize="20" Style="height: 500px">
+        <Columns>
+            <RadzenDataGridColumn Width="200px" TItem="QuestionViewModel" Property="OrderID" Title="Order ID" />
+            <RadzenDataGridColumn Width="200px" TItem="QuestionViewModel" Property="Customer.CompanyName" Title="Customer" />
+            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Employee.LastName" Title="Employee">
+                <Template Context="order">
+                    @order.Body
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Employee.Title" Title="Employee Title" />  
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
 
-@code {
-    private IEnumerable<Element> pagedData = default!;
-    private MudTable<Element> table = default!;
-
-    private int totalItems;
-    private string searchString = default!;
-
-    /// <summary>
-    /// Here we simulate getting the paged, filtered and ordered data from the server
-    /// </summary>
-    private async Task<TableData<Element>> ServerReload(TableState state)
-    {
-        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-        await Task.Delay(300);
-        data = data.Where(element =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
-                return true;
-            return false;
-        }).ToArray();
-        totalItems = data.Count();
-        switch (state.SortLabel)
-        {
-            case "nr_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Number);
-                break;
-            case "sign_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Sign);
-                break;
-            case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Name);
-                break;
-            case "position_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Position);
-                break;
-            case "mass_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Molar);
-                break;
-        }
-
-        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
-    }
-
-    private void OnSearch(string text)
-    {
-        searchString = text;
-        table.ReloadServerData();
-    }
-
-    public class Element
-    {
-        public string Group { get; set; }
-        public int Position { get; set; }
-        public string Name { get; set; }
-        public int Number { get; set; }
-
-        [JsonPropertyName("small")]
-        public string Sign { get; set; }
-        public double Molar { get; set; }
-        public IList<int> Electrons { get; set; }
-
-        /// <summary>
-        /// Overriding Equals is essential for use with Select and Table because they use HashSets internally
-        /// </summary>
-        public override bool Equals(object obj) => object.Equals(GetHashCode(), obj?.GetHashCode());
-
-        /// <summary>
-        /// Overriding GetHashCode is essential for use with Select and Table because they use HashSets internally
-        /// </summary>
-        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
-
-        public override string ToString() => $"{Sign} - {Name}";
-    }
-}*@

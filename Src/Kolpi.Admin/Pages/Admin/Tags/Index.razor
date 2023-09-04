@@ -86,7 +86,7 @@
         await Task.Yield();
 
         string url = $"api/tags?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
-        var result = await http.GetFromJsonAsync<TagsFilteredViewModel>(url) ?? new TagsFilteredViewModel();
+        var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new TagsMetaViewModel();
 
         totalItems = result.TotalCount;
         tagViewModels = result.Records;

@@ -21,7 +21,7 @@ public partial class AddSingle
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<TagsFilteredViewModel>($"api/tags?take=999999") ?? new TagsFilteredViewModel();
+        var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
         Tags = result.Records;
     }
 

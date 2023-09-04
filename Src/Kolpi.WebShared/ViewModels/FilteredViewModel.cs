@@ -1,8 +1,6 @@
-namespace Kolpi.WebShared.ViewModels
+namespace Kolpi.WebShared.ViewModels;
+public class MetaViewModel<T> where T : class
 {
-    public class FilteredViewModel<T> where T : class
-    {
-        public int TotalCount { get; set; }
-        public List<T> Records { get; set; } = default!;
-    }
+    public int TotalCount { get; set; }
+    public List<T> Records { get; set; } = default!;
 }
