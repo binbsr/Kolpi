@@ -24,26 +24,6 @@ public partial class QuestionBank
         questions = Enumerable.Empty<QuestionViewModel>();
     }
 
-    List<string> titles = new List<string> { "Sales Representative", "Vice President, Sales", "Sales Manager", "Inside Sales Coordinator" };
-    IEnumerable<string> selectedTitles;
-    IEnumerable<string> finalSelectedTitles;
-
-    async Task OnSelectedTitlesChange(object value)
-    {
-        if (selectedTitles != null && !selectedTitles.Any())
-        {
-            selectedTitles = null;
-        }
-
-        await questionsGrid.FirstPage();
-    }
-
-    async Task ApplyFilter()
-    {
-        finalSelectedTitles = selectedTitles;
-        await dataFilter.Filter();
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -52,22 +32,27 @@ public partial class QuestionBank
         {
             await dataFilter.AddFilter(new CompositeFilterDescriptor()
             {
-                Property = "Employee.LastName",
-                FilterValue = "Buchanan",
-                FilterOperator = FilterOperator.Contains
+                Property = "Type",
+                FilterValue = 1,
+                FilterOperator = FilterOperator.Equals
             });
         }
+    }
+
+    async Task ApplyFilter()
+    {
+        await dataFilter.Filter();
     }
 
     async Task LoadData(LoadDataArgs args)
     {
         isLoading = true;
 
-        string url = $"api/questions?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
+        string url = $"api/questions?filter={dataFilter.ToODataFilterString()}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
         var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new QuestionsMetaViewModel();
 
         totalItems = result.TotalCount;
-        questions = result.Records;
+        filteredQuestions = result.Records;
 
         isLoading = false;
     }

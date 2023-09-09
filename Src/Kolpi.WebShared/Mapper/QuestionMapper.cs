@@ -31,8 +31,8 @@ public static class QuestionMapper
             Id = question.Id,
             Body = question.Body,
             Type = question.Type,
-            AnswerOptions = question.AnswerOptions.ToViewModel(),
-            Tags = question.Tags.ToViewModel()
+            AnswerOptions = question.AnswerOptions?.ToViewModel() ?? default!,
+            Tags = question.Tags?.ToViewModel() ?? default!
         };
 
         return questionViewModel;

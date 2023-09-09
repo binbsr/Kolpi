@@ -1,25 +1,28 @@
 ﻿@page "/questions"
 
-<RadzenStack Gap="2rem">    
+<RadzenStack Gap="2rem">
     <RadzenDataFilter @ref="dataFilter" Auto=@false Data="@questions" TItem="QuestionViewModel" ViewChanged=@(view => questionsGrid.Reload())>
         <Properties>
             <RadzenDataFilterProperty TItem="QuestionViewModel" Property="Type" Title="Question Type" />
             <RadzenDataFilterProperty TItem="QuestionViewModel" Property="Tags" Title="Tags" />
         </Properties>
     </RadzenDataFilter>
+    <RadzenButton Text="Apply Filter" Click="@ApplyFilter" Disabled="@isLoading" Size="ButtonSize.Small" Style="width: 50%"/>
 
-    <RadzenDataGrid @ref="@questionsGrid" AllowPaging="@true" AllowSorting="@true" IsLoading="@isLoading"
-                    Data="@(filteredQuestions)" TItem="QuestionViewModel" Count="@totalItems" LoadData="@LoadData"
-                    ColumnWidth="200px" PageSize="20" Style="height: 500px">
+    <RadzenDataGrid AllowPaging="@true" AllowSorting="@true" IsLoading="@isLoading"
+                    Data="@filteredQuestions" TItem="QuestionViewModel" Count="@totalItems" LoadData="@LoadData"
+                    ColumnWidth="200px" PageSize="20" >
         <Columns>
-            <RadzenDataGridColumn Width="200px" TItem="QuestionViewModel" Property="OrderID" Title="Order ID" />
-            <RadzenDataGridColumn Width="200px" TItem="QuestionViewModel" Property="Customer.CompanyName" Title="Customer" />
-            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Employee.LastName" Title="Employee">
-                <Template Context="order">
-                    @order.Body
+            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Body" Title="Question" />
+            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Type" Title="Type" />
+            <RadzenDataGridColumn TItem="QuestionViewModel" Title="Tags">
+                <Template Context="question">
+                    @foreach(var tag in question.Tags)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
+                    }
                 </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="QuestionViewModel" Property="Employee.Title" Title="Employee Title" />  
+            </RadzenDataGridColumn>            
         </Columns>
     </RadzenDataGrid>
 </RadzenStack>
