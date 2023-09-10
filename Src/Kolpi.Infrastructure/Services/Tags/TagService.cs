@@ -41,5 +41,8 @@ namespace Kolpi.Infrastructure.Services.Tags
         {
             dbContext.Tags.AttachRange(tags);
         }
+
+        public Task<List<string>> GetTagNamesAsync() => dbContext.Set<Tag>()
+            .Select(t => t.Name).ToListAsync();
     }
 }

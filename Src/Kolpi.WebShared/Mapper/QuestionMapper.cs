@@ -1,4 +1,5 @@
 ﻿using Kolpi.ApplicationCore.Entities;
+using Kolpi.Shared.Extentions;
 using Kolpi.WebShared.ViewModels;
 
 namespace Kolpi.WebShared.Mapper;
@@ -31,6 +32,8 @@ public static class QuestionMapper
             Id = question.Id,
             Body = question.Body,
             Type = question.Type,
+            CreatedBy = question.CreatedBy ?? "N/A",
+            Created = question.CreatedAt != default ? question.CreatedAt.Relativize() : "Long Back",
             AnswerOptions = question.AnswerOptions?.ToViewModel() ?? default!,
             Tags = question.Tags?.ToViewModel() ?? default!
         };

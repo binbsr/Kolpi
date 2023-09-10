@@ -44,6 +44,20 @@ public class TagsController : ControllerBase
         }
     }
 
+    [HttpGet("names")]
+    public async Task<ActionResult<List<string>>> Get()
+    {
+        try
+        {
+            var tagNames = await tagService.GetTagNamesAsync();
+            return tagNames;
+        }
+        catch (Exception e)
+        {
+            return Problem(e.StackTrace);
+        }
+    }
+
     [HttpGet("totalcount")]
     public async Task<ActionResult<int>> GetTotalCount()
     {

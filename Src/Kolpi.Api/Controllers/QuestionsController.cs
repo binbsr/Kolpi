@@ -8,6 +8,7 @@ using Kolpi.WebShared.Mapper;
 using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
+using System.Security.Claims;
 
 namespace Kolpi.Api.Controllers;
 
@@ -66,6 +67,9 @@ public class QuestionsController : ControllerBase
         {
             Question question = questionViewModel.ToModel();
             question.QuestionStatusId = 1;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
+            question.AddCreatedStamps(userId);
 
             // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
             tagService.AttachTags(question.Tags);
