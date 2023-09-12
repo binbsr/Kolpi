@@ -32,8 +32,9 @@ public static class QuestionMapper
             Id = question.Id,
             Body = question.Body,
             Type = question.Type,
+            Status = question.QuestionStatus?.Name ?? "N/A",
             CreatedBy = question.CreatedBy ?? "N/A",
-            Created = question.CreatedAt != default ? question.CreatedAt.Relativize() : "Long Back",
+            CreatedAt = question.CreatedAt,
             AnswerOptions = question.AnswerOptions?.ToViewModel() ?? default!,
             Tags = question.Tags?.ToViewModel() ?? default!
         };

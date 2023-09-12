@@ -1,35 +1,70 @@
 ﻿@page "/questions"
 
-<RadzenDataGrid Count="@totalItems"
+<RadzenDataGrid TItem="QuestionViewModel"
+                Count="@totalItems"
                 Data="@questions"
                 LoadData="@LoadData"
                 GridLines="DataGridGridLines.None"
 @ref="questionsGrid"
                 AllowColumnResize="true"
                 AllowFiltering="true"
-                FilterMode="FilterMode.SimpleWithMenu"
+                FilterMode="FilterMode.Advanced"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 AllowSorting="true"
                 PageSize="10"
                 AllowPaging="true"
                 ShowPagingSummary="true"
-                TItem="QuestionViewModel"
                 IsLoading="isLoading"
-                AllowColumnPicking="true">
+                AllowColumnPicking="true"
+                SelectionMode="DataGridSelectionMode.Multiple"
+@bind-Value=@selectedQuestions>
     <HeaderTemplate>
         <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add Question" Click="AddNewQuestion" />
     </HeaderTemplate>
     <Columns>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false">
+            <HeaderTemplate>
+                <RadzenCheckBox TriState="false" TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
+                                Change="@(args => selectedQuestions = args ? questions : null)" />
+            </HeaderTemplate>
+            <Template Context="data">
+                <RadzenCheckBox TriState="false" Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
+                                TValue="bool" Change=@(args => { if(!allowRowSelectOnRowClick) { questionsGrid.SelectRow(data); }}) />
+            </Template>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="QuestionViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
             <Template Context="question">
                 @(questions.IndexOf(question) + 1)
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question">
+        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question" Property="Body">
             <Template Context="question">
                 @((MarkupString)question.Body)
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="QuestionViewModel" Property="Type" Title="Type" />
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="Status" Title="Status">
+            <FilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedStatuses
+                                Style="width:100%"
+                                Change=@OnSelectedStatusesChange
+                                Data="@(statuses)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </FilterValueTemplate>
+            <SecondFilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedStatuses
+                                Style="width:100%"
+                                Change=@OnSelectedStatusesChange
+                                Data="@(statuses)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </SecondFilterValueTemplate>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="QuestionViewModel" Title="Tags">
             <Template Context="question">
                 @foreach (var tag in question.Tags)
@@ -37,20 +72,27 @@
                     <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
                 }
             </Template>
-            <FilterTemplate>
-                <RadzenDropDown 
-                    @bind-Value=@selectedTags 
-                    Style="width:100%"
-                    Change=@OnSelectedTagsChange 
-                    Data="@(tags)" 
-                    AllowClear="true" 
-                    Multiple="true" />
-            </FilterTemplate>
+            <FilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedTags
+                                Style="width:100%"
+                                Change=@OnSelectedTagsChange
+                                Data="@(tags)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </FilterValueTemplate>
+            <SecondFilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedTags
+                                Style="width:100%"
+                                Change=@OnSelectedTagsChange
+                                Data="@(tags)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </SecondFilterValueTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Created">
-            <Template Context="question">
-                @question.Created
-            </Template>
-        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="CreatedAt" Title="CreatedAt" />
     </Columns>
 </RadzenDataGrid>

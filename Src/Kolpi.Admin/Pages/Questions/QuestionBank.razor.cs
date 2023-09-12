@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Radzen.Blazor;
 using Radzen;
 using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
+using Kolpi.WebShared.ViewModels.Question;
 
 namespace Kolpi.Admin.Pages.Questions;
 public partial class QuestionBank
@@ -17,15 +17,38 @@ public partial class QuestionBank
     private bool isLoading = false;
     private int totalItems = 0;
     List<QuestionViewModel> questions;
+    IList<QuestionViewModel> selectedQuestions;
     RadzenDataGrid<QuestionViewModel> questionsGrid;
-    IEnumerable<string> selectedTags;
-    List<string> tags;
+    IEnumerable<int> selectedTags;
+    List<TagViewModel> tags;
+    IEnumerable<int> selectedStatuses;
+    List<QuestionStatusViewModel> statuses;
+
+    bool allowRowSelectOnRowClick = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        tags = await Http.GetFromJsonAsync<List<TagViewModel>>("api/tags/names") ?? new List<TagViewModel>();
+        statuses = await Http.GetFromJsonAsync<List<QuestionStatusViewModel>>("api/questionstatuses") ?? new List<QuestionStatusViewModel>();
+        isLoading = false;
+    }
 
     async Task OnSelectedTagsChange(object value)
     {
         if (selectedTags != null && !selectedTags.Any())
         {
             selectedTags = null;
+        }
+
+        await questionsGrid.FirstPage();
+    }
+
+    async Task OnSelectedStatusesChange(object value)
+    {
+        if (selectedStatuses != null && !selectedStatuses.Any())
+        {
+            selectedStatuses = null;
         }
 
         await questionsGrid.FirstPage();
@@ -40,9 +63,7 @@ public partial class QuestionBank
 
         totalItems = result.TotalCount;
         questions = result.Records;
-
-        tags = await Http.GetFromJsonAsync<List<string>>("api/tags/names") ?? new List<string>();
-
+       
         isLoading = false;
     }
 

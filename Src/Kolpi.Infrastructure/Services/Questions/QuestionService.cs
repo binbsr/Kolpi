@@ -16,7 +16,7 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
 
     public async Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy)
     {
-        var query = dbContext.Set<Question>().Include(t => t.Tags).AsQueryable();
+        var query = dbContext.Set<Question>().Include(t => t.Tags).Include(s => s.QuestionStatus).AsQueryable();
         if (filter is not null and not "")
         {
             query = query.Where(filter);

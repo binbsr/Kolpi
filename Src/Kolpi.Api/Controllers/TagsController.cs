@@ -45,12 +45,13 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet("names")]
-    public async Task<ActionResult<List<string>>> Get()
+    public async Task<ActionResult<List<TagViewModel>>> Get()
     {
         try
         {
-            var tagNames = await tagService.GetTagNamesAsync();
-            return tagNames;
+            var tags = await tagService.GetAllAsync();
+            var tagViewModels = tags.ToViewModel();
+            return tagViewModels;
         }
         catch (Exception e)
         {
