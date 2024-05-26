@@ -1,7 +1,2 @@
 # Kolpi
-
-## Devnotes
-### EF Core
-1. dotnet ef migrations list
-1. dotnet ef migrations add InitialCreate -o "Data\Migrations"
-1. dotnet ef database update
+## This project streamlines written assessments or exams taken for screening process in any organization/institution.
