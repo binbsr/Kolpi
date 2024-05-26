@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Kolpi.ApplicationCore.Entities;
+using Microsoft.Extensions.Hosting;
+using Duende.IdentityServer.EntityFramework.Entities;
 
 namespace Kolpi.Infrastructure.Data
 {
@@ -14,7 +16,7 @@ namespace Kolpi.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KolpiServerContext-014917e0-fcbe-4c08-8874-ace3897c77b4;Trusted_Connection=True;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KolpiStudyDb;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 
@@ -55,8 +57,12 @@ namespace Kolpi.Infrastructure.Data
                 .WithMany(qs => qs.Questions)
                 .HasForeignKey(q => q.QuestionStatusId);
 
-            //Seeding
+            // Question to tag (manay to many - unidirectioanl)
+            modelBuilder.Entity<Question>()
+                .HasMany(e => e.Tags)
+                .WithMany();
 
+            //Seeding
             modelBuilder.Entity<TagType>()
                 .HasData(
                     new TagType
@@ -105,15 +111,15 @@ namespace Kolpi.Infrastructure.Data
 
             modelBuilder.Entity<QuestionStatus>()
                 .HasData(
-                new QuestionStatus 
+                new QuestionStatus
                 {
                     Id = 1,
                     Name = "New",
                     Details = "QUestion just added"
                 },
-                new QuestionStatus 
+                new QuestionStatus
                 {
-                    Id= 2,
+                    Id = 2,
                     Name = "Review",
                     Details = "Question is being reviewed"
                 },

@@ -1,61 +1,41 @@
 ﻿@using Kolpi.WebShared.ViewModels
-@using MudBlazor.Utilities
 
 @inject HttpClient Http
-@inject ISnackbar SBar
+@inject NotificationService Notification
+@inject NavigationManager Navigation
 
-<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator />
-    <MudCard>
-        <MudCardContent>
-            <MudTextField Label="Name"
-                          @bind-Value="Model.Name"
-                          For="@(() => Model.Name)" />
-            <MudTextField Label="Details"
-                          Lines="3"
-                          Class="mt-3"
-                          @bind-Value="Model.Details"
-                          For="@(() => Model.Details)" />
+<RadzenRow Gap="1rem">
+    <RadzenColumn Size="12">
+        <RadzenStack>
+            <RadzenFormField Text="Name" Variant="Variant.Flat">
+                <RadzenTextBox @bind-Value="@Model.Name" />
+            </RadzenFormField>
+            <RadzenFormField Text="Details" Variant="Variant.Flat">
+                <RadzenTextArea @bind-Value="@Model.Details" Rows="5"/>
+            </RadzenFormField>
+            <RadzenFormField Text="Color Code" Variant="Variant.Flat">
+                <RadzenColorPicker @bind-Value="@Model.ColorCode" />
+            </RadzenFormField>
+            <RadzenFormField>
+                <RadzenButton Text="Cancel" Click="Cancel" ButtonStyle="ButtonStyle.Info" />
+                <RadzenButton Text="Save" Click="SaveTagType" IsBusy="@isSaving" BusyText="Saving..." ButtonStyle="ButtonStyle.Warning" />
+            </RadzenFormField>
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
 
-            <MudGrid>
-                <MudItem xs="4" Class="py-8">
-                    <MudText>Color Code</MudText>
-                </MudItem>
-                <MudItem xs="8">
-                    <MudColorPicker ValueChanged="ColorChanged" 
-                        Label="Color Code"
-                        ColorPickerView="ColorPickerView.Palette"
-                        Palette="CustomPallete" 
-                        PickerVariant="PickerVariant.Static"/>
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Disabled="isSaving" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Tertiary"
-                       StartIcon="@Icons.Material.Filled.Save" Class="ml-auto">
-                Save Category
-            </MudButton>
-        </MudCardActions>
-    </MudCard>
-</EditForm>
 @code {
 
     [Parameter]
     public TagTypeViewModel Model { get; set; } = new TagTypeViewModel();
-
-    public IEnumerable<MudColor> CustomPallete => new MudColor[]
-    {
-        "#594ae2ff", "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff"
-    };
-
     bool isSaving = false;
 
-    private void ColorChanged(MudColor color)
+    private void Cancel()
     {
-        Model.ColorCode = color.Value;
+        Navigation.NavigateTo("/tagtypes");
     }
 
-    private async Task OnValidSubmit(EditContext editContext)
+    private async Task SaveTagType()
     {
         isSaving = true;
 
@@ -80,11 +60,25 @@
 
             if (result.IsSuccessStatusCode)
             {
-                SBar.Add("Tag category saved successfully.", Severity.Success);
+                Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = $"Tag category saved successfully",
+                        Severity = NotificationSeverity.Success,
+                        Duration = 4000
+                    }
+            );
             }
             else
             {
-                SBar.Add($"Error occured while saving tag. Problem: {result.ReasonPhrase}", Severity.Error);
+                Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = $"Tag category save failed. Error: {result.ReasonPhrase}",
+                        Severity = NotificationSeverity.Error,
+                        Duration = 4000
+                    }
+            );
             }
         });
 

@@ -1,12 +1,46 @@
+@using Kolpi.ApplicationCore.Enums;
 @using Kolpi.WebShared.ViewModels
 
-<MudContainer Class="d-flex gap-2 mx-0">
-    <MudTooltip Text="@ChkTooltip" Arrow Placement="Placement.Start">
-        <MudCheckBox @bind-Checked="AnswerModel.IsAnswer" Size="Size.Large" Color="Color.Primary" Class="d-inline-flex">Answer</MudCheckBox>
-    </MudTooltip>
-    <MudTextField @bind-Value="AnswerModel.Body" Label="@TextInputLabel" Variant="Variant.Outlined" Class="d-inline-flex" FullWidth></MudTextField>
-    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="RemoveItem" Class="d-inline-flex"></MudIconButton>
-</MudContainer>
+@inject TooltipService tooltipService
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-p-4">
+
+    <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
+    <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;"/>
+
+    @if (AnswerModel.Type == AnswerType.ShortText)
+    {
+        <RadzenFormField Text="@TextInputLabel" Style="width: 100%;" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%;" />
+        </RadzenFormField>
+    }
+    else if (AnswerModel.Type == AnswerType.Paragraph)
+    {
+        <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
+            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="3" />
+        </RadzenFormField>
+    }
+    else if (AnswerModel.Type == AnswerType.Image)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" ChooseText="Select image" />
+    }
+    else if (AnswerModel.Type == AnswerType.Audio)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" Accept="audio/*" ChooseText="Select audio file" />
+    }
+    else if (AnswerModel.Type == AnswerType.Video)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" Accept="video/*" ChooseText="Select video file" />
+    }
+
+
+    <RadzenFormField Variant="@Variant.Outlined">
+        <RadzenDropDown Data="@(Enum.GetValues<AnswerType>().Cast<Enum>())" @bind-Value=@AnswerModel.Type Style="width:100px;" />
+    </RadzenFormField>
+
+    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem" class="rz-mt-2"></RadzenButton>
+
+</RadzenStack>
 
 @code
 {
@@ -18,10 +52,16 @@
 
     [Parameter]
     public string TextInputLabel { get; set; } = "Option";
+
     public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
 
     private async Task RemoveItem()
     {
         await RemoveItemCallback.InvokeAsync(AnswerModel);
+    }
+
+    private void ShowTooltip(ElementReference elementReference, TooltipOptions options = null)
+    {
+        tooltipService.Open(elementReference, ChkTooltip, options);
     }
 }

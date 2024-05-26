@@ -23,9 +23,9 @@ namespace Kolpi.WebShared.ViewModels
         public string? TagColorCode { get; set; }
 
         [DisplayName("Created")]
-        public string? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         
         [DisplayName("Modified")]
-        public string? ModifiedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
     }
 }

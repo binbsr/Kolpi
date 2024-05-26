@@ -1,121 +1,98 @@
 ﻿@page "/questions"
 
-@using System.Net.Http.Json
-@using System.Text.Json.Serialization
-
-@inject HttpClient httpClient
-
-<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="nr_field" T="Element">Nr</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="sign_field" T="Element">Sign</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="name_field" T="Element">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="position_field" T="Element">Position</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="mass_field" T="Element">Molar mass</MudTableSortLabel></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Number</MudTd>
-        <MudTd DataLabel="Sign">@context.Sign</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Position">@context.Position</MudTd>
-        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
-    </RowTemplate>
-    <NoRecordsContent>
-        <MudText>No matching records found</MudText>
-    </NoRecordsContent>
-    <LoadingContent>
-        <MudText>Loading...</MudText>
-    </LoadingContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-
-@code {
-    private IEnumerable<Element> pagedData = default!;
-    private MudTable<Element> table = default!;
-
-    private int totalItems;
-    private string searchString = default!;
-
-    /// <summary>
-    /// Here we simulate getting the paged, filtered and ordered data from the server
-    /// </summary>
-    private async Task<TableData<Element>> ServerReload(TableState state)
-    {
-        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-        await Task.Delay(300);
-        data = data.Where(element =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
-                return true;
-            return false;
-        }).ToArray();
-        totalItems = data.Count();
-        switch (state.SortLabel)
-        {
-            case "nr_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Number);
-                break;
-            case "sign_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Sign);
-                break;
-            case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Name);
-                break;
-            case "position_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Position);
-                break;
-            case "mass_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Molar);
-                break;
-        }
-
-        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
-    }
-
-    private void OnSearch(string text)
-    {
-        searchString = text;
-        table.ReloadServerData();
-    }
-
-    public class Element
-    {
-        public string Group { get; set; }
-        public int Position { get; set; }
-        public string Name { get; set; }
-        public int Number { get; set; }
-
-        [JsonPropertyName("small")]
-        public string Sign { get; set; }
-        public double Molar { get; set; }
-        public IList<int> Electrons { get; set; }
-
-        /// <summary>
-        /// Overriding Equals is essential for use with Select and Table because they use HashSets internally
-        /// </summary>
-        public override bool Equals(object obj) => object.Equals(GetHashCode(), obj?.GetHashCode());
-
-        /// <summary>
-        /// Overriding GetHashCode is essential for use with Select and Table because they use HashSets internally
-        /// </summary>
-        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
-
-        public override string ToString() => $"{Sign} - {Name}";
-    }
-}
+<RadzenDataGrid TItem="QuestionViewModel"
+                Count="@totalItems"
+                Data="@questions"
+                LoadData="@LoadData"
+                GridLines="DataGridGridLines.None"
+@ref="questionsGrid"
+                AllowColumnResize="true"
+                AllowFiltering="true"
+                FilterMode="FilterMode.Advanced"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                AllowSorting="true"
+                PageSize="10"
+                AllowPaging="true"
+                ShowPagingSummary="true"
+                IsLoading="isLoading"
+                AllowColumnPicking="true"
+                SelectionMode="DataGridSelectionMode.Multiple"
+@bind-Value=@selectedQuestions>
+    <HeaderTemplate>
+        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add Question" Click="AddNewQuestion" />
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false">
+            <HeaderTemplate>
+                <RadzenCheckBox TriState="false" TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
+                                Change="@(args => selectedQuestions = args ? questions : null)" />
+            </HeaderTemplate>
+            <Template Context="data">
+                <RadzenCheckBox TriState="false" Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
+                                TValue="bool" Change=@(args => { if(!allowRowSelectOnRowClick) { questionsGrid.SelectRow(data); }}) />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
+            <Template Context="question">
+                @(questions.IndexOf(question) + 1)
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question" Property="Body">
+            <Template Context="question">
+                @((MarkupString)question.Body)
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="Type" Title="Type" />
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="Status" Title="Status">
+            <FilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedStatuses
+                                Style="width:100%"
+                                Change=@OnSelectedStatusesChange
+                                Data="@(statuses)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </FilterValueTemplate>
+            <SecondFilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedStatuses
+                                Style="width:100%"
+                                Change=@OnSelectedStatusesChange
+                                Data="@(statuses)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </SecondFilterValueTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Tags">
+            <Template Context="question">
+                @foreach (var tag in question.Tags)
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
+                }
+            </Template>
+            <FilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedTags
+                                Style="width:100%"
+                                Change=@OnSelectedTagsChange
+                                Data="@(tags)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </FilterValueTemplate>
+            <SecondFilterValueTemplate>
+                <RadzenDropDown @bind-Value=@selectedTags
+                                Style="width:100%"
+                                Change=@OnSelectedTagsChange
+                                Data="@(tags)"
+                                ValueProperty="Id"
+                                TextProperty="Name"
+                                AllowClear="true"
+                                Multiple="true" />
+            </SecondFilterValueTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="CreatedAt" Title="CreatedAt" />
+    </Columns>
+</RadzenDataGrid>

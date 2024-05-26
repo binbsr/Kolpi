@@ -17,8 +17,8 @@ namespace Kolpi.WebShared.Mapper
                 Name = model.Name,
                 Details = model.Details,
                 IsFinalized = model.IsFinalized,
-                CreatedAt = model.CreatedAt.Relativize(),
-                ModifiedAt = model.ModifiedAt.Relativize(),
+                CreatedAt = model.CreatedAt,
+                ModifiedAt = model.ModifiedAt,
                 TagTypeId = model.TagTypeId,
                 TagTypeName = model.TagType?.Name,
                 TagColorCode = model.TagType?.ColorCode
@@ -37,6 +37,8 @@ namespace Kolpi.WebShared.Mapper
                 Id = viewModel.Id,
                 Name = viewModel.Name,
                 Details = viewModel.Details,
+                CreatedAt = viewModel.CreatedAt,
+                ModifiedAt = viewModel.ModifiedAt,
                 IsFinalized = viewModel.IsFinalized ?? false,
                 TagTypeId = viewModel.TagTypeId
             };
@@ -46,7 +48,7 @@ namespace Kolpi.WebShared.Mapper
 
         public static List<TagViewModel> ToViewModel(this IEnumerable<Tag> tagModels)
         {
-            List<TagViewModel> tagViewModels = new List<TagViewModel>();
+            List<TagViewModel> tagViewModels = new();
             foreach (var model in tagModels)
             {
                 tagViewModels.Add(model.ToViewModel());
@@ -57,7 +59,7 @@ namespace Kolpi.WebShared.Mapper
 
         public static List<Tag> ToModel(this IEnumerable<TagViewModel> tagViewModels)
         {
-            List<Tag> tagModels = new List<Tag>();
+            List<Tag> tagModels = new();
             foreach (var model in tagViewModels)
             {
                 tagModels.Add(model.ToModel());

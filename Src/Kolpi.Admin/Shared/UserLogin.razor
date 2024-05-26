@@ -6,7 +6,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <MudCard Elevation="0" Square="true" Class="@Class">
+       @* <MudCard Elevation="0" Square="true" Class="@Class">
             <MudCardHeader>
                 <CardHeaderAvatar>
                     @if (string.IsNullOrEmpty(ImageDataUrl))
@@ -28,13 +28,13 @@
         <MudList Dense="true" Clickable="true">
             <MudListItem Text="Account" Href="/authentication/profile" Icon="@Icons.Material.Outlined.Person" IconColor="Color.Warning"/>
             <MudListItem Text="Logout" Icon="@Icons.Material.Filled.Logout" OnClick="BeginSignOut" IconColor="Color.Error"/>
-        </MudList>
+        </MudList>*@
     </Authorized>
     <NotAuthorized>
-        <MudList Dense="true" Clickable="true">
+       @* <MudList Dense="true" Clickable="true">
             <MudListItem Text="Register" Href="/authentication/register" Icon="@Icons.Material.Outlined.PersonAdd" IconColor="Color.Warning"/>
             <MudListItem Text="Log in" Href="/authentication/login" Icon="@Icons.Material.Filled.Login" IconColor="Color.Success"/>
-        </MudList>
+        </MudList>*@
     </NotAuthorized>
 </AuthorizeView>
 

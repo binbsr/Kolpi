@@ -1,6 +1,7 @@
 ﻿using Kolpi.ApplicationCore.Entities;
 using Kolpi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Kolpi.ApplicationCore.Services
@@ -32,10 +33,7 @@ namespace Kolpi.ApplicationCore.Services
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            var entityToDelete = entities.SingleOrDefault(m => m.Id.Equals(id));
-            if (entityToDelete == null)
-                throw new Exception($"Deletion: Can't find record with id {id}");
-
+            var entityToDelete = entities.SingleOrDefault(m => m.Id.Equals(id)) ?? throw new Exception($"Deletion: Can't find record with id {id}");
             entities.Remove(entityToDelete);
             return commit ? CommitAsync() : Task.FromResult(0);
         }
@@ -68,6 +66,16 @@ namespace Kolpi.ApplicationCore.Services
         {
             entities.UpdateRange(models);
             return commit ? CommitAsync() : Task.FromResult(0);
+        }
+
+        public Task<int> ExecuteUpdateAsync(
+            Expression<Func<TEntity, bool>> condition, 
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> changingProperties)
+        {
+            var result = entities
+                            .Where(condition)
+                            .ExecuteUpdateAsync(changingProperties);
+            return result;
         }
 
         public Task<int> CommitAsync()

@@ -1,145 +1,100 @@
 ﻿@page "/tagtypes"
 
+@inject NavigationManager Nav
 @inject HttpClient Http
-@inject ISnackbar Snackbar
+@inject NotificationService Notification
+@inject DialogService DialogService
 
-@using Kolpi.WebShared.ViewModels
-@using Kolpi.Admin.Components.Results
-@using MudBlazor.Utilities
+<RadzenDataGrid GridLines="DataGridGridLines.None"
+                @ref="categoriesGrid"
+                AllowColumnResize="true"
+                AllowFiltering="true"
+                FilterMode="FilterMode.Advanced"
+                AllowSorting="true"
+                PageSize="10"
+                AllowPaging="true"
+                ShowPagingSummary="true"
+                Data="@tagCategories"
+                TItem="TagTypeViewModel"                
+                IsLoading="tagCategories is null">
+    <HeaderTemplate>
+        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="New Tag Category" Click="AddNewCategory" />
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
+            <Template Context="category">
+                @(tagCategories?.IndexOf(category) + 1)
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Property="Details" Title="Details" />
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Property="ColorCode" Title="Color Code" Filterable="false">
+            <Template Context="category">
+                <div style="height:20px; width:100%; background-color:@category.ColorCode"></div>
+            </Template>
+        </RadzenDataGridColumn>
 
-@if (tagCategories == null)
-{
-    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave"></MudSkeleton>
-}
-else if (tagCategories.Any())
-{
-    <MudTable Items="@tagCategories" Hover="@true"          
-          CanCancelEdit="true"
-          CommitEditTooltip="Save"
-          IsEditRowSwitchingBlocked="true"
-          RowEditPreview="BackupItem"
-          RowEditCancel="ResetItemToOriginalValues"
-          RowEditCommit="(e) => ItemHasBeenCommitted(e)">
-        <ToolBarContent>
-            <MudButton Color="Color.Tertiary"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Add" 
-                   Href="/tagtypes/add">
-                Add Category
-            </MudButton>
-        </ToolBarContent>
-        <HeaderContent>
-            <MudTh></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="TagTypeViewModel">Name</MudTableSortLabel></MudTh>
-            <MudTh>Details</MudTh>
-            <MudTh>Color Code</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>
-                <MudIconButton Color="Color.Error"
-                           Icon="@Icons.Material.Filled.Delete"
-                           Size="Size.Small"
-                           Title="Remove"
-                           OnClick="_ => DeleteRow(context)">
-                </MudIconButton>
-            </MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Details">@context.Details</MudTd>
-            <MudTd DataLabel="Details">                
-                <span style="color:@context.ColorCode">@context.Name</span>
-            </MudTd>
-        </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd></MudTd>
-            <MudTd DataLabel="Name">
-                <MudTextField @bind-Value="@context.Name" Required />
-            </MudTd>
-            <MudTd DataLabel="Details">
-                <MudTextField @bind-Value="@context.Details" Required />
-            </MudTd>
-            <MudTd DataLabel="ColorCode">
-                <MudColorPicker ColorPickerView="ColorPickerView.Palette"
-                            Variant="Variant.Filled" @bind-Value="cColor" />
-            </MudTd>
-        </RowEditingTemplate>
-        <NoRecordsContent>
-            <MudText>No matching records found</MudText>
-        </NoRecordsContent>
-        <LoadingContent>
-            <MudText>Loading...</MudText>
-        </LoadingContent>
-    </MudTable>
-}
-else
-{
-    <EmptyResult />
-}
+        <RadzenDataGridColumn TItem="TagTypeViewModel" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
+            <Template Context="category">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" Click="@(args => EditRow(category))" @onclick:stopPropagation="true">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(category))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>            
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
 
 @code {
 
-    List<TagTypeViewModel> tagCategories = new List<TagTypeViewModel>();
-    private HashSet<TagTypeViewModel> selectedItems = new HashSet<TagTypeViewModel>();
-    private TagTypeViewModel categoryBeforeEdit = new();
-    private MudColor cColor = default!;
-
-    [Inject]
-    private IDialogService DialogService { get; set; } = default!;
-
+    List<TagTypeViewModel> tagCategories = default!;
+    RadzenDataGrid<TagTypeViewModel> categoriesGrid;
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes") ?? default!;
     }
 
+    private void AddNewCategory() => Nav.NavigateTo("/tagtypes/add");
+
     private async Task DeleteRow(TagTypeViewModel modelToDelete)
     {
-        var result = await DialogService.ShowMessageBox("Delete Category",
-            message: $"Are you sure to delete {modelToDelete.Name}?",
-            yesText: "Delete",
-            cancelText: "Cancel");
+        var result = await DialogService.Confirm($"Are you sure to delete '{modelToDelete.Name}' tag category?", "Delete Category");
 
-        if (result == null)
+        if (result == null || !result.Value)
             return;
 
         var deleteResult = await Http.DeleteAsync($"api/tagtypes/{modelToDelete.Id}");
         if (deleteResult.IsSuccessStatusCode)
         {
-            Snackbar.Add("Tag category deleted successfully.", Severity.Success);
+            Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = "Tag category deleted successfully.",
+                        Severity = NotificationSeverity.Success,
+                        Duration = 2000
+                    }
+            );
             tagCategories.Remove(modelToDelete);
+            await categoriesGrid.Reload();
         }
         else
         {
-            Snackbar.Add($"Tag category delete failed. Error: {deleteResult.ReasonPhrase}", Severity.Error);
+            Notification.Notify(
+                new NotificationMessage
+                    {
+                        Summary = $"Tag category delete failed. Error: {deleteResult.ReasonPhrase}",
+                        Severity = NotificationSeverity.Error,
+                        Duration = 2000
+                    }
+            );
         }
     }
 
-    private void BackupItem(object element)
+    private void EditRow(TagTypeViewModel tagTypeViewModel)
     {
-        categoryBeforeEdit = new()
-            {
-                Name = ((TagTypeViewModel)element).Name,
-                Details = ((TagTypeViewModel)element).Details,
-                ColorCode = ((TagTypeViewModel)element).ColorCode,
-            };
-    }
-
-    private async Task ItemHasBeenCommitted(object element)
-    {
-        var modelToUpdate = (TagTypeViewModel)element;
-        modelToUpdate.ColorCode = cColor.Value;
-
-        //Update model to database
-        var updateResult = await Http.PutAsJsonAsync($"api/tagtypes/{modelToUpdate.Id}", modelToUpdate);
-        if (updateResult.IsSuccessStatusCode)
-            Snackbar.Add("Tag category updated successfully.", Severity.Success);
-        else
-            Snackbar.Add($"Tag category update failed. Error: {updateResult.ReasonPhrase}", Severity.Error);
-    }
-
-    private void ResetItemToOriginalValues(object element)
-    {
-        ((TagTypeViewModel)element).Name = categoryBeforeEdit.Name;
-        ((TagTypeViewModel)element).Details = categoryBeforeEdit.Details;
-        ((TagTypeViewModel)element).ColorCode = categoryBeforeEdit.ColorCode;
+        Nav.NavigateTo($"/tagtypes/update/{tagTypeViewModel.Id}");
     }
 }
