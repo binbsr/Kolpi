@@ -1,3 +1,0 @@
-﻿-Considered using automapper like libraries, didn't find worth it.
--Even utility like OneOf for discriminated unioin is not worth it, C# will add it in future anyway.
--So for efficieny and learning effort, decided on manaul mappers though there is effort

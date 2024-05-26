@@ -1,0 +1,11 @@
+<RadzenHtmlEditor 
+    @bind-Value=@htmlValue 
+    style="height: 300px;" 
+    Input=@OnInput UploadUrl="upload/image" />
+@code {
+    string htmlValue = "<h1>Hello World!</h1>";
+
+    void OnInput(string html)
+    {       
+    }
+}

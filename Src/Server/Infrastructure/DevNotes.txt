@@ -1,2 +1,0 @@
-﻿- Read a lot about if repository pattern is good on top of EF core ORM and even take some time to explore CQRS
-- As DBContext is UOW and DbSets are repositories, I settled down on generic services pattern, redundant repository classes omitted for now

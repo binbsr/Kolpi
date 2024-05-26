@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<RadzenLayout Style="grid-template-columns: 1fr auto; grid-template-areas: 'rz-header rz-header' 'rz-body rz-sidebar'">
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" AlignItems="AlignItems.Center" Gap="1rem">
+            <RadzenLink Match="NavLinkMatch.All" Path="/">
+                <RadzenImage Path="/img/kolpi (2).jpg" Style="height:30px;"></RadzenImage>
+            </RadzenLink>
+            <RadzenSidebarToggle Click="@(() => _drawerOpen = !_drawerOpen)" Class="rz-m-0" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Expanded="@_drawerOpen">
+        <SideNavigation />
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-3">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+
+@code {
+    bool _drawerOpen = true;
+}

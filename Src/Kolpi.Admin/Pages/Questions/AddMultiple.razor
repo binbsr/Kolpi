@@ -1,0 +1,56 @@
+@* @page "/Question/Multiple"
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Kolpi.Admin.Models
+@using Kolpi.Client.Components
+@using Kolpi.Admin.ViewModels
+
+@inject HttpClient Http
+
+<Form Model="@questionsBulk" OnFinish="SubmitQuestions">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <FormItem>
+        <Button Type="dashed" Icon="question-circle" OnClick="@(()=>{ _visible = true; })" Style="float:right;">
+            Input Format
+        </Button>
+        <Modal Title="@title"
+               Visible="@_visible"
+               Closable="true"
+               OnOk="HandleCancel"
+               OnCancel="HandleCancel">
+            <p>
+                Quesiton body? <br/>
+                --------------------------------<br/>
+                Tags: categories and complexity<br/>
+                --------------------------------<br/>
+                Answeroption1<br/>
+                Answeroption2<br/>
+                Answeroption3<br/>
+                Answeroption4<br/>
+                ======================================
+            </p>
+        </Modal>
+        <TextArea AutoFocus Placeholder="Your questions in specified format..." @bind-Value="@questionsBulk.Body" />
+    </FormItem>
+    <FormItem>
+        <Button Type="default" HtmlType="submit" Icon="save">Submit Questions</Button>
+     </FormItem>
+</Form>
+
+@code {
+    private QuestionsBulkViewModel questionsBulk = new QuestionsBulkViewModel();
+    string title = "Multi-Questions Input Format";
+    bool _visible = false;
+
+
+    private void SubmitQuestions()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+} *@

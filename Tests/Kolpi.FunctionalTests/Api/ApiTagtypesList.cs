@@ -1,5 +1,6 @@
 ﻿using Kolpi.Server;
-using Kolpi.Shared.ViewModels;
+using Kolpi.WebShared;
+using Kolpi.WebShared.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -14,11 +15,11 @@ using Xunit;
 
 namespace Kolpi.FunctionalTests.Api
 {
-    public class ApiTagtypesList : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ApiTagtypesList : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient client;
 
-        public ApiTagtypesList(CustomWebApplicationFactory<Startup> applicationFactory)
+        public ApiTagtypesList(CustomWebApplicationFactory<Program> applicationFactory)
         {
             client = applicationFactory.WithWebHostBuilder(builder =>
             {
