@@ -1,0 +1,44 @@
+﻿@page "/login"
+<h3>Login</h3>
+
+    <div class="p-4">
+      <div class=" col-md-3">
+          <label class="form-label">Mobile No</label>
+          <Input type="number" class="form-control" id="mobile" @bind="Mobile" placeholder="0000000000000" />
+      </div>
+    <div class=" col-md-3">
+         <label class="form-label">Password</label>
+          <Input type="password" class="form-control" id="mobile" @bind="Password" placeholder="0000" />
+      </div>
+    
+    <div class=" col-md-3">
+         <p style="color:@Color"><b>@text</b></p>
+      </div>
+      <button type="submit" class="btn btn-primary" @onclick="Submit">Submit</button>
+    </div>
+    
+@code {
+    private string Mobile { get; set; }
+    private string Password { get; set; }
+    private string Color { get; set; } = "black";
+    private string text { get; set; } = "Hello Guest";
+    
+    private void Submit()
+    {
+        if(Mobile=="234567898"&& Password=="1020")
+        {
+            Color = "green";
+            text = "Welcome Guest";
+            Mobile = "";
+            Password = "";
+        }
+        else
+        {
+            Color = "red";
+            text = "User Password Wrong";
+            Mobile = "";
+            Password = "";
+
+        }
+    }
+}
