@@ -34,7 +34,6 @@ public partial class AddSingle
     {
         answerOptionViewModels.Remove(answerOptionViewModel);
     }
-
     public async Task OnSave()
     {
         isSaving = true;
