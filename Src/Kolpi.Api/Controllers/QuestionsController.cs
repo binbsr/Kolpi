@@ -9,6 +9,7 @@ using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace Kolpi.Api.Controllers;
 
@@ -19,6 +20,7 @@ public class QuestionsController : ControllerBase
     private readonly IQuestionService questionService;
     private readonly IAnswerOptionService answerOptionService;
     private readonly ITagService tagService;
+    private object _questionService;
 
     public QuestionsController(
         IQuestionService questionService,
@@ -132,5 +134,11 @@ public class QuestionsController : ControllerBase
     private bool QuestionExists(int id)
     {
         return questionService.GetByIdAsync(id).Result is not null;
+    }
+    [HttpPost("bulk")]
+    public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<Question> questions)
+    {
+        await questionService.SaveMultipleAsync(questions);
+        return Ok();
     }
 }

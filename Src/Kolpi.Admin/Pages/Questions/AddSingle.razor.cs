@@ -2,101 +2,209 @@
 using Microsoft.AspNetCore.Components;
 using Radzen;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Kolpi.ApplicationCore.Enums;  //  to resolve QuestionType reference
 
-namespace Kolpi.Admin.Pages.Questions;
-
-public partial class AddSingle
+namespace Kolpi.Admin.Pages.Questions
 {
-    [Inject]
-    public HttpClient Http { get; set; }
-
-    [Inject]
-    public NotificationService Notification { get; set; }
-
-    private QuestionViewModel Question = new();
-    List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
-    private List<TagViewModel> Tags { get; set; } = default!;
-    List<TagViewModel> tagsSelected = new();
-    bool isSaving = false;
-
-    protected override async Task OnInitializedAsync()
+    public partial class AddSingle
     {
-        var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
-        Tags = result.Records;
-    }
+        [Inject]
+        public HttpClient Http { get; set; }
 
-    public void AddNewOption()
-    {
-        answerOptionViewModels.Add(new());
-    }
+        [Inject]
+        public NotificationService Notification { get; set; }
 
-    public void DeleteAnsOption(AnswerOptionViewModel answerOptionViewModel)
-    {
-        answerOptionViewModels.Remove(answerOptionViewModel);
-    }
-    public async Task OnSave()
-    {
-        isSaving = true;
+        private List<QuestionViewModel> questions = new List<QuestionViewModel>();
+        private List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
+        private bool isSavingQuestions;
 
-        Task<HttpResponseMessage> saveTask;
-
-        Question.AnswerOptions = answerOptionViewModels;
-        Question.Tags = tagsSelected;
-
-        if (Question.Id == default)
+        protected override async Task OnInitializedAsync()
         {
-            // Adding new
-            saveTask = Http.PostAsJsonAsync("api/questions", Question);
-        }
-        else
-        {
-            // Modify existing
-            saveTask = Http.PutAsJsonAsync($"api/questions/{Question.Id}", Question);
+            questions.Add(new QuestionViewModel
+            {
+                Type = QuestionType.Objective,  // This should now be recognized
+                AnswerOptions = new List<AnswerOptionViewModel> { new(), new(), new(), new() }
+            });
+
+            var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
+            Tags = result.Records;
         }
 
-        await saveTask.ContinueWith(st =>
+        private void AddNewQuestion()
         {
-            isSaving = false;
-
-            var result = st.Result;
-
-            if (result.IsSuccessStatusCode)
+            questions.Add(new QuestionViewModel
             {
-                Notification.Notify(
-                   new NotificationMessage
-                   {
-                       Summary = $"Question saved successfully",
-                       Severity = NotificationSeverity.Success,
-                       Duration = 4000
-                   });
-            }
-            else
+                Type = QuestionType.Objective,  // This should now be recognized
+                AnswerOptions = new List<AnswerOptionViewModel> { new(), new(), new(), new() }
+            });
+        }
+
+        private void RemoveQuestion(QuestionViewModel question)
+        {
+            questions.Remove(question);
+        }
+
+        private async Task OnSaveQuestions()
+        {
+            isSavingQuestions = true;
+
+            foreach (var question in questions)
             {
-                Notification.Notify(
-                  new NotificationMessage
-                  {
-                      Summary = $"Error occured while saving question. Problem: {result.ReasonPhrase}",
-                      Severity = NotificationSeverity.Error,
-                      Duration = 4000
-                  });
+                question.Tags = tagsSelected;
+                var response = question.Id == default
+                    ? await Http.PostAsJsonAsync("api/questions", question)
+                    : await Http.PutAsJsonAsync($"api/questions/{question.Id}", question);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Notification.Notify(new NotificationMessage
+                    {
+                        Summary = $"Question {question.Id} saved successfully",
+                        Severity = NotificationSeverity.Success,
+                        Duration = 4000
+                    });
+                }
+                else
+                {
+                    Notification.Notify(new NotificationMessage
+                    {
+                        Summary = $"Error saving question {question.Id}: {response.ReasonPhrase}",
+                        Severity = NotificationSeverity.Error,
+                        Duration = 4000
+                    });
+                }
             }
-        });
-    }
 
+            isSavingQuestions = false;
+        }
 
-    public async Task<IEnumerable<TagViewModel>> Search(string value)
-    {
-        List<TagViewModel> emptyModel = new();
+        private List<TagViewModel> tagsSelected = new();
 
-        if (string.IsNullOrWhiteSpace(value))
-            return emptyModel;
+        public async Task<IEnumerable<TagViewModel>> Search(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return new List<TagViewModel>();
 
-        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
-        return Tags;
-    }
+            Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? new List<TagViewModel>();
+            return Tags;
+        }
 
-    public void OnInput(string body)
-    {
+        public void AddNewOption(QuestionViewModel question)
+        {
+            question.AnswerOptions.Add(new AnswerOptionViewModel());
+        }
 
+        public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel option)
+        {
+            question.AnswerOptions.Remove(option);
+        }
     }
 }
+
+
+//using Kolpi.WebShared.ViewModels;
+//using Microsoft.AspNetCore.Components;
+//using Radzen;
+//using System.Net.Http.Json;
+//using System.Threading.Tasks;
+//using System.Collections.Generic;
+
+//namespace Kolpi.Admin.Pages.Questions;
+
+//public partial class AddSingle
+//{
+//    [Inject]
+//    public HttpClient Http { get; set; }
+
+//    [Inject]
+//    public NotificationService Notification { get; set; }
+
+//    private QuestionViewModel Question = new();
+//    List<AnswerOptionViewModel> answerOptionViewModels = new() { new(), new(), new(), new() };
+//    private List<TagViewModel> Tags { get; set; } = default!;
+//    List<TagViewModel> tagsSelected = new();
+//    bool isSaving = false;
+
+//    protected override async Task OnInitializedAsync()
+//    {
+//        var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
+//        Tags = result.Records;
+//    }
+
+//    public void AddNewOption()
+//    {
+//        answerOptionViewModels.Add(new());
+//    }
+
+//    public void DeleteAnsOption(AnswerOptionViewModel answerOptionViewModel)
+//    {
+//        answerOptionViewModels.Remove(answerOptionViewModel);
+//    }
+//    public async Task OnSave()
+//    {
+//        isSaving = true;
+
+//        Task<HttpResponseMessage> saveTask;
+
+//        Question.AnswerOptions = answerOptionViewModels;
+//        Question.Tags = tagsSelected;
+
+//        if (Question.Id == default)
+//        {
+//            // Adding new
+//            saveTask = Http.PostAsJsonAsync("api/questions", Question);
+//        }
+//        else
+//        {
+//            // Modify existing
+//            saveTask = Http.PutAsJsonAsync($"api/questions/{Question.Id}", Question);
+//        }
+
+//        await saveTask.ContinueWith(st =>
+//        {
+//            isSaving = false;
+
+//            var result = st.Result;
+
+//            if (result.IsSuccessStatusCode)
+//            {
+//                Notification.Notify(
+//                   new NotificationMessage
+//                   {
+//                       Summary = $"Question saved successfully",
+//                       Severity = NotificationSeverity.Success,
+//                       Duration = 4000
+//                   });
+//            }
+//            else
+//            {
+//                Notification.Notify(
+//                  new NotificationMessage
+//                  {
+//                      Summary = $"Error occured while saving question. Problem: {result.ReasonPhrase}",
+//                      Severity = NotificationSeverity.Error,
+//                      Duration = 4000
+//                  });
+//            }
+//        });
+//    }
+
+
+//    public async Task<IEnumerable<TagViewModel>> Search(string value)
+//    {
+//        List<TagViewModel> emptyModel = new();
+
+//        if (string.IsNullOrWhiteSpace(value))
+//            return emptyModel;
+
+//        Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
+//        return Tags;
+//    }
+
+//    public void OnInput(string body)
+//    {
+
+//    }
+//}

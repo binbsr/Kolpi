@@ -37,4 +37,24 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
     public override Task<Question?> GetByIdAsync(int id) => dbContext.Set<Question>()
             .Include(t => t.AnswerOptions)
             .Where(o => o.Id.Equals(id)).FirstOrDefaultAsync();
+
+    // New method for saving multiple questions
+    public async Task SaveMultipleAsync(List<Question> questions)
+    {
+        foreach (var question in questions)
+        {
+            if (question.Id == 0)
+            {
+                dbContext.Set<Question>().Add(question);
+            }
+            else
+            {
+                dbContext.Set<Question>().Update(question);
+            }
+        }
+        await dbContext.SaveChangesAsync();
+    }
+
 }
+
+
