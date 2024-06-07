@@ -10,6 +10,7 @@ using Kolpi.ApplicationCore.Enums;  //  to resolve QuestionType reference
 namespace Kolpi.Admin.Pages.Questions
 {
 
+
     public partial class AddSingle : ComponentBase
     {
         [Inject]
@@ -21,6 +22,11 @@ namespace Kolpi.Admin.Pages.Questions
         private List<QuestionViewModel> questions = new List<QuestionViewModel>();
         private List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
         private bool isSaving;
+
+
+        private QuestionViewModel Question = new();
+
+
 
 
         protected override async Task OnInitializedAsync()
@@ -104,27 +110,6 @@ namespace Kolpi.Admin.Pages.Questions
             question.AnswerOptions.Remove(option);
         }
     }
-
-   
-
-    public class AddComponentBase
-    {
-
-        [Inject]
-        public HttpClient Http { get; set; }
-
-        [Inject]
-        public NotificationService Notification { get; set; }
-
-        bool isSaving = false;
-        private QuestionViewModel Question = new();
-    }
-    public abstract class AddSingleBase : ComponentBase
-    {
-        [Inject]
-        protected HttpClient Http { get; set; } = default!;
-
-        [Inject]
-        protected NotificationService Notification { get; set; } = default!;
-    }
 }
+
+

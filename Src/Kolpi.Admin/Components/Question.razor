@@ -1,6 +1,7 @@
 ﻿@using Kolpi.ApplicationCore.Enums
 
 @inject HttpClient Http
+<<<<<<< HEAD
 @code {
     private List<QuestionViewModel> questions = new List<QuestionViewModel>();
     private bool isSavingQuestions;
@@ -35,6 +36,10 @@
 {
     <div class="question-container">
         <!-- Your question UI code -->
+=======
+
+<RadzenPanel Style="border: 10px dotted var(--rz-success)">
+>>>>>>> 3f056a1e6b13843a3da1d50a8e0123262184836a
     <RadzenHtmlEditor @bind-Value=@QuestionViewModel.Body
                       style="height: 180px;"
                       UploadUrl="upload/image"
@@ -81,6 +86,7 @@
             <RadzenButton Icon="add" Text="New Option" ButtonStyle="ButtonStyle.Danger" Click="AddNewOption" title="Add new option" Style="height:20px" />
         </RadzenRow>
     }
+<<<<<<< HEAD
         <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="@(() => RemoveQuestion(question))" class="rz-mt-4" />
 
     </div>
@@ -89,6 +95,10 @@
     <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" Click="OnSaveQuestions" class="rz-mt-4" Style="margin-bottom: 20px" />
 </RadzenPanel>
 
+=======
+
+</RadzenPanel>
+>>>>>>> 3f056a1e6b13843a3da1d50a8e0123262184836a
 @code {
 
     private QuestionViewModel QuestionViewModel = new();
@@ -123,4 +133,7 @@
         return Tags;
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3f056a1e6b13843a3da1d50a8e0123262184836a
