@@ -1,10 +1,10 @@
 
-<RadzenPanelMenu Multiple="@true" Style="margin:0">
+<RadzenPanelMenu Multiple="@true" Style="margin:0" Match="NavLinkMatch.All">
     <RadzenPanelMenuItem Text="Dashboard" Path="/dashboard" Icon="dashboard" />
     <RadzenPanelMenuItem Text="Question Bank" Path="/questions" Icon="question_answer" />
 
     <RadzenPanelMenuItem Text="Questions" Icon="question_mark">
-        <RadzenPanelMenuItem Text="Add New (UI)" Icon="checklist" Path="/question/add"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Add New (UI)" Icon="checklist" Path="/question/add" ></RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="Add Multiple (Text)" Icon="text_fields" Path="/question/multiple"></RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="Review" Icon="rate_review" Path="/question/review"></RadzenPanelMenuItem>
     </RadzenPanelMenuItem>
@@ -25,8 +25,8 @@
             <RadzenPanelMenuItem Text="New Tag" Icon="add" Path="/tags/add"></RadzenPanelMenuItem>
         </RadzenPanelMenuItem>
         <RadzenPanelMenuItem Text="Tag Categories" Icon="category">
-            <RadzenPanelMenuItem Text="All" Icon="category" Path="/tagtypes" Match="NavLinkMatch.All"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="New Category" Icon="add" Path="/tagtypes/add" Match="NavLinkMatch.All"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="All" Icon="category" Path="/tagtypes"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="New Category" Icon="add" Path="/tagtypes/add"></RadzenPanelMenuItem>
         </RadzenPanelMenuItem>
     </RadzenPanelMenuItem>
 </RadzenPanelMenu>
