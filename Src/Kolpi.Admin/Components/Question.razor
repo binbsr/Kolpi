@@ -1,8 +1,40 @@
 ﻿@using Kolpi.ApplicationCore.Enums
 
 @inject HttpClient Http
+@code {
+    private List<QuestionViewModel> questions = new List<QuestionViewModel>();
+    private bool isSavingQuestions;
+
+    protected override void OnInitialized()
+    {
+        // Initialize with one empty question
+        questions.Add(new QuestionViewModel { Type = QuestionType.Objective, AnswerOptions = new List<AnswerOptionViewModel>() });
+    }
+
+    private void AddNewQuestion()
+    {
+        questions.Add(new QuestionViewModel { Type = QuestionType.Objective, AnswerOptions = new List<AnswerOptionViewModel>() });
+    }
+
+    private void RemoveQuestion(QuestionViewModel question)
+    {
+        questions.Remove(question);
+    }
+
+    private void OnSaveQuestions()
+    {
+        isSavingQuestions = true;
+        // Logic to save all questions
+        isSavingQuestions = false;
+    }
+
+}
 
 <RadzenPanel Style="border: 10px dotted var(--rz-success)">
+     @foreach (var question in questions)
+{
+    <div class="question-container">
+        <!-- Your question UI code -->
     <RadzenHtmlEditor @bind-Value=@QuestionViewModel.Body
                       style="height: 180px;"
                       UploadUrl="upload/image"
@@ -49,8 +81,14 @@
             <RadzenButton Icon="add" Text="New Option" ButtonStyle="ButtonStyle.Danger" Click="AddNewOption" title="Add new option" Style="height:20px" />
         </RadzenRow>
     }
+        <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="@(() => RemoveQuestion(question))" class="rz-mt-4" />
 
+    </div>
+}
+    <RadzenButton Icon="add" Text="Add New Question" ButtonStyle="ButtonStyle.Primary" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
+    <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" Click="OnSaveQuestions" class="rz-mt-4" Style="margin-bottom: 20px" />
 </RadzenPanel>
+
 @code {
 
     private QuestionViewModel QuestionViewModel = new();
@@ -85,3 +123,4 @@
         return Tags;
     }
 }
+
