@@ -1,11 +1,17 @@
 ﻿using Kolpi.ApplicationCore.Enums;
 using Kolpi.WebShared.ViewModels;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components;
 
 namespace Kolpi.Admin.Pages.Questions
 {
-    public class AddSingleBase
+    public class AddSingleBase : ComponentBase
     {
+        [Inject]
+        public HttpClient Http { get; set; }
+
+        protected List<QuestionViewModel> questions = new List<QuestionViewModel>();
+        protected List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 
         protected override async Task OnInitializedAsync()
         {
