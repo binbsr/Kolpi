@@ -23,8 +23,8 @@ namespace Kolpi.Admin.Pages.Questions
         private List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
         private bool isSaving;
 
-
-        private QuestionViewModel Question = new();
+    
+    private QuestionViewModel Question = new();
 
 
 
@@ -110,6 +110,72 @@ namespace Kolpi.Admin.Pages.Questions
             question.AnswerOptions.Remove(option);
         }
     }
+
+
+
+    public class AddComponentBase
+    {
+
+        [Inject]
+        public HttpClient Http { get; set; }
+
+        [Inject]
+        public NotificationService Notification { get; set; }
+
+        bool isSaving = false;
+        private QuestionViewModel Question = new();
+
+        //Task<HttpResponseMessage> saveTask;
+
+        //Question.AnswerOptions = answerOptionViewModels;
+        //Question.Tags = tagsSelected;
+
+        //if (Question.Id == default)
+        //{
+        //    // Adding new
+        //    saveTask = Http.PostAsJsonAsync("api/questions", Question);
+        //}
+        //else
+        //{
+        //    // Modify existing
+        //    saveTask = Http.PutAsJsonAsync($"api/questions/{Question.Id}", Question);
+        //}
+
+        //await saveTask.ContinueWith(st =>
+        //{
+        //    isSaving = false;
+
+        //    var result = st.Result;
+
+        //    if (result.IsSuccessStatusCode)
+        //    {
+        //        Notification.Notify(
+        //           new NotificationMessage
+        //           {
+        //               Summary = $"Question saved successfully",
+        //               Severity = NotificationSeverity.Success,
+        //               Duration = 4000
+        //           });
+        //    }
+        //    else
+        //    {
+        //        Notification.Notify(
+        //          new NotificationMessage
+        //          {
+        //              Summary = $"Error occured while saving question. Problem: {result.ReasonPhrase}",
+        //              Severity = NotificationSeverity.Error,
+        //              Duration = 4000
+        //          });
+        //    }
+        //});
+
+        public abstract class AddSingleBase : ComponentBase
+        {
+            [Inject]
+            protected HttpClient Http { get; set; } = default!;
+
+            [Inject]
+            protected NotificationService Notification { get; set; } = default!;
+        }
+    }
 }
-
-
