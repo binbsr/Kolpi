@@ -8,7 +8,7 @@ using Kolpi.ApplicationCore.Enums;  //  to resolve QuestionType reference
 
 namespace Kolpi.Admin.Pages.Questions
 {
-    public partial class AddSingle
+    public partial class AddSingle: AddSingleBase
     {
         [Inject]
         public HttpClient Http { get; set; }
@@ -19,6 +19,7 @@ namespace Kolpi.Admin.Pages.Questions
         private List<QuestionViewModel> questions = new List<QuestionViewModel>();
         private List<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
         private bool isSavingQuestions;
+        
 
         protected override async Task OnInitializedAsync()
         {
@@ -100,6 +101,10 @@ namespace Kolpi.Admin.Pages.Questions
         {
             question.AnswerOptions.Remove(option);
         }
+    }
+
+    public class AddComponentBase
+    {
     }
 }
 
