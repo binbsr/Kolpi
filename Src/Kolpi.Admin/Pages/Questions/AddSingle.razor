@@ -1,7 +1,7 @@
 @page "/question/add"
 @using Kolpi.ApplicationCore.Enums;
-
-@code {
+<Question />
+@* @code {
     private List<QuestionViewModel> questions = new List<QuestionViewModel>();
     private bool isSavingQuestions;
 
@@ -28,9 +28,10 @@
         isSavingQuestions = false;
     }
     
-}
+    
+} *@
 
-@foreach (var question in questions)
+@* @foreach (var question in questions)
 {
     <div class="question-container">
         <!-- Your question UI code -->
@@ -83,15 +84,17 @@
         }
 
         <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="@(() => RemoveQuestion(question))" class="rz-mt-4" />
-    }
+    
     </div>
-}
+}  *@
 
-<RadzenButton Icon="add" Text="Add New Question" ButtonStyle="ButtonStyle.Primary" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
+@* <RadzenButton Icon="add" Text="Add New Question" ButtonStyle="ButtonStyle.Primary" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />  *@
+
 @* <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSavingQuestions" BusyText="Saving..." Click="OnSaveQuestions" class="rz-mt-4" Style="float: right" /> *@
 <!-- Button to save all questions -->
 @* <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSavingQuestions" BusyText="Saving..." Click="OnSaveQuestions" class="rz-mt-4" Style="float: right" /> *@
 <RadzenButton Icon="save" Text="Save All Question" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
+
 
 @* @page "/question/add"
 @using Kolpi.ApplicationCore.Enums;
