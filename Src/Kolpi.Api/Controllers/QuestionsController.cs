@@ -10,6 +10,7 @@ using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kolpi.Api.Controllers;
 
@@ -135,10 +136,50 @@ public class QuestionsController : ControllerBase
     {
         return questionService.GetByIdAsync(id).Result is not null;
     }
+    //[HttpPost("bulk")]
+    //public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<Question> questions)
+    //{
+    //    await questionService.SaveMultipleAsync(questions);
+    //    return Ok();
+    //}
+
     [HttpPost("bulk")]
-    public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<Question> questions)
+    public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<QuestionViewModel> questionViewModels)
     {
-        await questionService.SaveMultipleAsync(questions);
-        return Ok();
+        if (questionViewModels == null || !questionViewModels.Any())
+        {
+            return BadRequest("No questions to save.");
+        }
+
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
+            var questions = new List<Question>();
+
+            foreach (var viewModel in questionViewModels)
+            {
+                var question = viewModel.ToModel();
+                question.QuestionStatusId = 1; // Assuming default status id is 1
+                question.AddCreatedStamps(userId);
+
+                // Inform EF that these tags selected already exist and are not changed; else EF will try to insert
+                tagService.AttachTags(question.Tags);
+
+                // Just add answer options to EF
+                await answerOptionService.AddAsync(question.AnswerOptions, false);
+
+                questions.Add(question);
+            }
+
+            // Add all questions to EF and commit all changes made to context so far (UoW)
+            await questionService.SaveMultipleAsync(questions);
+
+            return Ok(new { message = $"{questions.Count} questions saved successfully." });
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
     }
+
 }
