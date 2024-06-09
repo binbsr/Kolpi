@@ -11,5 +11,8 @@ public class QuestionViewModel
     public QuestionType Type { get; set; } = QuestionType.Objective;
     public List<TagViewModel> Tags { get; set; } = default!;
     public List<AnswerOptionViewModel> AnswerOptions { get; set; } = default!;
-    public int NumberOfOptions => AnswerOptions?.Count ?? 0;   
+    public int NumberOfOptions => AnswerOptions?.Count ?? 0;
+   
+
+    
  }
