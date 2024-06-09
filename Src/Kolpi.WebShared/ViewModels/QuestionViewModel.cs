@@ -9,7 +9,6 @@ public class QuestionViewModel
     public string? CreatedBy { get; set; }
     public DateTime? CreatedAt { get; set; }
     public QuestionType Type { get; set; } = QuestionType.Objective;
-    public int NumberOfOptions => AnswerOptions?.Count ?? 0;
     public List<TagViewModel> Tags { get; set; } = default!;
     public List<AnswerOptionViewModel> AnswerOptions { get; set; } = default!;
 }

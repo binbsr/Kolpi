@@ -7,6 +7,5 @@ namespace Kolpi.Infrastructure.Services.Questions
     {
         Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy);
         Task<List<string>> GetAllQuestionsBodyAsync();
-        Task<Question?> GetByIdAsync(int id);
     }
 }
