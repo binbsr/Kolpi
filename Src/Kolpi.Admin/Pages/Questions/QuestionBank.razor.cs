@@ -63,10 +63,9 @@ public partial class QuestionBank
 
         totalItems = result.TotalCount;
         questions = result.Records;
-       
+
         isLoading = false;
     }
-
     private void AddNewQuestion()
     {
         Navigation.NavigateTo("/question/add");

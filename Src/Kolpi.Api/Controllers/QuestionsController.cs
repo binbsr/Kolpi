@@ -9,6 +9,7 @@ using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace Kolpi.Api.Controllers;
 
@@ -38,6 +39,10 @@ public class QuestionsController : ControllerBase
         {
             var (count, questions) = await questionService.GetAllAsync(filter, skip, take, orderBy);
             var questionViewModels = questions.ToViewModel();
+            foreach (var question in questions)
+            {
+                question.AnswerOptions = await answerOptionService.GetOptionsForQuestionAsync(question.Id);
+            }
             int totalCount = count;
             return new QuestionsMetaViewModel { TotalCount = totalCount, Records = questionViewModels };
         }
@@ -48,7 +53,7 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Question>> GetQuestion(int id)
+    public async Task<ActionResult<QuestionViewModel>> GetQuestion(int id)
     {
         var question = await questionService.GetByIdAsync(id);
 
@@ -57,7 +62,11 @@ public class QuestionsController : ControllerBase
             return NotFound();
         }
 
-        return question;
+        // Load AnswerOptions for the question
+        question.AnswerOptions = await answerOptionService.GetOptionsForQuestionAsync(id);
+
+        var questionViewModel = question.ToViewModel();
+        return questionViewModel;
     }
 
     [HttpPost]

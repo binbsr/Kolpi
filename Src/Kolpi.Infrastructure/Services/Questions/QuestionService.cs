@@ -3,15 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using Kolpi.Infrastructure.Data;
 using Kolpi.ApplicationCore.Services;
 using System.Linq.Dynamic.Core;
+using Kolpi.Infrastructure.Services.AnswerOptions;
 
 namespace Kolpi.Infrastructure.Services.Questions;
 public class QuestionService : AsyncService<Question, int>, IQuestionService
 {
     private readonly KolpiDbContext dbContext;
+    private readonly IAnswerOptionService answerOptionService;
 
-    public QuestionService(KolpiDbContext dbContext) : base(dbContext)
+    public QuestionService(KolpiDbContext dbContext, IAnswerOptionService answerOptionService) : base(dbContext)
     {
         this.dbContext = dbContext;
+        this.answerOptionService = answerOptionService;
     }
 
     public async Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy)
@@ -29,6 +32,11 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
 
         var count = await query.CountAsync();
         var result = await query.Skip(skip).Take(take).ToListAsync();
+        foreach (var question in result)
+        {
+            question.AnswerOptions = await answerOptionService.GetOptionsForQuestionAsync(question.Id);
+        }
+
         return (count, result);
     }
 

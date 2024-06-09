@@ -35,7 +35,7 @@ public static class QuestionMapper
             Status = question.QuestionStatus?.Name ?? "N/A",
             CreatedBy = question.CreatedBy ?? "N/A",
             CreatedAt = question.CreatedAt,
-            AnswerOptions = question.AnswerOptions?.ToViewModel() ?? default!,
+            AnswerOptions = question.AnswerOptions?.ToViewModel() ?? new List<AnswerOptionViewModel>(),
             Tags = question.Tags?.ToViewModel() ?? default!
         };
 
