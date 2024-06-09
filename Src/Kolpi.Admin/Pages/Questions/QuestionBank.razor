@@ -19,18 +19,19 @@
                 IsLoading="isLoading"
                 AllowColumnPicking="true"
                 SelectionMode="DataGridSelectionMode.Multiple"
+                
 @bind-Value=@selectedQuestions>
     <HeaderTemplate>
         <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add Question" Click="AddNewQuestion" />
     </HeaderTemplate>
     <Columns>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false">
+        <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false" Frozen="true">
             <HeaderTemplate>
                 <RadzenCheckBox TriState="false" TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
                                 Change="@(args => selectedQuestions = args ? questions : null)" />
             </HeaderTemplate>
             <Template Context="data">
-                <RadzenCheckBox TriState="false" Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
+                <RadzenCheckBox TriState="false"  Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
                                 TValue="bool" Change=@(args => { if(!allowRowSelectOnRowClick) { questionsGrid.SelectRow(data); }}) />
             </Template>
         </RadzenDataGridColumn>
@@ -39,7 +40,7 @@
                 @(questions.IndexOf(question) + 1)
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question" Property="Body">
+        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question" Property="Body" Frozen="true">
             <Template Context="question">
                 @((MarkupString)question.Body)
             </Template>
