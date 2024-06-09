@@ -6,12 +6,14 @@
                 LoadData="@LoadData"
                 GridLines="DataGridGridLines.None"
 @ref="questionsGrid"
+                AllowRowSelect="true"
+                AllowMultiRowSelect="true"
                 AllowColumnResize="true"
                 AllowFiltering="true"
                 FilterMode="FilterMode.Advanced"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 AllowSorting="true"
-                PageSize="10"
+                PageSize="5"
                 AllowPaging="true"
                 ShowPagingSummary="true"
                 IsLoading="isLoading"
@@ -93,6 +95,8 @@
                                 Multiple="true" />
             </SecondFilterValueTemplate>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="QuestionViewModel" Property="NumberOfOptions" Title="NumOpts" />
         <RadzenDataGridColumn TItem="QuestionViewModel" Property="CreatedAt" Title="CreatedAt" />
+        
     </Columns>
 </RadzenDataGrid>
