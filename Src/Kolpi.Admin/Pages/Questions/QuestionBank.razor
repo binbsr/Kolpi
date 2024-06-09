@@ -1,5 +1,6 @@
 ﻿@page "/questions"
 
+
 <RadzenDataGrid TItem="QuestionViewModel"
                 Count="@totalItems"
                 Data="@questions"
@@ -19,11 +20,14 @@
                 IsLoading="isLoading"
                 AllowColumnPicking="true"
                 SelectionMode="DataGridSelectionMode.Multiple"
+                ColumnWidth="200px"
                 
-@bind-Value=@selectedQuestions>
+ @bind-Value=@selectedQuestions>
     <HeaderTemplate>
         <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add Question" Click="AddNewQuestion" />
     </HeaderTemplate>
+
+
     <Columns>
         <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false" Frozen="true">
             <HeaderTemplate>
@@ -102,4 +106,7 @@
         <RadzenDataGridColumn TItem="QuestionViewModel" Property="CreatedAt" Title="CreatedAt" />
     </Columns>
 </RadzenDataGrid>
-  
+
+
+
+ 
