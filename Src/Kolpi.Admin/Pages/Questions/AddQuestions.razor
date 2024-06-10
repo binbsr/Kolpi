@@ -1,0 +1,94 @@
+@page "/questions/add"
+@using Kolpi.ApplicationCore.Enums
+
+@{
+    byte i = 1;
+}
+@foreach (var question in questions)
+{
+    var optionLabel = "Question " + i++;
+    <Question DeleteQuestionCallback="QuestionDeleted"/>
+}
+
+<RadzenButton Icon="add" Text="Add New Question" ButtonStyle="ButtonStyle.Primary" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
+
+<RadzenButton Icon="save" Text="Save All Question" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
+
+@code {
+    [Inject]
+    public HttpClient Http { get; set; } = default!;
+
+    [Inject]
+    public NotificationService Notification { get; set; } = default!;
+
+    private List<QuestionViewModel> questions = new List<QuestionViewModel> { new() };
+    private bool isSaving;
+
+    private void AddNewQuestion()
+    {
+        questions.Add(new QuestionViewModel
+            {
+                Type = QuestionType.Objective,
+                AnswerOptions = new List<AnswerOptionViewModel> { new(), new(), new(), new() }
+            });
+    }
+
+    private void RemoveQuestion(QuestionViewModel question)
+    {
+        questions.Remove(question);
+    }
+
+    private async Task OnSave()
+    {
+        isSaving = true;
+
+        foreach (var question in questions)
+        {
+
+            var response = question.Id == default
+                ? await Http.PostAsJsonAsync("api/questions", question)
+                : await Http.PutAsJsonAsync($"api/questions/{question.Id}", question);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Notification.Notify(new NotificationMessage
+                    {
+                        Summary = $"Question {question.Id} saved successfully",
+                        Severity = NotificationSeverity.Success,
+                        Duration = 4000
+                    });
+            }
+            else
+            {
+                Notification.Notify(new NotificationMessage
+                    {
+                        Summary = $"Error saving question {question.Id}: {response.ReasonPhrase}",
+                        Severity = NotificationSeverity.Error,
+                        Duration = 4000
+                    });
+            }
+        }
+
+        isSaving = false;
+    }
+
+    public void AddNewOption(QuestionViewModel question)
+    {
+        question.AnswerOptions.Add(new AnswerOptionViewModel());
+    }
+
+    public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel option)
+    {
+        question.AnswerOptions.Remove(option);
+    }
+
+    private void QuestionAdded(QuestionViewModel question)
+    {
+        questions.Add(question);
+    }
+
+    private void QuestionDeleted(QuestionViewModel question)
+    {
+        questions.Remove(question);
+    }
+}
