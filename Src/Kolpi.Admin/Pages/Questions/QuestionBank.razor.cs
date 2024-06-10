@@ -63,7 +63,6 @@ public partial class QuestionBank
 
         totalItems = result.TotalCount;
         questions = result.Records;
-       
         isLoading = false;
     }
 
