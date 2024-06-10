@@ -10,12 +10,13 @@
 
     @if (AnswerModel.Type == AnswerType.ShortText)
     {
-        <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%;" />
+        
+        <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%; height: 20px" />
     }
     else if (AnswerModel.Type == AnswerType.Paragraph)
     {
         <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
-            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="3" />
+            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="1" />
         </RadzenFormField>
     }
     else if (AnswerModel.Type == AnswerType.Image)
