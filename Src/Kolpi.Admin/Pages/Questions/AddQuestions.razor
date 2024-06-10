@@ -8,7 +8,7 @@
 @foreach (var question in questions)
 {
     optionLabel = "Question " + i++;
-    <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted"/>
+    <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted" />
 }
 
 <RadzenButton Icon="add" Text="@optionLabel" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
@@ -43,31 +43,27 @@
     {
         isSaving = true;
 
-        foreach (var question in questions)
+        var response = question.Id == default
+            ? await Http.PostAsJsonAsync("api/questions", questions);
+        //: await Http.PutAsJsonAsync($"api/questions/{question.Id}", question);
+
+        if (response.IsSuccessStatusCode)
         {
-
-            var response = question.Id == default
-                ? await Http.PostAsJsonAsync("api/questions", question)
-                : await Http.PutAsJsonAsync($"api/questions/{question.Id}", question);
-
-            if (response.IsSuccessStatusCode)
-            {
-                Notification.Notify(new NotificationMessage
-                    {
-                        Summary = $"Question {question.Id} saved successfully",
-                        Severity = NotificationSeverity.Success,
-                        Duration = 4000
-                    });
-            }
-            else
-            {
-                Notification.Notify(new NotificationMessage
-                    {
-                        Summary = $"Error saving question {question.Id}: {response.ReasonPhrase}",
-                        Severity = NotificationSeverity.Error,
-                        Duration = 4000
-                    });
-            }
+            Notification.Notify(new NotificationMessage
+                {
+                    Summary = $"Questions {question.Id} saved successfully",
+                    Severity = NotificationSeverity.Success,
+                    Duration = 4000
+                });
+        }
+        else
+        {
+            Notification.Notify(new NotificationMessage
+                {
+                    Summary = $"Error saving questions {question.Id}: {response.ReasonPhrase}",
+                    Severity = NotificationSeverity.Error,
+                    Duration = 4000
+                });
         }
 
         isSaving = false;
