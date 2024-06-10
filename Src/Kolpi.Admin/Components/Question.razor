@@ -48,8 +48,9 @@
                     <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(question, option)" />
                 </RadzenColumn>
             }
+            <RadzenButton Icon="add" Text="@($"Option {question.AnswerOptions.Count + 1}")" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" />
 
-            <RadzenButton Icon="add" Text="Option" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" />
+            @* <RadzenButton Icon="add" Text="Option" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" /> *@
         </RadzenRow>
     }
 </RadzenPanel>
