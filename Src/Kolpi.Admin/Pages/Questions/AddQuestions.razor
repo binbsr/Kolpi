@@ -3,16 +3,17 @@
 
 @{
     byte i = 1;
+    var optionLabel = "Question";
 }
 @foreach (var question in questions)
 {
-    var optionLabel = "Question " + i++;
-    <Question DeleteQuestionCallback="QuestionDeleted"/>
+    optionLabel = "Question " + i++;
+    <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted"/>
 }
 
-<RadzenButton Icon="add" Text="Add New Question" ButtonStyle="ButtonStyle.Primary" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
+<RadzenButton Icon="add" Text="@optionLabel" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
 
-<RadzenButton Icon="save" Text="Save All Question" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
+<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
 
 @code {
     [Inject]
