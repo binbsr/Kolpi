@@ -12,13 +12,17 @@
 }
 
 <RadzenButton Icon="add" Text="@optionLabel" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" /> *@
+
 @{
     byte questionNumber = 1;
 }
 @foreach (var question in questions)
 {
     var optionLabel = "Question " + questionNumber++;
-    <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted" />
+    @* <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted" /> *@
+    <Question Label="@optionLabel" DeleteQuestionCallback="@(() => RemoveQuestion(question))" />
+    
+   
 }
 
 @foreach (var question in new[] { new QuestionViewModel() }) // Loop to display the "Add new question" button
@@ -28,6 +32,7 @@
 }
 
 <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
+
 
 @code {
     [Inject]
@@ -50,8 +55,10 @@
 
     private void RemoveQuestion(QuestionViewModel question)
     {
-        questions.Remove(question);
+       questions.Remove(question);
     }
+    
+
 
     private async Task OnSave()
     {
