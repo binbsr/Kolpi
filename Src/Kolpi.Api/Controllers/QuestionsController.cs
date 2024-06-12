@@ -9,6 +9,8 @@ using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kolpi.Api.Controllers;
 
@@ -19,6 +21,7 @@ public class QuestionsController : ControllerBase
     private readonly IQuestionService questionService;
     private readonly IAnswerOptionService answerOptionService;
     private readonly ITagService tagService;
+    private object _questionService;
 
     public QuestionsController(
         IQuestionService questionService,
@@ -61,26 +64,32 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Question>> PostQuestion(QuestionViewModel questionViewModel)
+    public async Task<ActionResult<int>> PostQuestion(List<QuestionViewModel> questionViewModels)
     {
         try
         {
-            Question question = questionViewModel.ToModel();
-            question.QuestionStatusId = 1;
+            List<Question> questions = questionViewModels.ToModel();
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
-            question.AddCreatedStamps(userId);
+            foreach(Question question in questions)
+            {
+                question.QuestionStatusId = 1;
 
-            // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
-            tagService.AttachTags(question.Tags);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
+                question.AddCreatedStamps(userId);
 
-            // Just add answer options to EF
-            await answerOptionService.AddAsync(question.AnswerOptions, false);
+                // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
+                tagService.AttachTags(question.Tags);
 
-            // Add question model to EF and commit all changes made to conext so far (UoW)
-            await questionService.AddAsync(question);
+                // Just add answer options to EF
+                await answerOptionService.AddAsync(question.AnswerOptions, false);
 
-            return CreatedAtAction(nameof(GetQuestion), new { question.Id }, question.Id);
+                // Add question model to EF and commit all changes made to conext so far (UoW)
+                await questionService.AddAsync(question, false);                
+            }
+
+            var rowsAffected =await questionService.CommitAsync();
+
+            return Created("", rowsAffected);
         }
         catch (Exception ex)
         {
@@ -133,4 +142,50 @@ public class QuestionsController : ControllerBase
     {
         return questionService.GetByIdAsync(id).Result is not null;
     }
+    //[HttpPost("bulk")]
+    //public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<Question> questions)
+    //{
+    //    await questionService.SaveMultipleAsync(questions);
+    //    return Ok();
+    //}
+
+    [HttpPost("bulk")]
+    public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<QuestionViewModel> questionViewModels)
+    {
+        if (questionViewModels == null || !questionViewModels.Any())
+        {
+            return BadRequest("No questions to save.");
+        }
+
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
+            var questions = new List<Question>();
+
+            foreach (var viewModel in questionViewModels)
+            {
+                var question = viewModel.ToModel();
+                question.QuestionStatusId = 1; // Assuming default status id is 1
+                question.AddCreatedStamps(userId);
+
+                // Inform EF that these tags selected already exist and are not changed; else EF will try to insert
+                tagService.AttachTags(question.Tags);
+
+                // Just add answer options to EF
+                await answerOptionService.AddAsync(question.AnswerOptions, false);
+
+                questions.Add(question);
+            }
+
+            // Add all questions to EF and commit all changes made to context so far (UoW)
+            await questionService.SaveMultipleAsync(questions);
+
+            return Ok(new { message = $"{questions.Count} questions saved successfully." });
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
+    }
+
 }

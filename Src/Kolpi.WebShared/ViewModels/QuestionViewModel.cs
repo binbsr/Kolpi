@@ -1,8 +1,10 @@
 using Kolpi.ApplicationCore.Enums;
+using System.Reflection.Emit;
 
 namespace Kolpi.WebShared.ViewModels;
 public class QuestionViewModel
 {
+    public int Label { get; set; }
     public int Id { get; set; }
     public string Body { get; set; } = default!;
     public string? Status { get; set; } = default!;
