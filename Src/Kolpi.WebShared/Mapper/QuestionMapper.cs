@@ -55,4 +55,18 @@ public static class QuestionMapper
 
         return questionnModels;
     }
+
+    public static List<Question> ToModel(this IEnumerable<QuestionViewModel> questionViewModels)
+    {
+        if (!questionViewModels.Any())
+            return default!;
+
+        List<Question> questions = new();
+        foreach (var questionViewModel in questionViewModels)
+        {
+            questions.Add(questionViewModel.ToModel());
+        }
+
+        return questions;
+    }
 }
