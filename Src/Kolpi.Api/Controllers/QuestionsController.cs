@@ -21,7 +21,6 @@ public class QuestionsController : ControllerBase
     private readonly IQuestionService questionService;
     private readonly IAnswerOptionService answerOptionService;
     private readonly ITagService tagService;
-    private object _questionService;
 
     public QuestionsController(
         IQuestionService questionService,
@@ -51,21 +50,23 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Question>> GetQuestion(int id)
+    public async Task<ActionResult<QuestionViewModel>> GetQuestion(int id)
     {
         var question = await questionService.GetByIdAsync(id);
 
-        if (question == null)
+        if (question is null)
         {
             return NotFound();
         }
 
-        return question;
+        return question.ToViewModel();
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> PostQuestion(List<QuestionViewModel> questionViewModels)
+    public async Task<IActionResult> PostQuestions(List<QuestionViewModel> questionViewModels)
     {
+        if (questionViewModels == null || !questionViewModels.Any())
+            return BadRequest("No questions supplied to save.");
         try
         {
             List<Question> questions = questionViewModels.ToModel();
@@ -142,50 +143,4 @@ public class QuestionsController : ControllerBase
     {
         return questionService.GetByIdAsync(id).Result is not null;
     }
-    //[HttpPost("bulk")]
-    //public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<Question> questions)
-    //{
-    //    await questionService.SaveMultipleAsync(questions);
-    //    return Ok();
-    //}
-
-    [HttpPost("bulk")]
-    public async Task<IActionResult> SaveMultipleQuestions([FromBody] List<QuestionViewModel> questionViewModels)
-    {
-        if (questionViewModels == null || !questionViewModels.Any())
-        {
-            return BadRequest("No questions to save.");
-        }
-
-        try
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
-            var questions = new List<Question>();
-
-            foreach (var viewModel in questionViewModels)
-            {
-                var question = viewModel.ToModel();
-                question.QuestionStatusId = 1; // Assuming default status id is 1
-                question.AddCreatedStamps(userId);
-
-                // Inform EF that these tags selected already exist and are not changed; else EF will try to insert
-                tagService.AttachTags(question.Tags);
-
-                // Just add answer options to EF
-                await answerOptionService.AddAsync(question.AnswerOptions, false);
-
-                questions.Add(question);
-            }
-
-            // Add all questions to EF and commit all changes made to context so far (UoW)
-            await questionService.SaveMultipleAsync(questions);
-
-            return Ok(new { message = $"{questions.Count} questions saved successfully." });
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
-    }
-
 }
