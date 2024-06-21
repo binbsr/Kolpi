@@ -1,23 +1,18 @@
-@using Kolpi.ApplicationCore.Enums;
-@using Kolpi.WebShared.ViewModels
-
 @inject TooltipService tooltipService
 
-<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" class="rz-p-4">
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" class="rz-pt-0 rz-p-3">
 
     <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
-    <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;"/>
+    <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;" />
 
     @if (AnswerModel.Type == AnswerType.ShortText)
     {
-        <RadzenFormField Text="@TextInputLabel" Style="width: 100%;" Variant="Variant.Outlined">
-            <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%;" />
-        </RadzenFormField>
+        <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%; height: 20px" />
     }
     else if (AnswerModel.Type == AnswerType.Paragraph)
     {
         <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
-            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="3" />
+            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="1" />
         </RadzenFormField>
     }
     else if (AnswerModel.Type == AnswerType.Image)
@@ -33,12 +28,8 @@
         <RadzenFileInput TValue="string" Style="width: 100%;" Accept="video/*" ChooseText="Select video file" />
     }
 
-
-    <RadzenFormField Variant="@Variant.Outlined">
-        <RadzenDropDown Data="@(Enum.GetValues<AnswerType>().Cast<Enum>())" @bind-Value=@AnswerModel.Type Style="width:100px;" />
-    </RadzenFormField>
-
-    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem" class="rz-mt-2"></RadzenButton>
+    <RadzenDropDown Data="@(Enum.GetValues<AnswerType>().Cast<Enum>())" @bind-Value=@AnswerModel.Type Style="width:100px;" />
+    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem"></RadzenButton>
 
 </RadzenStack>
 
