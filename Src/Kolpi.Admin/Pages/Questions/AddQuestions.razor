@@ -1,72 +1,46 @@
 @page "/questions/add"
-@using Kolpi.ApplicationCore.Enums
 
-@* @{
-    byte i = 1;
-    var optionLabel = "Question";
-}
-@foreach (var question in questions)
-{
-    optionLabel = "Question " + i++;
-    <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted" />
-}
-
-<RadzenButton Icon="add" Text="@optionLabel" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" /> *@
+@inject HttpClient Http
+@inject NotificationService Notification
 
 @{
     byte questionNumber = 1;
 }
-@foreach (var question in questions)
+@for (var i = 0; i < questions.Count; i++)
 {
     var optionLabel = "Question " + questionNumber++;
-    @* <Question Label="@optionLabel" DeleteQuestionCallback="QuestionDeleted" /> *@
-    <Question Label="@optionLabel" DeleteQuestionCallback="@(() => RemoveQuestion(question))" />
-    
-   
+    var index = i;
+    <Question Label="@optionLabel" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
 }
 
-@foreach (var question in new[] { new QuestionViewModel() }) // Loop to display the "Add new question" button
-{
-    var optionLabel = "Question " + questionNumber;
-    <RadzenButton Icon="add" Text="@optionLabel" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
-}
-
+<RadzenButton Icon="add" Text="@($"Question {questionNumber}")" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
 <RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
 
-
 @code {
-    [Inject]
-    public HttpClient Http { get; set; } = default!;
-
-    [Inject]
-    public NotificationService Notification { get; set; } = default!;
 
     private List<QuestionViewModel> questions = new List<QuestionViewModel> { new() };
     private bool isSaving;
 
     private void AddNewQuestion()
     {
-        questions.Add(new QuestionViewModel
-            {
-                Type = QuestionType.Objective,
-                AnswerOptions = new List<AnswerOptionViewModel> { new(), new(), new(), new() }
-            });
+        questions.Add(new QuestionViewModel());
     }
 
     private void RemoveQuestion(QuestionViewModel question)
     {
-       questions.Remove(question);
+        questions.Remove(question);
     }
-    
 
+    private void QuestionContentAdded(QuestionViewModel question)
+    {
+        
+    }
 
     private async Task OnSave()
     {
         isSaving = true;
 
-        var response = questions == default
-            ? await Http.PostAsJsonAsync("api/questions", questions):
-              await Http.PutAsJsonAsync($"api/questions/{questions}", questions);
+        var response = await Http.PostAsJsonAsync("api/questions", questions);
 
         if (response.IsSuccessStatusCode)
         {
@@ -98,15 +72,5 @@
     public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel option)
     {
         question.AnswerOptions.Remove(option);
-    }
-
-    private void QuestionAdded(QuestionViewModel question)
-    {
-        questions.Add(question);
-    }
-
-    private void QuestionDeleted(QuestionViewModel question)
-    {
-        questions.Remove(question);
     }
 }

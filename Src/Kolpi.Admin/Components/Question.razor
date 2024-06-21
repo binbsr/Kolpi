@@ -1,58 +1,63 @@
-﻿@using Kolpi.ApplicationCore.Enums
+﻿@inject HttpClient Http
 
-@inject HttpClient Http
-
-<RadzenPanel class="rz-mb-4 rz-border-info">
-    <RadzenRow AlignItems="AlignItems.Center" class="rz-my-2">
-        <RadzenColumn SizeMD="10">
-            <RadzenHtmlEditor @bind-Value=@question.Body
-                              style="height: 150px;"
-                              UploadUrl="upload/image"
-                              Placeholder="Your question goes here..." />
-        </RadzenColumn>
-        <RadzenColumn SizeMD="2">
-            <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-0" TextAlign="TextAlign.Center">@Label</RadzenText>
-            <RadzenDropDown Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@question.Type Style="width:100%;" />
-            <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" class="rz-mt-4" Style="width:100%" />
-        </RadzenColumn>
-        <RadzenColumn SizeMD="12">
-            <RadzenDropDown @bind-Value="question.Tags" TValue="List<TagViewModel>" Data=@Tags Context="tag"
-                            Multiple=true
-                            AllowClear=true
-                            AllowSelectAll=false
-                            Placeholder="Click to tag your question"
-                            Chips=true
-                            Style="width: 100%"
-                            AllowFiltering=true
-                            FilterAsYouType=true
-                            FilterCaseSensitivity=FilterCaseSensitivity.CaseInsensitive
-                            FilterOperator="StringFilterOperator.Contains"
-                            MaxSelectedLabels="8">
-                <Template>
-                    @tag.Name
-                </Template>
-            </RadzenDropDown>
-        </RadzenColumn>        
-    </RadzenRow>
-
-    @if (question.Type == QuestionType.Objective)
-    {
-        <RadzenRow>
-            @{
-                char i = 'A';
-            }
-            @foreach (var option in question.AnswerOptions)
-            {
-                var optionLabel = "Option " + i++;
-                <RadzenColumn SizeMD="6" class="rz-background-color-base-200">
-                    <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(question, option)" />
-                </RadzenColumn>
-            }
-            <RadzenButton Icon="add" Text="@($"Option {question.AnswerOptions.Count + 1}")" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" />
-
-            @* <RadzenButton Icon="add" Text="Option" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" /> *@
+<RadzenPanel class="rz-mb-4 rz-border-info" AllowCollapse>
+    <HeaderTemplate>
+        <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+            <b>@Label</b>
+            @((MarkupString)question.Body)
+        </RadzenStack>        
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow class="rz-my-2">
+            <RadzenColumn SizeMD="10">
+                <RadzenHtmlEditor @bind-Value=@question.Body
+                                  style="height: 140px;"
+                                  UploadUrl="upload/image"
+                                  Placeholder="Your question goes here..." />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="2">
+                <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
+                <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-5" TextAlign="TextAlign.Center">@Label</RadzenText>
+                <RadzenDropDown class="rz-mt-5" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@question.Type Style="width:100%;" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="12">
+                <RadzenDropDown @bind-Value="question.Tags" TValue="List<TagViewModel>" Data=@Tags Context="tag"
+                                Multiple=true
+                                AllowClear=true
+                                AllowSelectAll=false
+                                Placeholder="Add tags to your question"
+                                Chips=true
+                                Style="width: 100%"
+                                AllowFiltering=true
+                                FilterAsYouType=true
+                                FilterCaseSensitivity=FilterCaseSensitivity.CaseInsensitive
+                                FilterOperator="StringFilterOperator.Contains"
+                                MaxSelectedLabels="8">
+                    <Template>
+                        @tag.Name
+                    </Template>
+                </RadzenDropDown>
+            </RadzenColumn>
         </RadzenRow>
-    }
+
+        @if (question.Type == QuestionType.Objective)
+        {
+            <RadzenRow>
+                @{
+                    char i = 'A';
+                }
+                @foreach (var option in question.AnswerOptions)
+                {
+                    var optionLabel = "Option " + i++;
+                    <RadzenColumn SizeMD="6" class="rz-background-color-base-200">
+                        <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(question, option)" />
+                    </RadzenColumn>
+                }
+                <RadzenButton Icon="add" Text="@($"Option {i}")" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" />
+
+            </RadzenRow>
+        }
+    </ChildContent>
 </RadzenPanel>
 
 @code {
@@ -73,7 +78,7 @@
         question.AnswerOptions = new() { new(), new() };
         var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
         Tags = result.Records;
-    }    
+    }
 
     private void RemoveQuestion()
     {

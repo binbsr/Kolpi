@@ -3,9 +3,9 @@
 <RadzenLayout Style="grid-template-columns: 1fr auto; grid-template-areas: 'rz-header rz-header' 'rz-body rz-sidebar'">
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" AlignItems="AlignItems.Center" Gap="1rem">
-            <RadzenLink Match="NavLinkMatch.All" Path="/">
-                <RadzenImage Path="/img/kolpi (2).jpg" Style="height:30px;"></RadzenImage>
-            </RadzenLink>
+            <NavLink Match="NavLinkMatch.All" href="/" >
+                <h2 class="rz-my-0">HOME</h2>                
+            </NavLink>
             <RadzenSidebarToggle Click="@(() => _drawerOpen = !_drawerOpen)" Class="rz-m-0" />
         </RadzenStack>
     </RadzenHeader>

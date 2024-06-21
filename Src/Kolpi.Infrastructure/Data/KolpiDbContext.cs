@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Kolpi.ApplicationCore.Entities;
 using Microsoft.Extensions.Hosting;
-using Duende.IdentityServer.EntityFramework.Entities;
 
 namespace Kolpi.Infrastructure.Data
 {
