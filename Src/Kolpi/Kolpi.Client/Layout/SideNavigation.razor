@@ -1,0 +1,29 @@
+<RadzenPanelMenuItem Text="Home" Path="/" Icon="home" />
+<RadzenPanelMenuItem Text="Dashboard" Path="/dashboard" Icon="dashboard" />
+<RadzenPanelMenuItem Text="Question Bank" Path="/questions" Icon="question_answer" />
+
+<RadzenPanelMenuItem Text="Questions" Icon="question_mark">
+    <RadzenPanelMenuItem Text="Add Questions" Icon="checklist" Path="/questions/add"></RadzenPanelMenuItem>
+    <RadzenPanelMenuItem Text="Review New Questions" Icon="rate_review" Path="/question/review"></RadzenPanelMenuItem>
+</RadzenPanelMenuItem>
+
+<RadzenPanelMenuItem Text="Question Paper" Icon="quiz">
+    <RadzenPanelMenuItem Text="Add New" Icon="note_add" Path="/paper/add"></RadzenPanelMenuItem>
+    <RadzenPanelMenuItem Text="Sets" Icon="filter_none" Path="/paper/sets"></RadzenPanelMenuItem>
+</RadzenPanelMenuItem>
+
+<RadzenPanelMenuItem Text="Exams" Icon="quiz">
+    <RadzenPanelMenuItem Text="Schedule" Icon="schedule" Path="/paper/schedule"></RadzenPanelMenuItem>
+    <RadzenPanelMenuItem Text="Attendees" Icon="groups" Path="/paper/add"></RadzenPanelMenuItem>
+</RadzenPanelMenuItem>
+
+<RadzenPanelMenuItem Text="Admin" Icon="admin_panel_settings">
+    <RadzenPanelMenuItem Text="Tags" Icon="local_offer">
+        <RadzenPanelMenuItem Text="All" Icon="style" Path="/tags"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="New Tag" Icon="add" Path="/tags/add"></RadzenPanelMenuItem>
+    </RadzenPanelMenuItem>
+    <RadzenPanelMenuItem Text="Tag Categories" Icon="category">
+        <RadzenPanelMenuItem Text="All" Icon="category" Path="/tagtypes"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="New Category" Icon="add" Path="/tagtypes/add"></RadzenPanelMenuItem>
+    </RadzenPanelMenuItem>
+</RadzenPanelMenuItem>

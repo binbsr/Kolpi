@@ -1,0 +1,58 @@
+@inject TooltipService tooltipService
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" class="rz-pt-0 rz-p-3">
+
+    <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
+    <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;" />
+
+    @if (AnswerModel.Type == AnswerType.ShortText)
+    {
+        <RadzenTextBox @bind-Value="@AnswerModel.Body" Style="width: 100%; height: 20px" />
+    }
+    else if (AnswerModel.Type == AnswerType.Paragraph)
+    {
+        <RadzenFormField Text="@TextInputLabel" Style="width: 100%;">
+            <RadzenTextArea @bind-Value="@AnswerModel.Body" Style="width: 100%;" Rows="1" />
+        </RadzenFormField>
+    }
+    else if (AnswerModel.Type == AnswerType.Image)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" ChooseText="Select image" />
+    }
+    else if (AnswerModel.Type == AnswerType.Audio)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" Accept="audio/*" ChooseText="Select audio file" />
+    }
+    else if (AnswerModel.Type == AnswerType.Video)
+    {
+        <RadzenFileInput TValue="string" Style="width: 100%;" Accept="video/*" ChooseText="Select video file" />
+    }
+
+    <RadzenDropDown Data="@(Enum.GetValues<AnswerType>().Cast<Enum>())" @bind-Value=@AnswerModel.Type Style="width:100px;" />
+    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="RemoveItem"></RadzenButton>
+
+</RadzenStack>
+
+@code
+{
+    [Parameter]
+    public AnswerOptionViewModel AnswerModel { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<AnswerOptionViewModel> RemoveItemCallback { get; set; }
+
+    [Parameter]
+    public string TextInputLabel { get; set; } = "Option";
+
+    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
+
+    private async Task RemoveItem()
+    {
+        await RemoveItemCallback.InvokeAsync(AnswerModel);
+    }
+
+    private void ShowTooltip(ElementReference elementReference, TooltipOptions options = null)
+    {
+        tooltipService.Open(elementReference, ChkTooltip, options);
+    }
+}
