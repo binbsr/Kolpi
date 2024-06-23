@@ -1,0 +1,72 @@
+@page "/questions/add"
+
+@inject HttpClient Http
+@inject NotificationService Notification
+
+<PageTitle>New Questions</PageTitle>
+@{
+    byte questionNumber = 1;
+}
+@for (var i = 0; i < questions.Count; i++)
+{
+    var optionLabel = "Question " + questionNumber++;
+    var index = i;
+    <Question Label="@optionLabel" @bind-Data="questions[index]" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
+}
+
+<RadzenButton Icon="add" Text="@($"Question {questionNumber}")" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
+<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4 ml-auto" />
+
+@code {
+
+    private List<QuestionViewModel> questions = new List<QuestionViewModel> { new() };
+    private bool isSaving;
+
+    private void AddNewQuestion()
+    {
+        questions.Add(new QuestionViewModel());
+    }
+
+    private void RemoveQuestion(QuestionViewModel question)
+    {
+        questions.Remove(question);
+    }
+
+    private async Task OnSave()
+    {
+        isSaving = true;
+
+        var response = await Http.PostAsJsonAsync("api/questions", questions);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Notification.Notify(new NotificationMessage
+                {
+                    Summary = $"Questions {questions} saved successfully",
+                    Severity = NotificationSeverity.Success,
+                    Duration = 4000
+                });
+        }
+        else
+        {
+            Notification.Notify(new NotificationMessage
+                {
+                    Summary = $"Error saving questions {questions}: {response.ReasonPhrase}",
+                    Severity = NotificationSeverity.Error,
+                    Duration = 4000
+                });
+        }
+
+        isSaving = false;
+    }
+
+    public void AddNewOption(QuestionViewModel question)
+    {
+        question.AnswerOptions.Add(new AnswerOptionViewModel());
+    }
+
+    public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel option)
+    {
+        question.AnswerOptions.Remove(option);
+    }
+}
