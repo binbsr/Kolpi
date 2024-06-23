@@ -69,7 +69,7 @@ public class QuestionsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PostQuestions(List<QuestionViewModel> questionViewModels)
     {
-        if (questionViewModels == null || !questionViewModels.Any())
+        if (questionViewModels == null || questionViewModels.Count == 0)
             return BadRequest("No questions supplied to save.");
         try
         {
@@ -79,7 +79,7 @@ public class QuestionsController : ControllerBase
             {
                 question.QuestionStatusId = 1;
 
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
+                var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
                 question.AddCreatedStamps(userId);
 
                 // Inform EF that these tags selected already exists and not changed at all else EF will try to insert

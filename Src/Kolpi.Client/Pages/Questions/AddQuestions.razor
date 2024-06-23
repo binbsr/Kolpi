@@ -11,11 +11,11 @@
 {
     var optionLabel = "Question " + questionNumber++;
     var index = i;
-    <Question Label="@optionLabel" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
+    <Question Label="@optionLabel" @bind-Data="questions[index]" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
 }
 
 <RadzenButton Icon="add" Text="@($"Question {questionNumber}")" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
-<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float: right" />
+<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4 ml-auto" />
 
 @code {
 
@@ -30,11 +30,6 @@
     private void RemoveQuestion(QuestionViewModel question)
     {
         questions.Remove(question);
-    }
-
-    private void QuestionContentAdded(QuestionViewModel question)
-    {
-        
     }
 
     private async Task OnSave()

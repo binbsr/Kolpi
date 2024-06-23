@@ -1,59 +1,59 @@
 ﻿@inject HttpClient Http
 
-<RadzenPanel class="rz-mb-4 rz-border-info" AllowCollapse>
+<RadzenPanel class="rz-mb-4 rz-border-info" AllowCollapse Collapse="UpdateParentModel" MouseLeave="UpdateParentModel">
     <HeaderTemplate>
         <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
             <b>@Label</b>
-            @((MarkupString)question.Body)
+            @((MarkupString)Data.Body)
         </RadzenStack>        
     </HeaderTemplate>
     <ChildContent>
         <RadzenRow class="rz-my-2">
             <RadzenColumn SizeMD="10">
-                <RadzenHtmlEditor @bind-Value=@question.Body
+                <RadzenHtmlEditor @bind-Value=@Data.Body
                                   style="height: 145px;"
                                   UploadUrl="upload/image"
                                   Placeholder="Your question goes here..." />
             </RadzenColumn>
             <RadzenColumn SizeMD="2">
-                <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
+                <RadzenButton Icon="remove_circle" Text="Remove Data" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
                 <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-4" TextAlign="TextAlign.Center">@Label</RadzenText>
-                <RadzenDropDown class="rz-mt-4" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@question.Type Style="width:100%;" />
+                <RadzenDropDown class="rz-mt-4" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@Data.Type Style="width:100%;" />
             </RadzenColumn>
             <RadzenColumn SizeMD="12">
-                <RadzenDropDown @bind-Value="question.Tags" TValue="List<TagViewModel>" Data=@Tags Context="tag"
+                <RadzenDropDown @bind-Value=Data.Tags TValue="List<TagViewModel>" Data=@Tags Context="tag"
                                 Multiple=true
                                 AllowClear=true
                                 AllowSelectAll=false
                                 Placeholder="Add tags"
                                 Chips=true
                                 Style="width: 100%"
-                                AllowFiltering=true
-                                FilterAsYouType=true
-                                FilterCaseSensitivity=FilterCaseSensitivity.CaseInsensitive
+                                AllowFiltering
+                                FilterAsYouType
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 FilterOperator="StringFilterOperator.Contains"
                                 MaxSelectedLabels="8">
                     <Template>
-                        @tag.Name
+                        @tag.Name (@tag.TagTypeName)
                     </Template>
                 </RadzenDropDown>
             </RadzenColumn>
         </RadzenRow>
 
-        @if (question.Type == QuestionType.Objective)
+        @if (Data.Type == QuestionType.Objective)
         {
             <RadzenRow>
                 @{
                     char i = 'A';
                 }
-                @foreach (var option in question.AnswerOptions)
+                @foreach (var option in Data.AnswerOptions)
                 {
                     var optionLabel = "Option " + i++;
                     <RadzenColumn SizeMD="6" class="rz-background-color-base-200">
-                        <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(question, option)" />
+                        <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(option)" />
                     </RadzenColumn>
                 }
-                <RadzenButton Icon="add" Text="@($"Option {i}")" ButtonStyle="ButtonStyle.Success" Click="() => AddNewOption(question)" title="Add new option" Style="height:20px" />
+                <RadzenButton Icon="add" Text="@($"Option {i}")" ButtonStyle="ButtonStyle.Success" Click="AddNewOption" title="Add new option" />
 
             </RadzenRow>
         }
@@ -68,39 +68,36 @@
     [Parameter]
     public EventCallback<QuestionViewModel> DeleteQuestionCallback { get; set; }
 
-    private QuestionViewModel question = new();
+    [Parameter]
+    public QuestionViewModel Data { get; set; }
+
+    [Parameter]
+    public EventCallback<QuestionViewModel> DataChanged { get; set; }
+
     private bool isSavingQuestions;
+    private string searchText = string.Empty;
     private List<TagViewModel> Tags { get; set; } = default!;
-    private List<TagViewModel> tagsSelected = new();
 
     protected override async Task OnInitializedAsync()
     {
-        question.AnswerOptions = new() { new(), new() };
+        Data.AnswerOptions = new() { new(), new(), new(), new() };
         var result = await Http.GetFromJsonAsync<TagsMetaViewModel>($"api/tags?take=999999") ?? new TagsMetaViewModel();
         Tags = result.Records;
     }
 
     private void RemoveQuestion()
     {
-        DeleteQuestionCallback.InvokeAsync(question);
+        DeleteQuestionCallback.InvokeAsync(Data);
     }
 
-    private void OnSaveQuestions()
+    public void AddNewOption()
     {
-        isSavingQuestions = true;
-        // Logic to save all questions
-        //await Http.PostAsJsonAsync("api/questions", questions);
-        isSavingQuestions = false;
+        Data.AnswerOptions.Add(new AnswerOptionViewModel());
     }
 
-    public void AddNewOption(QuestionViewModel question)
+    public void DeleteAnsOption(AnswerOptionViewModel answerOption)
     {
-        question.AnswerOptions.Add(new AnswerOptionViewModel());
-    }
-
-    public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel answerOption)
-    {
-        question.AnswerOptions.Remove(answerOption);
+        Data.AnswerOptions.Remove(answerOption);
     }
 
     public async Task<IEnumerable<TagViewModel>> Search(string value)
@@ -112,5 +109,10 @@
 
         Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
         return Tags;
+    }
+
+    private async Task UpdateParentModel()
+    {
+        await DataChanged.InvokeAsync(Data);
     }
 }
