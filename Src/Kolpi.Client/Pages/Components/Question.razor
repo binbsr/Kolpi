@@ -1,6 +1,6 @@
 ﻿@inject HttpClient Http
 
-<RadzenPanel class="rz-mb-4 rz-border-info" AllowCollapse Collapse="UpdateParentModel" MouseLeave="UpdateParentModel">
+<RadzenPanel class="rz-mb-4 rz-border-info" AllowCollapse>
     <HeaderTemplate>
         <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
             <b>@Label</b>
@@ -70,9 +70,6 @@
 
     [Parameter]
     public QuestionViewModel Data { get; set; }
-
-    [Parameter]
-    public EventCallback<QuestionViewModel> DataChanged { get; set; }
 
     private bool isSavingQuestions;
     private string searchText = string.Empty;
