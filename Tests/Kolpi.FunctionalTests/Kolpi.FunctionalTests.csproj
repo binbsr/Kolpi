@@ -22,7 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Src\Kolpi.Api\Kolpi.Api.csproj" />
+    <ProjectReference Include="..\..\Src\Kolpi.ApplicationCore\Kolpi.ApplicationCore.csproj" />
+    <ProjectReference Include="..\..\Src\Kolpi.Infrastructure\Kolpi.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Src\Kolpi.WebShared\Kolpi.WebShared.csproj" />
+    <ProjectReference Include="..\..\Src\Kolpi\Kolpi.csproj" />
   </ItemGroup>
 
 </Project>

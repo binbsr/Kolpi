@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Kolpi.WebShared\Kolpi.WebShared.csproj" />
+    <ProjectReference Include="..\Kolpi.WebShared\Kolpi.WebShared.csproj" />
   </ItemGroup>
 
 </Project>
