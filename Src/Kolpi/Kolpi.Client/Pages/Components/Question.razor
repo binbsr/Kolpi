@@ -11,21 +11,21 @@
         <RadzenRow class="rz-my-2">
             <RadzenColumn SizeMD="10">
                 <RadzenHtmlEditor @bind-Value=@question.Body
-                                  style="height: 140px;"
+                                  style="height: 145px;"
                                   UploadUrl="upload/image"
                                   Placeholder="Your question goes here..." />
             </RadzenColumn>
             <RadzenColumn SizeMD="2">
                 <RadzenButton Icon="remove_circle" Text="Remove Question" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
-                <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-5" TextAlign="TextAlign.Center">@Label</RadzenText>
-                <RadzenDropDown class="rz-mt-5" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@question.Type Style="width:100%;" />
+                <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-4" TextAlign="TextAlign.Center">@Label</RadzenText>
+                <RadzenDropDown class="rz-mt-4" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@question.Type Style="width:100%;" />
             </RadzenColumn>
             <RadzenColumn SizeMD="12">
                 <RadzenDropDown @bind-Value="question.Tags" TValue="List<TagViewModel>" Data=@Tags Context="tag"
                                 Multiple=true
                                 AllowClear=true
                                 AllowSelectAll=false
-                                Placeholder="Add tags to your question"
+                                Placeholder="Add tags"
                                 Chips=true
                                 Style="width: 100%"
                                 AllowFiltering=true
