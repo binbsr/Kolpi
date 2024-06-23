@@ -33,15 +33,19 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<QuestionsMetaViewModel>> GetQuestions([FromQuery] string filter = "",
+    public async Task<IActionResult> GetQuestions([FromQuery] string filter = "",
         int skip = 0, int take = 10, string orderBy = "")
     {
         try
         {
             var (count, questions) = await questionService.GetAllAsync(filter, skip, take, orderBy);
+            if (count is 0)
+                return Ok(new QuestionsMetaViewModel { TotalCount = 0, Records = [] });
+
             var questionViewModels = questions.ToViewModel();
             int totalCount = count;
-            return new QuestionsMetaViewModel { TotalCount = totalCount, Records = questionViewModels };
+            var result = new QuestionsMetaViewModel { TotalCount = totalCount, Records = questionViewModels };
+            return Ok(result);
         }
         catch (Exception e)
         {
@@ -71,7 +75,7 @@ public class QuestionsController : ControllerBase
         {
             List<Question> questions = questionViewModels.ToModel();
 
-            foreach(Question question in questions)
+            foreach (Question question in questions)
             {
                 question.QuestionStatusId = 1;
 
@@ -85,10 +89,10 @@ public class QuestionsController : ControllerBase
                 await answerOptionService.AddAsync(question.AnswerOptions, false);
 
                 // Add question model to EF and commit all changes made to conext so far (UoW)
-                await questionService.AddAsync(question, false);                
+                await questionService.AddAsync(question, false);
             }
 
-            var rowsAffected =await questionService.CommitAsync();
+            var rowsAffected = await questionService.CommitAsync();
 
             return Created("", rowsAffected);
         }
