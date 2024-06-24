@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\ref\Kolpi functional architecture.drawio" />
-    <None Include="wwwroot\ref\Kolpi functional architecture.drawio.svg" />
   </ItemGroup>
 
   <ItemGroup>
