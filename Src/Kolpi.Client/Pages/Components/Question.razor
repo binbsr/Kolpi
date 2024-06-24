@@ -106,10 +106,5 @@
 
         Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
         return Tags;
-    }
-
-    private async Task UpdateParentModel()
-    {
-        await DataChanged.InvokeAsync(Data);
-    }
+    }    
 }
