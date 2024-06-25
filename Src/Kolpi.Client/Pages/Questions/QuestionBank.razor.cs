@@ -69,6 +69,6 @@ public partial class QuestionBank
 
     private void AddNewQuestion()
     {
-        Navigation.NavigateTo("/question/add");
+        Navigation.NavigateTo("/questions/add");
     }
 }
