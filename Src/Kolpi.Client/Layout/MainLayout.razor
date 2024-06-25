@@ -8,9 +8,7 @@
         </RadzenStack>
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="_drawerOpen">
-        <RadzenPanelMenu Multiple Match="NavLinkMatch.All">
-            <SideNavigation />
-        </RadzenPanelMenu>
+        <SideNavigation />
     </RadzenSidebar>
     <RadzenBody>
         @Body
@@ -29,5 +27,5 @@
 </div>
 
 @code {
-    bool _drawerOpen = false;
+    bool _drawerOpen = true;
 }

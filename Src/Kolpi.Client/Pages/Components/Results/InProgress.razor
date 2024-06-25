@@ -1,0 +1,15 @@
+﻿<RadzenAlert Title="@Title" AlertStyle="@Type" Variant="Variant.Flat" Shade="Shade.Lighter">
+    @Details
+</RadzenAlert>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; } = "Information";
+
+    [Parameter]
+    public AlertStyle Type { get; set; } = AlertStyle.Info;
+
+    [Parameter]
+    public string Details { get; set; } = "Development in progress...";
+}

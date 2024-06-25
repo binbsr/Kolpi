@@ -11,11 +11,11 @@
 {
     var optionLabel = "Question " + questionNumber++;
     var index = i;
-    <Question Label="@optionLabel" @bind-Data="questions[index]" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
+    <Question Label="@optionLabel" Data="questions[index]" DeleteQuestionCallback="@(() => RemoveQuestion(questions[index]))" />
 }
 
 <RadzenButton Icon="add" Text="@($"Question {questionNumber}")" ButtonStyle="ButtonStyle.Success" Click="AddNewQuestion" class="rz-mt-4" Style="margin-bottom: 20px" />
-<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4 ml-auto" />
+<RadzenButton Icon="save" Text="Save All Questions" ButtonStyle="ButtonStyle.Success" IsBusy="isSaving" BusyText="Saving..." Click="OnSave" class="rz-mt-4" Style="float:right" />
 
 @code {
 
@@ -42,7 +42,7 @@
         {
             Notification.Notify(new NotificationMessage
                 {
-                    Summary = $"Questions {questions} saved successfully",
+                    Summary = $"{questions.Count} questions saved successfully",
                     Severity = NotificationSeverity.Success,
                     Duration = 4000
                 });
@@ -51,7 +51,7 @@
         {
             Notification.Notify(new NotificationMessage
                 {
-                    Summary = $"Error saving questions {questions}: {response.ReasonPhrase}",
+                    Summary = $"Error saving {questions.Count} questions: {response.ReasonPhrase}",
                     Severity = NotificationSeverity.Error,
                     Duration = 4000
                 });
