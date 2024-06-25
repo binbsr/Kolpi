@@ -1,7 +1,9 @@
 ﻿@page "/questions"
 
 
-<RadzenDataGrid TItem="QuestionViewModel"
+<RadzenDataGrid 
+                class="custom-datagrid"
+                TItem="QuestionViewModel"
                 Count="@totalItems"
                 Data="@questions"
                 LoadData="@LoadData"
@@ -14,7 +16,7 @@
                 FilterMode="FilterMode.Advanced"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 AllowSorting="true"
-                PageSize="5"
+                PageSize="10"
                 AllowPaging="true"
                 ShowPagingSummary="true"
                 IsLoading="isLoading"
