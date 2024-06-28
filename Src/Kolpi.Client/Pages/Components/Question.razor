@@ -66,10 +66,10 @@
     public string Label { get; set; }
 
     [Parameter]
-    public EventCallback<QuestionViewModel> DeleteQuestionCallback { get; set; }
+    public EventCallback<QuestionAddViewModel> DeleteQuestionCallback { get; set; }
 
     [Parameter]
-    public QuestionViewModel Data { get; set; }
+    public QuestionAddViewModel Data { get; set; }
 
     private bool isSavingQuestions;
     private string searchText = string.Empty;

@@ -5,7 +5,7 @@ using Kolpi.WebShared.ViewModels;
 namespace Kolpi.WebShared.Mapper;
 public static class QuestionMapper
 {
-    public static Question ToModel(this QuestionViewModel questionViewModel)
+    public static Question ToModel(this QuestionAddViewModel questionViewModel)
     {
         if (questionViewModel is null)
             return default!;
@@ -22,12 +22,12 @@ public static class QuestionMapper
         return question;
     }
 
-    public static QuestionViewModel ToViewModel(this Question question)
+    public static QuestionAddViewModel ToAddViewModel(this Question question)
     {
         if (question is null)
             return default!;
 
-        QuestionViewModel questionViewModel = new()
+        QuestionAddViewModel questionViewModel = new()
         {
             Id = question.Id,
             Body = question.Body,
@@ -42,21 +42,56 @@ public static class QuestionMapper
         return questionViewModel;
     }
 
-    public static List<QuestionViewModel> ToViewModel(this IEnumerable<Question> questions)
+    public static QuestionGetViewModel ToGetViewModel(this Question question)
+    {
+        if (question is null)
+            return default!;
+
+        QuestionGetViewModel questionViewModel = new()
+        {
+            Id = question.Id,
+            Body = question.Body,
+            Type = question.Type,
+            Status = question.QuestionStatus?.Name ?? "N/A",
+            CreatedBy = question.CreatedBy ?? "N/A",
+            CreatedAt = question.CreatedAt,
+            TotalOptions = question.AnswerOptions?.Count ?? 0,
+            Answers = question.AnswerOptions?.Where(x => x.IsAnswer).Count() ?? 0,
+            Tags = question.Tags?.Select(x => x.Name).ToArray() ?? []
+        };
+
+        return questionViewModel;
+    }
+
+    public static List<QuestionAddViewModel> ToViewModel(this IEnumerable<Question> questions)
     {
         if (!questions.Any())
             return default!;
 
-        List<QuestionViewModel> questionnModels = new();
+        List<QuestionAddViewModel> questionnModels = new();
         foreach (var model in questions)
         {
-            questionnModels.Add(model.ToViewModel());
+            questionnModels.Add(model.ToAddViewModel());
         }
 
         return questionnModels;
     }
 
-    public static List<Question> ToModel(this IEnumerable<QuestionViewModel> questionViewModels)
+    public static List<QuestionGetViewModel> ToGetViewModel(this IEnumerable<Question> questions)
+    {
+        if (!questions.Any())
+            return default!;
+
+        List<QuestionGetViewModel> questionnModels = new();
+        foreach (var model in questions)
+        {
+            questionnModels.Add(model.ToGetViewModel());
+        }
+
+        return questionnModels;
+    }
+
+    public static List<Question> ToModel(this IEnumerable<QuestionAddViewModel> questionViewModels)
     {
         if (!questionViewModels.Any())
             return default!;

@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using Kolpi.Shared.Mapper;
 using System.Net;
 using System.Security.Claims;
-using System;
 using Kolpi.WebShared.ViewModels;
 using Kolpi.ApplicationCore.Entities;
 using Kolpi.WebShared.Mapper;
@@ -30,28 +26,27 @@ public class TagsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<TagsMetaViewModel>> Get([FromQuery] string filter = "",
         string orderBy = "", int skip = 0, int take = 10)
-    {        
+    {
         try
         {
-            var result = await tagService.GetAllAsync(filter, skip, take, orderBy);
-            var tagViewModels = result.Tags.ToViewModel();
-            int totalCount = result.Count;
-            return new TagsMetaViewModel { TotalCount = totalCount, Records = tagViewModels };
+            var (Count, Tags) = await tagService.GetAllAsync(filter, skip, take, orderBy);
+            var tagViewModels = Tags.ToViewModel();
+            return new TagsMetaViewModel { TotalCount = Count, Records = tagViewModels };
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             return Problem(e.StackTrace);
         }
     }
 
-    [HttpGet("names")]
-    public async Task<ActionResult<List<TagViewModel>>> Get()
+    [HttpGet("dropdownitems")]
+    public async Task<IActionResult> Get()
     {
         try
         {
             var tags = await tagService.GetAllAsync();
-            var tagViewModels = tags.ToViewModel();
-            return tagViewModels;
+            var tagViewModels = tags.ToDropdownViewModel();
+            return Ok(tagViewModels);
         }
         catch (Exception e)
         {
@@ -97,7 +92,7 @@ public class TagsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return Problem($"Could not insert into the store. Error: {ex.StackTrace}", 
+            return Problem($"Could not insert into the store. Error: {ex.StackTrace}",
                 nameof(Tag), (int)HttpStatusCode.InternalServerError, "Data Insert");
         }
 

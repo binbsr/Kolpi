@@ -15,6 +15,7 @@
                 AllowSorting="true"
                 PageSize="10"
                 AllowPaging="true"
+                Density="Density.Compact"
                 ShowPagingSummary="true"
                 TItem="TagViewModel"
                 IsLoading="isLoading">
@@ -29,7 +30,7 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="TagViewModel" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="Details" Title="Details" />
-        <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeId" Title="Tag Category" />
+        <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeName" Title="Category" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="CreatedAt" Title="Created">
             <Template Context="tag">
                 @tag.CreatedAt.Relativize()
@@ -38,9 +39,9 @@
 
         <RadzenDataGridColumn TItem="TagViewModel" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
             <Template Context="tag">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Small" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
                 </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(tag))" @onclick:stopPropagation="true">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Small" class="my-1 ms-1" Click="@(args => DeleteRow(tag))" @onclick:stopPropagation="true">
                 </RadzenButton>
             </Template>
         </RadzenDataGridColumn>

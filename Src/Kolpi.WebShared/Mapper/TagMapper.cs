@@ -27,6 +27,20 @@ namespace Kolpi.WebShared.Mapper
             return tagViewModel;
         }
 
+        public static TagDropdownViewModel ToDropdownViewModel(this Tag model)
+        {
+            if (model is null)
+                return default!;
+
+            var tagViewModel = new TagDropdownViewModel
+            {
+                Id = model.Id,
+                Name = model.Name
+            };
+
+            return tagViewModel;
+        }
+
         public static Tag ToModel(this TagViewModel viewModel)
         {
             if (viewModel == null)
@@ -52,6 +66,17 @@ namespace Kolpi.WebShared.Mapper
             foreach (var model in tagModels)
             {
                 tagViewModels.Add(model.ToViewModel());
+            }
+
+            return tagViewModels;
+        }
+
+        public static List<TagDropdownViewModel> ToDropdownViewModel(this IEnumerable<Tag> tagModels)
+        {
+            List<TagDropdownViewModel> tagViewModels = [];
+            foreach (var model in tagModels)
+            {
+                tagViewModels.Add(model.ToDropdownViewModel());
             }
 
             return tagViewModels;

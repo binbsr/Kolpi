@@ -42,7 +42,7 @@ public class QuestionsController : ControllerBase
             if (count is 0)
                 return Ok(new QuestionsMetaViewModel { TotalCount = 0, Records = [] });
 
-            var questionViewModels = questions.ToViewModel();
+            var questionViewModels = questions.ToGetViewModel();
             int totalCount = count;
             var result = new QuestionsMetaViewModel { TotalCount = totalCount, Records = questionViewModels };
             return Ok(result);
@@ -54,7 +54,7 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<QuestionViewModel>> GetQuestion(int id)
+    public async Task<ActionResult<QuestionAddViewModel>> GetQuestion(int id)
     {
         var question = await questionService.GetByIdAsync(id);
 
@@ -63,11 +63,11 @@ public class QuestionsController : ControllerBase
             return NotFound();
         }
 
-        return question.ToViewModel();
+        return question.ToAddViewModel();
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostQuestions(List<QuestionViewModel> questionViewModels)
+    public async Task<IActionResult> PostQuestions(List<QuestionAddViewModel> questionViewModels)
     {
         if (questionViewModels == null || questionViewModels.Count == 0)
             return BadRequest("No questions supplied to save.");

@@ -1,14 +1,14 @@
 ﻿@page "/questions"
 
-<RadzenDataGrid TItem="QuestionViewModel"
+<RadzenDataGrid TItem="QuestionGetViewModel"
                 Count="@totalItems"
                 Data="@questions"
                 LoadData="@LoadData"
-                GridLines="DataGridGridLines.None"
-@ref="questionsGrid"
+                @ref="questionsGrid"
                 AllowColumnResize="true"
                 AllowFiltering="true"
                 FilterMode="FilterMode.Advanced"
+                FilterCleared="FilterCleared"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 AllowSorting="true"
                 PageSize="10"
@@ -17,33 +17,39 @@
                 IsLoading="isLoading"
                 AllowColumnPicking="true"
                 SelectionMode="DataGridSelectionMode.Multiple"
-@bind-Value=@selectedQuestions>
+                @bind-Value=@selectedQuestions>
     <HeaderTemplate>
-        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add Question" Click="AddNewQuestion" />
+        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add" Click="AddNewQuestion" />
+        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="preview" Text="Review" Disabled="@(selectedQuestions == null || selectedQuestions.Count == 0)" />
     </HeaderTemplate>
     <Columns>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Width="60px" Sortable="false" Filterable="false">
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Width="60px" Sortable="false" Filterable="false">
             <HeaderTemplate>
-                <RadzenCheckBox TriState="false" TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
+                <RadzenCheckBox TriState TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
                                 Change="@(args => selectedQuestions = args ? questions : null)" />
             </HeaderTemplate>
             <Template Context="data">
-                <RadzenCheckBox TriState="false" Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
+                <RadzenCheckBox TriState Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"
                                 TValue="bool" Change=@(args => { if(!allowRowSelectOnRowClick) { questionsGrid.SelectRow(data); }}) />
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
             <Template Context="question">
                 @(questions.IndexOf(question) + 1)
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Question" Property="Body">
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Title="Question" Property="Body">
             <Template Context="question">
-                @((MarkupString)question.Body)
+                @{
+                    var body = (MarkupString)question.Body;
+                }
+                <RadzenText title="@body">
+                    @body
+                </RadzenText>
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Property="Type" Title="Type" />
-        <RadzenDataGridColumn TItem="QuestionViewModel" Property="Status" Title="Status">
+        <RadzenDataGridColumn Property="Type" Title="Type" />
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="Status" Title="Status">
             <FilterValueTemplate>
                 <RadzenDropDown @bind-Value=@selectedStatuses
                                 Style="width:100%"
@@ -65,11 +71,21 @@
                                 Multiple="true" />
             </SecondFilterValueTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Title="Tags">
+        <RadzenDataGridColumn Title="Answer Options" Filterable="false">
+            <Template Context="question">
+                <RadzenText title="@($"{@question.TotalOptions} options - {@question.Answers} answers")">
+                    @question.TotalOptions-@question.Answers
+                </RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.Tags)" Title="Tags"
+                              Type="typeof(IEnumerable<int>)" LogicalFilterOperator=LogicalFilterOperator.Or
+                              FilterValue="@selectedTags" FilterOperator="FilterOperator.Equals"
+                              SecondFilterValue="@selectedSecondTags" SecondFilterOperator="FilterOperator.Equals">
             <Template Context="question">
                 @foreach (var tag in question.Tags)
                 {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
+                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag />
                 }
             </Template>
             <FilterValueTemplate>
@@ -83,9 +99,9 @@
                                 Multiple="true" />
             </FilterValueTemplate>
             <SecondFilterValueTemplate>
-                <RadzenDropDown @bind-Value=@selectedTags
+                <RadzenDropDown @bind-Value=@selectedSecondTags
                                 Style="width:100%"
-                                Change=@OnSelectedTagsChange
+                                Change=@OnSelectedSecondTagsChange
                                 Data="@(tags)"
                                 ValueProperty="Id"
                                 TextProperty="Name"
@@ -93,6 +109,7 @@
                                 Multiple="true" />
             </SecondFilterValueTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionViewModel" Property="CreatedAt" Title="CreatedAt" />
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="CreatedAt" Title="Created" />
+        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="CreatedBy" Title="By" />
     </Columns>
 </RadzenDataGrid>

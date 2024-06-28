@@ -1,4 +1,4 @@
 namespace Kolpi.WebShared.ViewModels;
-public class QuestionsMetaViewModel : MetaViewModel<QuestionViewModel>
+public class QuestionsMetaViewModel : MetaViewModel<QuestionGetViewModel>
 {
 }
