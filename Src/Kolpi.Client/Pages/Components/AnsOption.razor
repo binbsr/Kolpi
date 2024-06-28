@@ -51,7 +51,7 @@
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
 
-    private void ShowTooltip(ElementReference elementReference, TooltipOptions options = null)
+    private void ShowTooltip(ElementReference elementReference, TooltipOptions options)
     {
         tooltipService.Open(elementReference, ChkTooltip, options);
     }

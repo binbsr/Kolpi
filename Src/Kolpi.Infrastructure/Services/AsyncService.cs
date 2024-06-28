@@ -4,84 +4,86 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace Kolpi.ApplicationCore.Services
+namespace Kolpi.ApplicationCore.Services;
+public abstract class AsyncService<TEntity, TKey> : IAsyncService<TEntity, TKey> where TEntity : BaseEntity<TKey>
 {
-    public abstract class AsyncService<TEntity, TKey> : IAsyncService<TEntity, TKey> where TEntity : BaseEntity<TKey>
+    private readonly KolpiDbContext context;
+    private DbSet<TEntity> entities;
+    
+    public AsyncService(KolpiDbContext context)
     {
-        private readonly KolpiDbContext context;
-        private DbSet<TEntity> entities;
-        
-        public AsyncService(KolpiDbContext context)
+        this.context = context;
+        entities = context.Set<TEntity>();
+    }
+
+    public Task<int> AddAsync(TEntity model, bool commit = true)
+    {
+        entities.Add(model);            
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
+
+    public Task<int> AddAsync(IEnumerable<TEntity> models, bool commit = true)
+    {
+        entities.AddRange(models);
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
+
+    public Task<int> DeleteAsync(TKey id, bool commit = true)
+    {
+        if (id == null) throw new ArgumentNullException(nameof(id));
+
+        var entityToDelete = entities.SingleOrDefault(m => m.Id!.Equals(id)) ?? throw new Exception($"Deletion: Can't find record with id {id}");
+        entities.Remove(entityToDelete);
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
+
+    public Task<int> DeleteAsync(IEnumerable<TKey> ids, bool commit = true)
+    {
+        if (!entities.Any())
         {
-            this.context = context;
-            entities = context.Set<TEntity>();
+            throw new ArgumentNullException(nameof(entities));
         }
 
-        public Task<int> AddAsync(TEntity model, bool commit = true)
-        {
-            entities.Add(model);            
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
+        var entitiesToDelete = entities.Where(e => ids.Contains(e.Id));
 
-        public Task<int> AddAsync(IEnumerable<TEntity> models, bool commit = true)
-        {
-            entities.AddRange(models);
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
+        entities.RemoveRange(entitiesToDelete);
 
-        public Task<int> DeleteAsync(TKey id, bool commit = true)
-        {
-            if (id == null) throw new ArgumentNullException(nameof(id));
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
 
-            var entityToDelete = entities.SingleOrDefault(m => m.Id.Equals(id)) ?? throw new Exception($"Deletion: Can't find record with id {id}");
-            entities.Remove(entityToDelete);
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
+    public virtual Task<List<TEntity>> GetAllAsync() => entities.ToListAsync();
 
-        public Task<int> DeleteAsync(IEnumerable<TKey> ids, bool commit = true)
-        {
-            if (!entities.Any()) throw new ArgumentNullException(nameof(entities));
-            var entitiesToDelete = entities.Where(e => ids.Contains(e.Id));
+    public Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression) => entities.Where(expression).ToListAsync();
 
-            entities.RemoveRange(entitiesToDelete);
+    public virtual Task<TEntity?> GetByIdAsync(TKey id) => entities.SingleOrDefaultAsync(o => o.Id!.Equals(id));
 
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
+    public Task<int> GetTotalCountAsync() => entities.CountAsync();
 
-        public virtual Task<List<TEntity>> GetAllAsync() => entities.ToListAsync();
+    public Task<int> UpdateAsync(TEntity model, bool commit = true)
+    {
+        entities.Update(model);
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
 
-        public Task<List<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> expression) => entities.Where(expression).ToListAsync();
+    public Task<int> UpdateAsync(IEnumerable<TEntity> models, bool commit = true)
+    {
+        entities.UpdateRange(models);
+        return commit ? CommitAsync() : Task.FromResult(0);
+    }
 
-        public virtual Task<TEntity?> GetByIdAsync(TKey id) => entities.SingleOrDefaultAsync(o => o.Id.Equals(id));
+    public Task<int> ExecuteUpdateAsync(
+        Expression<Func<TEntity, bool>> condition, 
+        Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> changingProperties)
+    {
+        var result = entities
+                        .Where(condition)
+                        .ExecuteUpdateAsync(changingProperties);
+        return result;
+    }
 
-        public Task<int> GetTotalCountAsync() => entities.CountAsync();
-
-        public Task<int> UpdateAsync(TEntity model, bool commit = true)
-        {
-            entities.Update(model);
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
-
-        public Task<int> UpdateAsync(IEnumerable<TEntity> models, bool commit = true)
-        {
-            entities.UpdateRange(models);
-            return commit ? CommitAsync() : Task.FromResult(0);
-        }
-
-        public Task<int> ExecuteUpdateAsync(
-            Expression<Func<TEntity, bool>> condition, 
-            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> changingProperties)
-        {
-            var result = entities
-                            .Where(condition)
-                            .ExecuteUpdateAsync(changingProperties);
-            return result;
-        }
-
-        public Task<int> CommitAsync()
-        {
-            var rowsAffectedTask = context.SaveChangesAsync();
-            return rowsAffectedTask;
-        }
+    public Task<int> CommitAsync()
+    {
+        var rowsAffectedTask = context.SaveChangesAsync();
+        return rowsAffectedTask;
     }
 }

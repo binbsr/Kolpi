@@ -11,7 +11,7 @@
                 FilterCleared="FilterCleared"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 AllowSorting="true"
-                PageSize="10"
+                PageSizeOptions="[10, 20, 50, 100]"
                 AllowPaging="true"
                 ShowPagingSummary="true"
                 IsLoading="isLoading"
@@ -19,14 +19,14 @@
                 SelectionMode="DataGridSelectionMode.Multiple"
                 @bind-Value=@selectedQuestions>
     <HeaderTemplate>
-        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="Add" Click="AddNewQuestion" />
-        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="preview" Text="Review" Disabled="@(selectedQuestions == null || selectedQuestions.Count == 0)" />
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="add_circle_outline" Text="Add" Click="AddNewQuestion" />
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="preview" Text="Review" Disabled="@(selectedQuestions == null || selectedQuestions.Count == 0)" />
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="QuestionGetViewModel" Width="60px" Sortable="false" Filterable="false">
             <HeaderTemplate>
-                <RadzenCheckBox TriState TValue="bool" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
-                                Change="@(args => selectedQuestions = args ? questions : null)" />
+                <RadzenCheckBox TriState TValue="bool?" Value="@(questions != null ? (questions.Any(q => selectedQuestions != null && selectedQuestions.Contains(q))) : false)"
+                                Change="@(args => selectedQuestions = args == true ? questions : [])" />
             </HeaderTemplate>
             <Template Context="data">
                 <RadzenCheckBox TriState Value="@(selectedQuestions != null && selectedQuestions.Contains(data))"

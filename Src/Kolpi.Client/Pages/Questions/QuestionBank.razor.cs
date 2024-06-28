@@ -17,12 +17,12 @@ public partial class QuestionBank
     private bool isLoading = false;
     private int totalItems = 0;
     List<QuestionGetViewModel> questions = default!;
-    IList<QuestionGetViewModel> selectedQuestions = default!;
+    IList<QuestionGetViewModel>? selectedQuestions = default!;
     RadzenDataGrid<QuestionGetViewModel> questionsGrid = default!;
-    IEnumerable<int> selectedTags = default!;
-    IEnumerable<int> selectedSecondTags = default!;
+    IEnumerable<int>? selectedTags = default!;
+    IEnumerable<int>? selectedSecondTags = default!;
     List<TagDropdownViewModel> tags = default!;
-    IEnumerable<int> selectedStatuses = default!;
+    IEnumerable<int>? selectedStatuses = default!;
     List<QuestionStatusViewModel> statuses = default!;
 
     bool allowRowSelectOnRowClick = true;
@@ -75,7 +75,7 @@ public partial class QuestionBank
     {
         isLoading = true;
 
-        string url = $"api/questions?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
+        string url = $"api/questions?filter={args.Filter}&skip={args.Skip ?? 0}&take={args.Top ?? 10}&orderBy={args.OrderBy}";
         var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new QuestionsMetaViewModel();
 
         totalItems = result.TotalCount;

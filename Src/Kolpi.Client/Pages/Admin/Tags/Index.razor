@@ -13,7 +13,7 @@
                 AllowFiltering="true"
                 FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                PageSize="10"
+                PageSizeOptions="[10, 20, 50, 100]"
                 AllowPaging="true"
                 Density="Density.Compact"
                 ShowPagingSummary="true"
@@ -33,7 +33,7 @@
         <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeName" Title="Category" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="CreatedAt" Title="Created">
             <Template Context="tag">
-                @tag.CreatedAt.Relativize()
+                @tag.CreatedAt.Humanize(true)
             </Template>
             </RadzenDataGridColumn>
 
@@ -52,10 +52,8 @@
 
 @code {
 
-    List<TagViewModel> tagViewModels;
+    List<TagViewModel> tagViewModels = [];
     private int totalItems;
-
-    private string searchString = "";
     private RadzenDataGrid<TagViewModel> tagsGrid = default!;
     private bool isLoading = false;
 
@@ -86,7 +84,7 @@
 
         await Task.Yield();
 
-        string url = $"api/tags?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
+        string url = $"api/tags?filter={args.Filter}&skip={args?.Skip ?? 0}&take={args?.Top ?? 0}&orderBy={args?.OrderBy ?? ""}";
         var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new TagsMetaViewModel();
 
         totalItems = result.TotalCount;

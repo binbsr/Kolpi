@@ -61,17 +61,15 @@
 </RadzenPanel>
 
 @code {
-
     [Parameter]
-    public string Label { get; set; }
+    public string Label { get; set; } = "";
 
     [Parameter]
     public EventCallback<QuestionAddViewModel> DeleteQuestionCallback { get; set; }
 
     [Parameter]
-    public QuestionAddViewModel Data { get; set; }
+    public QuestionAddViewModel Data { get; set; } = new();
 
-    private bool isSavingQuestions;
     private string searchText = string.Empty;
     private List<TagViewModel> Tags { get; set; } = default!;
 

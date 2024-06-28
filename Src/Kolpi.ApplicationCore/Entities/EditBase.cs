@@ -9,14 +9,14 @@ public class EditBase<TKey> : BaseEntity<TKey>
     public EditBase<TKey> AddCreatedStamps(string createdBy)
     {
         CreatedBy = createdBy;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
         return this;
     }
 
     public EditBase<TKey> AddModifiedStamps(string modifiedBy)
     {
         ModifiedBy = modifiedBy;
-        ModifiedAt = DateTime.Now;
+        ModifiedAt = DateTime.UtcNow;
         return this;
     }
 }

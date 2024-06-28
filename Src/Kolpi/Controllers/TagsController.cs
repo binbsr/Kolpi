@@ -12,16 +12,10 @@ namespace Kolpi.Server.Controllers;
 //[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TagsController : ControllerBase
+public class TagsController(ITagService tagService, ILogger<TagsController> logger) : ControllerBase
 {
-    private readonly ITagService tagService;
-    private readonly ILogger<TagsController> logger;
-
-    public TagsController(ITagService tagService, ILogger<TagsController> logger)
-    {
-        this.tagService = tagService;
-        this.logger = logger;
-    }
+    private readonly ITagService tagService = tagService;
+    private readonly ILogger<TagsController> logger = logger;
 
     [HttpGet]
     public async Task<ActionResult<TagsMetaViewModel>> Get([FromQuery] string filter = "",
@@ -109,7 +103,7 @@ public class TagsController : ControllerBase
 
         // Get userid creating this tag
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        tagModel.AddModifiedStamps(userId);
+        tagModel.AddModifiedStamps(userId ?? "N/A");
 
         int rowsUpdated = 0;
         try
