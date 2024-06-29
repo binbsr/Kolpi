@@ -76,7 +76,7 @@ public partial class QuestionBank
         isLoading = true;
 
         string url = $"api/questions?filter={args.Filter}&skip={args.Skip ?? 0}&take={args.Top ?? 10}&orderBy={args.OrderBy}";
-        var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new QuestionsMetaViewModel();
+        var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new();
 
         totalItems = result.TotalCount;
         questions = result.Records;

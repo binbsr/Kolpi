@@ -1,5 +1,7 @@
 ﻿@page "/tagtypes"
 
+<PageTitle>Tag Categories</PageTitle>
+
 @inject NavigationManager Nav
 @inject HttpClient Http
 @inject NotificationService Notification
@@ -53,7 +55,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         tagCategories = await Http.GetFromJsonAsync<List<TagTypeViewModel>>("api/tagtypes") ?? default!;
     }
 

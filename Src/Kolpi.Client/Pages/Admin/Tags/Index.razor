@@ -1,10 +1,13 @@
 ﻿@page "/tags"
 @using Kolpi.Shared.Extentions;
 
+<PageTitle>Tags</PageTitle>
+
 @inject HttpClient http
 @inject NavigationManager Navigation
 
-<RadzenDataGrid Count="@totalItems"
+<RadzenDataGrid TItem="TagViewModel"
+                Count="@totalItems"
                 Data="@tagViewModels"
                 LoadData="@LoadData"
                 GridLines="DataGridGridLines.None"
@@ -17,10 +20,9 @@
                 AllowPaging="true"
                 Density="Density.Compact"
                 ShowPagingSummary="true"
-                TItem="TagViewModel"
                 IsLoading="isLoading">
     <HeaderTemplate>
-        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="New Tag" Click="AddNewTag" />
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="add_circle_outline" Text="New Tag" Click="AddNewTag" />
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="TagViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
@@ -52,7 +54,7 @@
 
 @code {
 
-    List<TagViewModel> tagViewModels = [];
+    List<TagViewModel>? tagViewModels;
     private int totalItems;
     private RadzenDataGrid<TagViewModel> tagsGrid = default!;
     private bool isLoading = false;
@@ -72,20 +74,12 @@
 
     }
 
-    //private void OnSearch(string text)
-    //{
-    //    searchString = text;
-    //    table.ReloadServerData();
-    //}
-
-    private async Task LoadData(LoadDataArgs args)
+    async Task LoadData(LoadDataArgs args)
     {
         isLoading = true;
-
-        await Task.Yield();
-
+                
         string url = $"api/tags?filter={args.Filter}&skip={args?.Skip ?? 0}&take={args?.Top ?? 0}&orderBy={args?.OrderBy ?? ""}";
-        var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new TagsMetaViewModel();
+        var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new();
 
         totalItems = result.TotalCount;
         tagViewModels = result.Records;
