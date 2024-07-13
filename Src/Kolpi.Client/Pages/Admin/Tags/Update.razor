@@ -1,12 +1,12 @@
-﻿@* @page "/tags/update/{Id:int}"
+﻿@page "/tags/update/{Id:int}"
+
+<PageTitle>Modify Tag</PageTitle>
 
 @inject HttpClient Http
 
-@using Kolpi.WebShared.ViewModels
-
 @if (tagViewModel == null)
 {
-    <MudSkeleton Animation="Animation.Wave" />
+    <Loading />
 }
 else
 {
@@ -25,4 +25,3 @@ else
         tagViewModel = await Http.GetFromJsonAsync<TagViewModel>($"api/tags/{Id}") ?? default!;
     }
 } 
-*@

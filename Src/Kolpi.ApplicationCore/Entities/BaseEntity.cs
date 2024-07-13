@@ -8,6 +8,6 @@ namespace Kolpi.ApplicationCore.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public TKey Id { get; set; }
+        public TKey Id { get; set; } = default!;
     }
 }

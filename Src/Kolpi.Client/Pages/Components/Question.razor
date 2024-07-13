@@ -16,7 +16,7 @@
                                   Placeholder="Your question goes here..." />
             </RadzenColumn>
             <RadzenColumn SizeMD="2">
-                <RadzenButton Icon="remove_circle" Text="Remove Data" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
+                <RadzenButton Icon="remove_circle" Text="Remove" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
                 <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-4" TextAlign="TextAlign.Center">@Label</RadzenText>
                 <RadzenDropDown class="rz-mt-4" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@Data.Type Style="width:100%;" />
             </RadzenColumn>
@@ -61,17 +61,15 @@
 </RadzenPanel>
 
 @code {
+    [Parameter]
+    public string Label { get; set; } = "";
 
     [Parameter]
-    public string Label { get; set; }
+    public EventCallback<QuestionAddViewModel> DeleteQuestionCallback { get; set; }
 
     [Parameter]
-    public EventCallback<QuestionViewModel> DeleteQuestionCallback { get; set; }
+    public QuestionAddViewModel Data { get; set; } = new();
 
-    [Parameter]
-    public QuestionViewModel Data { get; set; }
-
-    private bool isSavingQuestions;
     private string searchText = string.Empty;
     private List<TagViewModel> Tags { get; set; } = default!;
 

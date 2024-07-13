@@ -9,28 +9,29 @@ namespace Kolpi.Client.Pages.Questions;
 public partial class QuestionBank
 {
     [Inject]
-    public HttpClient Http { get; set; }
+    public HttpClient Http { get; set; } = default!;
 
     [Inject]
-    public NavigationManager Navigation { get; set; }
+    public NavigationManager Navigation { get; set; } = default!;
 
     private bool isLoading = false;
     private int totalItems = 0;
-    List<QuestionViewModel> questions;
-    IList<QuestionViewModel> selectedQuestions;
-    RadzenDataGrid<QuestionViewModel> questionsGrid;
-    IEnumerable<int> selectedTags;
-    List<TagViewModel> tags;
-    IEnumerable<int> selectedStatuses;
-    List<QuestionStatusViewModel> statuses;
+    List<QuestionGetViewModel> questions = default!;
+    IList<QuestionGetViewModel>? selectedQuestions = default!;
+    RadzenDataGrid<QuestionGetViewModel> questionsGrid = default!;
+    IEnumerable<TagDropdownViewModel>? selectedTags = default!;
+    IEnumerable<int>? selectedSecondTags = default!;
+    IEnumerable<TagDropdownViewModel> tags = default!;
+    IEnumerable<int>? selectedStatuses = default!;
+    List<QuestionStatusViewModel> statuses = default!;
 
     bool allowRowSelectOnRowClick = true;
 
     protected override async Task OnInitializedAsync()
     {
         isLoading = true;
-        tags = await Http.GetFromJsonAsync<List<TagViewModel>>("api/tags/names") ?? new List<TagViewModel>();
-        statuses = await Http.GetFromJsonAsync<List<QuestionStatusViewModel>>("api/questionstatuses") ?? new List<QuestionStatusViewModel>();
+        tags = await Http.GetFromJsonAsync<List<TagDropdownViewModel>>("api/tags/dropdownitems") ?? [];
+        statuses = await Http.GetFromJsonAsync<List<QuestionStatusViewModel>>("api/questionstatuses") ?? [];
         isLoading = false;
     }
 
@@ -39,6 +40,15 @@ public partial class QuestionBank
         if (selectedTags != null && !selectedTags.Any())
         {
             selectedTags = null;
+        }
+
+        await questionsGrid.FirstPage();
+    }
+    async Task OnSelectedSecondTagsChange(object value)
+    {
+        if (selectedSecondTags != null && !selectedSecondTags.Any())
+        {
+            selectedSecondTags = null;
         }
 
         await questionsGrid.FirstPage();
@@ -54,12 +64,19 @@ public partial class QuestionBank
         await questionsGrid.FirstPage();
     }
 
+    async Task FilterCleared()
+    {
+        selectedTags = null!;
+        selectedSecondTags = null!;
+        await questionsGrid.FirstPage();
+    }
+
     async Task LoadData(LoadDataArgs args)
     {
         isLoading = true;
 
-        string url = $"api/questions?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
-        var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new QuestionsMetaViewModel();
+        string url = $"api/questions?filter={args.Filter}&skip={args.Skip ?? 0}&take={args.Top ?? 10}&orderBy={args.OrderBy}";
+        var result = await Http.GetFromJsonAsync<QuestionsMetaViewModel>(url) ?? new();
 
         totalItems = result.TotalCount;
         questions = result.Records;

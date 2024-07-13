@@ -2,8 +2,8 @@
 
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" class="rz-pt-0 rz-p-3">
 
-    <RadzenCheckBox Name="@TextInputLabel" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
-    <RadzenLabel Text="Answer" Component="@TextInputLabel" Style="margin-left:-12px;" />
+    <RadzenCheckBox Name="@answerOptionName" @bind-Value=@AnswerModel.IsAnswer MouseEnter="@(args => ShowTooltip(args, new TooltipOptions(){ Position = TooltipPosition.Top }))" />
+    <RadzenLabel Text="Answer" Component="@answerOptionName" Style="margin-left:-12px;" />
 
     @if (AnswerModel.Type == AnswerType.ShortText)
     {
@@ -44,14 +44,15 @@
     [Parameter]
     public string TextInputLabel { get; set; } = "Option";
 
-    public string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
+    private string ChkTooltip => AnswerModel.IsAnswer ? "You marked it as answer." : "Click if it's an answer.";
+    private string answerOptionName = Guid.NewGuid().ToString("n");
 
     private async Task RemoveItem()
     {
         await RemoveItemCallback.InvokeAsync(AnswerModel);
     }
 
-    private void ShowTooltip(ElementReference elementReference, TooltipOptions options = null)
+    private void ShowTooltip(ElementReference elementReference, TooltipOptions options)
     {
         tooltipService.Open(elementReference, ChkTooltip, options);
     }

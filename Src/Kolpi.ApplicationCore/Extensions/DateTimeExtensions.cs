@@ -12,7 +12,7 @@ namespace Kolpi.Shared.Extentions
 
             // If nothing sent to dateTo, user is asking relative to current time
             if (dateTo == default)
-                dateTo = DateTime.Now;
+                dateTo = DateTime.UtcNow;
 
             bool isFuture = false;
             if (dateFrom > dateTo)
@@ -21,7 +21,7 @@ namespace Kolpi.Shared.Extentions
             if (isFuture)
             {
                 dateTo = dateFrom;
-                dateFrom = DateTime.Now;
+                dateFrom = DateTime.UtcNow;
             }
 
             TimeSpan duration = dateTo.Subtract(dateFrom);

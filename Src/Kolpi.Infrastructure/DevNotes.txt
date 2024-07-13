@@ -4,6 +4,9 @@
 EF CLI
 >dotnet ef migrations add Initial -s ..\Kolpi.Api\
 >dotnet ef migrations add Initial -s ..\Kolpi.Api\
+> dotnet tool list
+>dotnet tool uninstall dotnet-ef --tool-manifest  "D:\Apps\Kolpi\Src\Kolpi.Infrastructure\.config\dotnet-tools.json"
+
 
 Code generator
 >dotnet-aspnet-codegenerator controller -name QuestionsController -async -api -actions -m Question -dc KolpiDbContext -outDir .\Controllers\

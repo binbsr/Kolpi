@@ -27,7 +27,7 @@ namespace Kolpi.WebShared
             Name = "Level-1",
             Details = "Defines simplest objective questions.",
             TagType = TagType1,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             CreatedBy = "Test User",
         };
 
@@ -36,7 +36,7 @@ namespace Kolpi.WebShared
             Name = "GK",
             Details = "Defines general knowledge questions.",
             TagType = TagType2,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             CreatedBy = "Test User",
         };
 

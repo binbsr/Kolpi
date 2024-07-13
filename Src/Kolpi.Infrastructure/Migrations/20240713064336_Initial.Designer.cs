@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kolpi.Infrastructure.Migrations
 {
     [DbContext(typeof(KolpiDbContext))]
-    [Migration("20230825112403_AnsTypeCol")]
-    partial class AnsTypeCol
+    [Migration("20240713064336_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -273,6 +273,9 @@ namespace Kolpi.Infrastructure.Migrations
                     b.Property<int>("QuestionStatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionStatusId");
@@ -321,6 +324,21 @@ namespace Kolpi.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.QuestionTag", b =>
+                {
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("QuestionId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("QuestionTags");
+                });
+
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -365,7 +383,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1678),
+                            CreatedAt = new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6154),
                             Details = "Defines simplest objective questions.",
                             IsFinalized = false,
                             Name = "Level-1",
@@ -374,7 +392,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1690),
+                            CreatedAt = new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6173),
                             Details = "Defines questions harder than level-1",
                             IsFinalized = false,
                             Name = "Level-2",
@@ -383,7 +401,7 @@ namespace Kolpi.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 8, 25, 17, 9, 3, 92, DateTimeKind.Local).AddTicks(1692),
+                            CreatedAt = new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6176),
                             Details = "Defines general knowledge questions.",
                             IsFinalized = false,
                             Name = "GK",
@@ -546,21 +564,6 @@ namespace Kolpi.Infrastructure.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("QuestionTag", b =>
-                {
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("QuestionId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("QuestionTag");
-                });
-
             modelBuilder.Entity("ExamPaperQuestion", b =>
                 {
                     b.HasOne("Kolpi.ApplicationCore.Entities.ExamPaper", null)
@@ -605,18 +608,7 @@ namespace Kolpi.Infrastructure.Migrations
                     b.Navigation("QuestionStatus");
                 });
 
-            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
-                {
-                    b.HasOne("Kolpi.ApplicationCore.Entities.TagType", "TagType")
-                        .WithMany("Tags")
-                        .HasForeignKey("TagTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TagType");
-                });
-
-            modelBuilder.Entity("QuestionTag", b =>
+            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.QuestionTag", b =>
                 {
                     b.HasOne("Kolpi.ApplicationCore.Entities.Question", null)
                         .WithMany()
@@ -626,9 +618,20 @@ namespace Kolpi.Infrastructure.Migrations
 
                     b.HasOne("Kolpi.ApplicationCore.Entities.Tag", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Tag", b =>
+                {
+                    b.HasOne("Kolpi.ApplicationCore.Entities.TagType", "TagType")
+                        .WithMany("Tags")
+                        .HasForeignKey("TagTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TagType");
                 });
 
             modelBuilder.Entity("Kolpi.ApplicationCore.Entities.Exam", b =>

@@ -5,18 +5,19 @@ using Kolpi.ApplicationCore.Services;
 using System.Linq.Dynamic.Core;
 
 namespace Kolpi.Infrastructure.Services.Questions;
-public class QuestionService : AsyncService<Question, int>, IQuestionService
+public class QuestionService(KolpiDbContext dbContext) : AsyncService<Question, int>(dbContext), IQuestionService
 {
-    private readonly KolpiDbContext dbContext;
-
-    public QuestionService(KolpiDbContext dbContext) : base(dbContext)
-    {
-        this.dbContext = dbContext;
-    }
+    private readonly KolpiDbContext dbContext = dbContext;
 
     public async Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy)
     {
-        var query = dbContext.Set<Question>().Include(t => t.Tags).Include(s => s.QuestionStatus).AsQueryable();
+        var query = dbContext.Set<Question>()
+            .Include(t => t.Tags)
+            .Include(s => s.QuestionStatus)
+            .Include(x => x.AnswerOptions)
+            .OrderByDescending(x => x.CreatedAt)
+            .AsQueryable();        
+        
         if (filter is not null and not "")
         {
             query = query.Where(filter);
@@ -28,7 +29,7 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
         }
 
         var count = await query.CountAsync();
-        var result = await query.Skip(skip).Take(take).ToListAsync();
+        var result = await query.Skip(skip).Take(take).AsNoTracking().ToListAsync();
         return (count, result);
     }
 
@@ -36,25 +37,13 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
 
     public override Task<Question?> GetByIdAsync(int id) => dbContext.Set<Question>()
             .Include(t => t.AnswerOptions)
-            .Where(o => o.Id.Equals(id)).FirstOrDefaultAsync();
+            .Where(o => o.Id == id).FirstOrDefaultAsync();
 
-    // New method for saving multiple questions
-    public async Task SaveMultipleAsync(List<Question> questions)
-    {
-        foreach (var question in questions)
-        {
-            if (question.Id == 0)
-            {
-                dbContext.Set<Question>().Add(question);
-            }
-            else
-            {
-                dbContext.Set<Question>().Update(question);
-            }
-        }
-        await dbContext.SaveChangesAsync();
-    }
+    //public override Task<int> AddAsync(Question model, bool commit = true)
+    //{
+    //    var questionTags = model.Tags.Select(x => new QuestionTag { QuestionId = model.Id, TagId = x.Id });
+    //    dbContext.QuestionTags.AddRange(questionTags);
 
+    //    return base.AddAsync(model, commit);
+    //}
 }
-
-

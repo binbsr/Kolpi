@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.ApplicationCore.Entities;
@@ -9,8 +7,6 @@ using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kolpi.Api.Controllers;
 
@@ -42,7 +38,7 @@ public class QuestionsController : ControllerBase
             if (count is 0)
                 return Ok(new QuestionsMetaViewModel { TotalCount = 0, Records = [] });
 
-            var questionViewModels = questions.ToViewModel();
+            var questionViewModels = questions.ToGetViewModel();
             int totalCount = count;
             var result = new QuestionsMetaViewModel { TotalCount = totalCount, Records = questionViewModels };
             return Ok(result);
@@ -54,7 +50,7 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<QuestionViewModel>> GetQuestion(int id)
+    public async Task<ActionResult<QuestionAddViewModel>> GetQuestion(int id)
     {
         var question = await questionService.GetByIdAsync(id);
 
@@ -63,11 +59,11 @@ public class QuestionsController : ControllerBase
             return NotFound();
         }
 
-        return question.ToViewModel();
+        return question.ToAddViewModel();
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostQuestions(List<QuestionViewModel> questionViewModels)
+    public async Task<IActionResult> PostQuestions(List<QuestionAddViewModel> questionViewModels)
     {
         if (questionViewModels == null || questionViewModels.Count == 0)
             return BadRequest("No questions supplied to save.");
@@ -82,8 +78,8 @@ public class QuestionsController : ControllerBase
                 var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
                 question.AddCreatedStamps(userId);
 
-                // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
-                tagService.AttachTags(question.Tags);
+                // Attaching existing tags for the question
+                question.Tags = await tagService.GetByConditionAsync(x => question.Tags.Select(y => y.Id).Contains(x.Id));
 
                 // Just add answer options to EF
                 await answerOptionService.AddAsync(question.AnswerOptions, false);

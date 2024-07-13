@@ -1,10 +1,13 @@
 ﻿@page "/tags"
 @using Kolpi.Shared.Extentions;
 
+<PageTitle>Tags</PageTitle>
+
 @inject HttpClient http
 @inject NavigationManager Navigation
 
-<RadzenDataGrid Count="@totalItems"
+<RadzenDataGrid TItem="TagViewModel"
+                Count="@totalItems"
                 Data="@tagViewModels"
                 LoadData="@LoadData"
                 GridLines="DataGridGridLines.None"
@@ -13,13 +16,13 @@
                 AllowFiltering="true"
                 FilterMode="FilterMode.Advanced"
                 AllowSorting="true"
-                PageSize="10"
+                PageSizeOptions="[10, 20, 50, 100]"
                 AllowPaging="true"
+                Density="Density.Compact"
                 ShowPagingSummary="true"
-                TItem="TagViewModel"
                 IsLoading="isLoading">
     <HeaderTemplate>
-        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="add_circle_outline" Text="New Tag" Click="AddNewTag" />
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="add_circle_outline" Text="New Tag" Click="AddNewTag" />
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="TagViewModel" Title="#" Width="50px" Frozen="@true" Filterable="false" TextAlign="TextAlign.Center">
@@ -29,18 +32,18 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="TagViewModel" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="Details" Title="Details" />
-        <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeId" Title="Tag Category" />
+        <RadzenDataGridColumn TItem="TagViewModel" Property="TagTypeName" Title="Category" />
         <RadzenDataGridColumn TItem="TagViewModel" Property="CreatedAt" Title="Created">
             <Template Context="tag">
-                @tag.CreatedAt.Relativize()
+                @tag.CreatedAt.Humanize(true)
             </Template>
             </RadzenDataGridColumn>
 
         <RadzenDataGridColumn TItem="TagViewModel" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
             <Template Context="tag">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Small" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
                 </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(tag))" @onclick:stopPropagation="true">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Outlined" Shade="Shade.Lighter" Size="ButtonSize.Small" class="my-1 ms-1" Click="@(args => DeleteRow(tag))" @onclick:stopPropagation="true">
                 </RadzenButton>
             </Template>
         </RadzenDataGridColumn>
@@ -51,10 +54,8 @@
 
 @code {
 
-    List<TagViewModel> tagViewModels;
+    List<TagViewModel>? tagViewModels;
     private int totalItems;
-
-    private string searchString = "";
     private RadzenDataGrid<TagViewModel> tagsGrid = default!;
     private bool isLoading = false;
 
@@ -73,20 +74,12 @@
 
     }
 
-    //private void OnSearch(string text)
-    //{
-    //    searchString = text;
-    //    table.ReloadServerData();
-    //}
-
-    private async Task LoadData(LoadDataArgs args)
+    async Task LoadData(LoadDataArgs args)
     {
         isLoading = true;
-
-        await Task.Yield();
-
-        string url = $"api/tags?filter={args.Filter}&skip={args.Skip.Value}&take={args.Top.Value}&orderBy={args.OrderBy}";
-        var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new TagsMetaViewModel();
+                
+        string url = $"api/tags?filter={args.Filter}&skip={args?.Skip ?? 0}&take={args?.Top ?? 0}&orderBy={args?.OrderBy ?? ""}";
+        var result = await http.GetFromJsonAsync<TagsMetaViewModel>(url) ?? new();
 
         totalItems = result.TotalCount;
         tagViewModels = result.Records;

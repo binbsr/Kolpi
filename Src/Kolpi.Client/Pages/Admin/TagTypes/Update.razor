@@ -1,10 +1,10 @@
 ﻿@page "/tagtypes/update/{Id:int}"
-
+<PageTitle>Modify Tag Category</PageTitle>
 @inject HttpClient Http
 
 @if (tagTypeViewModel == null)
 {
-    <Loading></Loading>
+    <Loading />
 }
 else
 {

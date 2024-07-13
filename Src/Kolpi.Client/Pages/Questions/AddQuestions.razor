@@ -19,15 +19,15 @@
 
 @code {
 
-    private List<QuestionViewModel> questions = new List<QuestionViewModel> { new() };
+    private List<QuestionAddViewModel> questions = new List<QuestionAddViewModel> { new() };
     private bool isSaving;
 
     private void AddNewQuestion()
     {
-        questions.Add(new QuestionViewModel());
+        questions.Add(new QuestionAddViewModel());
     }
 
-    private void RemoveQuestion(QuestionViewModel question)
+    private void RemoveQuestion(QuestionAddViewModel question)
     {
         questions.Remove(question);
     }
@@ -60,12 +60,12 @@
         isSaving = false;
     }
 
-    public void AddNewOption(QuestionViewModel question)
+    public void AddNewOption(QuestionAddViewModel question)
     {
         question.AnswerOptions.Add(new AnswerOptionViewModel());
     }
 
-    public void DeleteAnsOption(QuestionViewModel question, AnswerOptionViewModel option)
+    public void DeleteAnsOption(QuestionAddViewModel question, AnswerOptionViewModel option)
     {
         question.AnswerOptions.Remove(option);
     }
