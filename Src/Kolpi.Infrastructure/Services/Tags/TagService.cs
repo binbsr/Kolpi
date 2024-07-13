@@ -39,13 +39,12 @@ namespace Kolpi.Infrastructure.Services.Tags
 
         public void AttachTags(IEnumerable<Tag> tags)
         {
-            foreach (var tag in tags)
-            {
-                if (dbContext.Tags.Local.Any(x => x.Id == tag.Id))
-                    continue;
+            //foreach (var tag in tags)
+            //{
+            //    if (dbContext.Tags.Local.Any(x => x.Id == tag.Id))
+            //        continue;
 
-                dbContext.Tags.Attach(tag);
-            }
+            dbContext.Tags.AttachRange(tags);
         }
     }
 }

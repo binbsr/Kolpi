@@ -219,6 +219,7 @@ namespace Kolpi.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     QuestionStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -270,6 +271,7 @@ namespace Kolpi.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsAnswer = table.Column<bool>(type: "bit", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -312,24 +314,24 @@ namespace Kolpi.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "QuestionTag",
+                name: "QuestionTags",
                 columns: table => new
                 {
                     QuestionId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    TagId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionId, x.TagsId });
+                    table.PrimaryKey("PK_QuestionTags", x => new { x.QuestionId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_QuestionTag_Questions_QuestionId",
+                        name: "FK_QuestionTags_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QuestionTag_Tags_TagsId",
-                        column: x => x.TagsId,
+                        name: "FK_QuestionTags_Tags_TagId",
+                        column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -359,9 +361,9 @@ namespace Kolpi.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Details", "IsFinalized", "ModifiedAt", "ModifiedBy", "Name", "TagTypeId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3651), null, "Defines simplest objective questions.", false, null, null, "Level-1", 1 },
-                    { 2, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3664), null, "Defines questions harder than level-1", false, null, null, "Level-2", 1 },
-                    { 3, new DateTime(2023, 8, 24, 11, 12, 23, 485, DateTimeKind.Local).AddTicks(3666), null, "Defines general knowledge questions.", false, null, null, "GK", 2 }
+                    { 1, new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6154), null, "Defines simplest objective questions.", false, null, null, "Level-1", 1 },
+                    { 2, new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6173), null, "Defines questions harder than level-1", false, null, null, "Level-2", 1 },
+                    { 3, new DateTime(2024, 7, 13, 12, 28, 35, 831, DateTimeKind.Local).AddTicks(6176), null, "Defines general knowledge questions.", false, null, null, "GK", 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -385,9 +387,9 @@ namespace Kolpi.Infrastructure.Migrations
                 column: "QuestionStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestionTag_TagsId",
-                table: "QuestionTag",
-                column: "TagsId");
+                name: "IX_QuestionTags_TagId",
+                table: "QuestionTags",
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_TagTypeId",
@@ -408,7 +410,7 @@ namespace Kolpi.Infrastructure.Migrations
                 name: "PrivilegeLookups");
 
             migrationBuilder.DropTable(
-                name: "QuestionTag");
+                name: "QuestionTags");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

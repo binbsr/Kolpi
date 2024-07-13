@@ -5,24 +5,18 @@ using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Kolpi.ApplicationCore.Services;
-public abstract class AsyncService<TEntity, TKey> : IAsyncService<TEntity, TKey> where TEntity : BaseEntity<TKey>
+public abstract class AsyncService<TEntity, TKey>(KolpiDbContext context) : IAsyncService<TEntity, TKey> where TEntity : BaseEntity<TKey>
 {
-    private readonly KolpiDbContext context;
-    private DbSet<TEntity> entities;
-    
-    public AsyncService(KolpiDbContext context)
-    {
-        this.context = context;
-        entities = context.Set<TEntity>();
-    }
+    private readonly KolpiDbContext context = context;
+    private DbSet<TEntity> entities = context.Set<TEntity>();
 
-    public Task<int> AddAsync(TEntity model, bool commit = true)
+    public virtual Task<int> AddAsync(TEntity model, bool commit = true)
     {
         entities.Add(model);            
         return commit ? CommitAsync() : Task.FromResult(0);
     }
 
-    public Task<int> AddAsync(IEnumerable<TEntity> models, bool commit = true)
+    public virtual Task<int> AddAsync(IEnumerable<TEntity> models, bool commit = true)
     {
         entities.AddRange(models);
         return commit ? CommitAsync() : Task.FromResult(0);

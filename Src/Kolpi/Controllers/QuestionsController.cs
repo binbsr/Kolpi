@@ -78,8 +78,8 @@ public class QuestionsController : ControllerBase
                 var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "N/A";
                 question.AddCreatedStamps(userId);
 
-                // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
-                //tagService.AttachTags(question.Tags);
+                // Attaching existing tags for the question
+                question.Tags = await tagService.GetByConditionAsync(x => question.Tags.Select(y => y.Id).Contains(x.Id));
 
                 // Just add answer options to EF
                 await answerOptionService.AddAsync(question.AnswerOptions, false);
