@@ -34,7 +34,9 @@
                                 FilterOperator="StringFilterOperator.Contains"
                                 MaxSelectedLabels="8">
                     <Template>
-                        @tag.Name (@tag.TagTypeName)
+                        <span style="@($"color: {tag.TagColorCode}")">
+                            @tag.Name (@tag.TagTypeName)
+                        </span>
                     </Template>
                 </RadzenDropDown>
             </RadzenColumn>

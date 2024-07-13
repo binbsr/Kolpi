@@ -12,9 +12,10 @@ public class QuestionService(KolpiDbContext dbContext) : AsyncService<Question, 
     public async Task<(int Count, List<Question> Questions)> GetAllAsync(string filter, int skip, int take, string orderBy)
     {
         var query = dbContext.Set<Question>()
-            .Include(t => t.Tags)
             .Include(s => s.QuestionStatus)
             .Include(x => x.AnswerOptions)
+            .Include(t => t.Tags)
+            .ThenInclude(tt => tt.TagType)
             .OrderByDescending(x => x.CreatedAt)
             .AsQueryable();        
         

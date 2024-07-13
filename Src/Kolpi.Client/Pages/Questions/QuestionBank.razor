@@ -86,7 +86,7 @@
             <Template Context="question">
                 @foreach (var tag in question.Tags)
                 {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
+                    <RadzenBadge Style="@($"background: {@tag.ColorCode}")" Text=@tag.Name />
                 }
             </Template>
             <FilterTemplate>
@@ -99,17 +99,7 @@
                                 TextProperty="Name"
                                 AllowClear="true"
                                 Multiple="true" />
-            </FilterTemplate>@* 
-            <SecondFilterValueTemplate>
-                <RadzenDropDown @bind-Value=@selectedSecondTags
-                                Style="width:100%"
-                                Change=@OnSelectedSecondTagsChange
-                                Data="@(tags)"
-                                ValueProperty="Id"
-                                TextProperty="Name"
-                                AllowClear="true"
-                                Multiple="true" />
-            </SecondFilterValueTemplate> *@
+            </FilterTemplate>            
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.CreatedAt)" Title="Created" />
         <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.CreatedBy)" Title="By" />
