@@ -19,9 +19,9 @@ public partial class QuestionBank
     List<QuestionGetViewModel> questions = default!;
     IList<QuestionGetViewModel>? selectedQuestions = default!;
     RadzenDataGrid<QuestionGetViewModel> questionsGrid = default!;
-    IEnumerable<int>? selectedTags = default!;
+    IEnumerable<TagDropdownViewModel>? selectedTags = default!;
     IEnumerable<int>? selectedSecondTags = default!;
-    List<TagDropdownViewModel> tags = default!;
+    IEnumerable<TagDropdownViewModel> tags = default!;
     IEnumerable<int>? selectedStatuses = default!;
     List<QuestionStatusViewModel> statuses = default!;
 

@@ -9,7 +9,7 @@ public class QuestionGetViewModel
     public string? CreatedBy { get; set; }
     public DateTime? CreatedAt { get; set; }
     public QuestionType Type { get; set; } = QuestionType.Objective;
-    public string[] Tags { get; set; } = [];
+    public IEnumerable<TagDropdownViewModel> Tags { get; set; } = [];
     public int TotalOptions { get; set; }
     public int Answers { get; set; }
 }

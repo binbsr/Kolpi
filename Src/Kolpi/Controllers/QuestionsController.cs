@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kolpi.ApplicationCore.Entities;
@@ -9,8 +7,6 @@ using Kolpi.Infrastructure.Services.Questions;
 using Kolpi.Infrastructure.Services.AnswerOptions;
 using Kolpi.Infrastructure.Services.Tags;
 using System.Security.Claims;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kolpi.Api.Controllers;
 
@@ -83,7 +79,7 @@ public class QuestionsController : ControllerBase
                 question.AddCreatedStamps(userId);
 
                 // Inform EF that these tags selected already exists and not changed at all else EF will try to insert
-                tagService.AttachTags(question.Tags);
+                //tagService.AttachTags(question.Tags);
 
                 // Just add answer options to EF
                 await answerOptionService.AddAsync(question.AnswerOptions, false);

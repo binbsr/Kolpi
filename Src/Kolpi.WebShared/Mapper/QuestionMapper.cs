@@ -57,7 +57,7 @@ public static class QuestionMapper
             CreatedAt = question.CreatedAt,
             TotalOptions = question.AnswerOptions?.Count ?? 0,
             Answers = question.AnswerOptions?.Where(x => x.IsAnswer).Count() ?? 0,
-            Tags = question.Tags?.Select(x => x.Name).ToArray() ?? []
+            Tags = question.Tags?.Select(x => new TagDropdownViewModel { Id = x.Id, Name = x.Name }) ?? []
         };
 
         return questionViewModel;

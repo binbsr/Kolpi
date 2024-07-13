@@ -50,8 +50,8 @@
                 </RadzenText>
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="Type" Title="Type" />
-        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="Status" Title="Status">
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.Type)" Title="Type" />
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.Status)" Title="Status">
             <FilterValueTemplate>
                 <RadzenDropDown @bind-Value=@selectedStatuses
                                 Style="width:100%"
@@ -80,18 +80,18 @@
                 </RadzenText>
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.Tags)" Title="Tags"
-                              Type="typeof(IEnumerable<int>)" LogicalFilterOperator=LogicalFilterOperator.Or
-                              FilterValue="@selectedTags" FilterOperator="FilterOperator.Equals"
-                              SecondFilterValue="@selectedSecondTags" SecondFilterOperator="FilterOperator.Equals">
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.Tags)" Title="Tags" Sortable="false"
+                              Type="typeof(IEnumerable<TagDropdownViewModel>)" LogicalFilterOperator=LogicalFilterOperator.Or
+                              FilterValue="@selectedTags" FilterOperator="FilterOperator.In">
             <Template Context="question">
                 @foreach (var tag in question.Tags)
                 {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag />
+                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@tag.Name />
                 }
             </Template>
-            <FilterValueTemplate>
-                <RadzenDropDown @bind-Value=@selectedTags
+            <FilterTemplate>
+                <RadzenDropDown @bind-Value="@selectedTags"
+                                TValue="IEnumerable<TagDropdownViewModel>"
                                 Style="width:100%"
                                 Change=@OnSelectedTagsChange
                                 Data="@(tags)"
@@ -99,7 +99,7 @@
                                 TextProperty="Name"
                                 AllowClear="true"
                                 Multiple="true" />
-            </FilterValueTemplate>
+            </FilterTemplate>@* 
             <SecondFilterValueTemplate>
                 <RadzenDropDown @bind-Value=@selectedSecondTags
                                 Style="width:100%"
@@ -109,9 +109,9 @@
                                 TextProperty="Name"
                                 AllowClear="true"
                                 Multiple="true" />
-            </SecondFilterValueTemplate>
+            </SecondFilterValueTemplate> *@
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="CreatedAt" Title="Created" />
-        <RadzenDataGridColumn TItem="QuestionGetViewModel" Property="CreatedBy" Title="By" />
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.CreatedAt)" Title="Created" />
+        <RadzenDataGridColumn Property="@nameof(QuestionGetViewModel.CreatedBy)" Title="By" />
     </Columns>
 </RadzenDataGrid>

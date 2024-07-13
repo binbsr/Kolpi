@@ -20,6 +20,7 @@ public class QuestionService : AsyncService<Question, int>, IQuestionService
             .Include(t => t.Tags)
             .Include(s => s.QuestionStatus)
             .Include(x => x.AnswerOptions)
+            .OrderByDescending(x => x.CreatedAt)
             .AsQueryable();        
         
         if (filter is not null and not "")

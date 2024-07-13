@@ -16,7 +16,7 @@
                                   Placeholder="Your question goes here..." />
             </RadzenColumn>
             <RadzenColumn SizeMD="2">
-                <RadzenButton Icon="remove_circle" Text="Remove Data" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
+                <RadzenButton Icon="remove_circle" Text="Remove" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
                 <RadzenText TextStyle="TextStyle.DisplayH5" class="rz-mt-4" TextAlign="TextAlign.Center">@Label</RadzenText>
                 <RadzenDropDown class="rz-mt-4" Data="@(Enum.GetValues<QuestionType>().Cast<Enum>())" @bind-Value=@Data.Type Style="width:100%;" />
             </RadzenColumn>

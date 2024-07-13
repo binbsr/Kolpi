@@ -61,7 +61,7 @@ public static class TagMapper
 
     public static List<TagViewModel> ToViewModel(this IEnumerable<Tag> tagModels)
     {
-        List<TagViewModel> tagViewModels = new();
+        List<TagViewModel> tagViewModels = [];
         foreach (var model in tagModels)
         {
             tagViewModels.Add(model.ToViewModel());
@@ -83,7 +83,7 @@ public static class TagMapper
 
     public static List<Tag> ToModel(this IEnumerable<TagViewModel> tagViewModels)
     {
-        List<Tag> tagModels = new();
+        List<Tag> tagModels = [];
         foreach (var model in tagViewModels)
         {
             tagModels.Add(model.ToModel());
