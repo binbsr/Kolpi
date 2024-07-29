@@ -5,7 +5,7 @@
         <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
             <b>@Label</b>
             @((MarkupString)Data.Body)
-        </RadzenStack>        
+        </RadzenStack>
     </HeaderTemplate>
     <ChildContent>
         <RadzenRow class="rz-my-2">
@@ -13,7 +13,12 @@
                 <RadzenHtmlEditor @bind-Value=@Data.Body
                                   style="height: 145px;"
                                   UploadUrl="upload/image"
-                                  Placeholder="Your question goes here..." />
+                                  Placeholder="Your question goes here..."
+                                  Change="@OnBodyChange" />
+                @if (!IsBodyValid)
+                {
+                    <div class="custom-warning">Question body must be supplied.</div>
+                }
             </RadzenColumn>
             <RadzenColumn SizeMD="2">
                 <RadzenButton Icon="remove_circle" Text="Remove" ButtonStyle="ButtonStyle.Danger" Click="RemoveQuestion" Style="width:100%;" />
@@ -32,13 +37,18 @@
                                 FilterAsYouType
                                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 FilterOperator="StringFilterOperator.Contains"
-                                MaxSelectedLabels="8">
+                                MaxSelectedLabels="8"
+                                Change="@OnTagsChange">
                     <Template>
                         <span style="@($"color: {tag.TagColorCode}")">
                             @tag.Name (@tag.TagTypeName)
                         </span>
                     </Template>
                 </RadzenDropDown>
+                @if(!AreTagsValid)
+                {
+                    <div class="custom-warning">At least one tag must be selected.</div>
+                }
             </RadzenColumn>
         </RadzenRow>
 
@@ -53,10 +63,17 @@
                     var optionLabel = "Option " + i++;
                     <RadzenColumn SizeMD="6" class="rz-background-color-base-200">
                         <AnsOption AnswerModel="@option" TextInputLabel="@optionLabel" RemoveItemCallback="() => DeleteAnsOption(option)" />
+                        @if (string.IsNullOrWhiteSpace(option.Text))
+                        {
+                            <div class="custom-warning">Answer option cannot be empty.</div>
+                        }
                     </RadzenColumn>
                 }
                 <RadzenButton Icon="add" Text="@($"Option {i}")" ButtonStyle="ButtonStyle.Success" Click="AddNewOption" title="Add new option" />
-
+                @if (!AreAnswerOptionsValid)
+                {
+                    <div class="custom-warning">At least one answer option must be provided.</div>
+                }
             </RadzenRow>
         }
     </ChildContent>
@@ -74,6 +91,9 @@
 
     private string searchText = string.Empty;
     private List<TagViewModel> Tags { get; set; } = default!;
+    private bool IsBodyValid => !string.IsNullOrWhiteSpace(Data.Body);
+    private bool AreTagsValid => Data.Tags != null && Data.Tags.Any();
+    private bool AreAnswerOptionsValid => Data.AnswerOptions.Any(option => !string.IsNullOrWhiteSpace(option.Text));
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,5 +126,28 @@
 
         Tags = await Http.GetFromJsonAsync<List<TagViewModel>>($"api/tags?searchText={value}") ?? emptyModel;
         return Tags;
-    }    
+    }
+
+    private void OnBodyChange(object value)
+    {
+        Data.Body = value.ToString();
+        StateHasChanged(); // Refresh the state to check for validation
+    }
+
+    private void OnTagsChange(object value)
+    {
+        Data.Tags = value as List<TagViewModel>;
+        StateHasChanged(); // Refresh the state to check for validation
+    }
+
+    private void OnOptionChange(object value)
+    {
+        var option = value as AnswerOptionViewModel;
+        var index = Data.AnswerOptions.FindIndex(o => o.Equals(option));
+        if (index >= 0)
+        {
+            Data.AnswerOptions[index] = option;
+        }
+        StateHasChanged(); // Refresh the state to check for validation
+    }
 }
